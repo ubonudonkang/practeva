@@ -43,13 +43,11 @@
   --gutter: clamp(16px, 4vw, 48px);
   --max: 1280px;
 
-  /* Radius */
-  --radius-card: 18px;
+  /* Radius. Cards, panels, photos and fields are square and flat; buttons and tags stay pills,
+     and process steps keep the rounded corners of a BPMN task. */
+  --radius-card: 0;
   --radius-step: 20px;
   --radius-pill: 9999px;
-  /* Leaf tile: two opposite corners rounded, taken from the leaves in the P */
-  --leaf: 28px;
-  --leaf-lg: 88px;
 
   /* Motion. Every transition uses these; UI motion stays under 300ms. */
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
@@ -340,7 +338,7 @@ a {
   min-height: 52px;
   padding: 0 var(--space-4);
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: 0;
   background: var(--surface);
   color: var(--ink);
   font: 400 17px/1.4 var(--font-sans);
@@ -374,7 +372,7 @@ a {
 .field textarea:focus-visible {
   outline: 3px solid var(--accent-text);
   outline-offset: 1px;
-  border-radius: 12px;
+  border-radius: 0;
 }
 
 /* A consent tick: the box and its sentence share one large hit area */
@@ -422,7 +420,7 @@ a {
 
 .form-status {
   padding: var(--space-3) var(--space-4);
-  border-radius: 12px;
+  border-radius: 0;
   font-size: 15px;
   line-height: 22px;
   font-weight: 600;
@@ -451,15 +449,6 @@ a {
 .form-status[data-tone='error'] {
   border: 1px solid var(--accent-text);
   color: var(--ink);
-}
-
-/* Leaf tiles */
-.leaf {
-  border-radius: var(--leaf) 0 var(--leaf) 0;
-}
-
-.leaf-lg {
-  border-radius: var(--leaf-lg) 0 var(--leaf-lg) 0;
 }
 
 /* Utilities */

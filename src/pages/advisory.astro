@@ -14,14 +14,14 @@ import { audiences, beforeAfter, engagement, packages, services } from '../data/
 ---
 <Page
   tone="paper"
-  title="Business analysis advisory | Practeva"
-  description="Requirements, process mapping and feasibility for founders and teams, from a quick read to a full feasibility study."
+  title="Business analysis and digital transformation advisory | Practeva"
+  description="Business analysis, process automation, business systems and digital transformation advice for organisations and founders, from a quick read to a full feasibility study."
 >
   <PageHero
     crumbs={[{ label: 'Home', href: '/' }, { label: 'Advisory' }]}
-    sub="Requirements, process maps and feasibility, settled before money goes into building. Start with a quick read, or take it as far as a full feasibility study."
+    sub="From a first look at an idea to a new process or system in daily use: requirements, process improvement, automation and the technology choices in between."
   >
-    <Fragment slot="title">Business analysis for founders and <em class="accent">teams</em>.</Fragment>
+    <Fragment slot="title">Business analysis, automation and digital <em class="accent">transformation</em>.</Fragment>
     <Fragment slot="actions">
       <a class="btn" href="/contact?topic=advisory">Book a call<Arrow /></a>
       <a class="link" href="#packages">See the packages</a>
@@ -30,15 +30,15 @@ import { audiences, beforeAfter, engagement, packages, services } from '../data/
       items={[
         { term: 'Who it is for', detail: 'Founders, product teams and operations leads' },
         { term: 'Where to start', detail: 'A quick read of what you have' },
-        { term: 'Experience', detail: 'Banking, fintech and government systems' },
+        { term: 'Experience', detail: 'Banking, automation and government systems' },
       ]}
     />
   </PageHero>
 
   <section class="ground-paper section" aria-labelledby="who-title">
     <div class="container">
-      <SectionHead id="who-title" label="Who we help" title="Bring us in before the build starts." />
-      <NumberedGrid items={audiences} cols={3} />
+      <SectionHead id="who-title" label="Who we help" title="Bring us in before the change starts." />
+      <NumberedGrid items={audiences} cols={4} />
     </div>
   </section>
 
@@ -48,7 +48,7 @@ import { audiences, beforeAfter, engagement, packages, services } from '../data/
         id="difference-title"
         label="The difference"
         title="What changes when the analysis comes first."
-        note="The same project, with and without the requirements, processes and decisions written down before anyone builds."
+        note="The same change, with and without the processes, requirements and decisions settled before anyone buys or builds."
       />
       <BeforeAfter before={beforeAfter.before} after={beforeAfter.after} />
     </div>
@@ -71,7 +71,7 @@ import { audiences, beforeAfter, engagement, packages, services } from '../data/
       <SectionHead
         id="services-title"
         label="What we take on"
-        title="The analysis behind every package."
+        title="From requirements to transformation."
         note="Bring us one piece of this, or the whole of it."
       />
       <NumberedGrid items={services} cols={3} />
@@ -98,7 +98,7 @@ import { audiences, beforeAfter, engagement, packages, services } from '../data/
         title="Who does the work."
         note="Advisory work is led by Ubon Udonkang, a working business analyst. These are results from his work before Practeva."
       >
-        <a slot="aside" class="link" href="/about">About Ubon</a>
+        <a slot="aside" class="link" href="/about">About Practeva</a>
       </SectionHead>
       <Record cols={4} />
     </div>

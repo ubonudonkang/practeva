@@ -1,6 +1,5 @@
 ---
-// Two panels side by side: how things stand without the work, and with it.
-// Together they form one leaf tile: the light panel rounds top left, the dark one bottom right.
+// Two flat panels side by side: how things stand without the work, and with it.
 interface Side {
   label: string;
   items: string[];
@@ -13,7 +12,7 @@ interface Props {
 
 const { before, after } = Astro.props;
 ---
-<div class="ba leaf-lg">
+<div class="ba">
   <div class="ba-panel ba-before">
     <p class="ba-label">{before.label}</p>
     <ul>

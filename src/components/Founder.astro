@@ -1,5 +1,5 @@
 ---
-// Ubon, with his bio and track record, beside a leaf-tile portrait.
+// Ubon, with his bio and track record, beside his portrait.
 import Record from './Record.astro';
 import { founder } from '../data/site';
 
@@ -15,7 +15,7 @@ const { id, title, eyebrow } = Astro.props;
   <div class="container founder-grid">
     <!-- The caption sits under the photo: white text would not read on its light background -->
     <figure class="portrait">
-      <div class="portrait-frame leaf-lg">
+      <div class="portrait-frame">
         <img src={founder.photo} alt={founder.photoAlt} width="862" height="1080" loading="lazy" />
       </div>
       <figcaption>

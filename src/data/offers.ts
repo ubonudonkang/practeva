@@ -7,8 +7,8 @@ export const pillars = [
     key: 'advisory',
     name: 'Advisory',
     href: '/advisory',
-    tease: 'For founders and teams',
-    line: 'Requirements, processes and feasibility, sorted before you build.',
+    tease: 'For organisations and founders',
+    line: 'Business analysis, process automation and digital transformation.',
   },
   {
     key: 'training',
@@ -26,29 +26,32 @@ export const pillars = [
   },
 ];
 
-/* Advisory */
+/* Advisory: the MEMART's objects A (business analysis and business process consulting) and
+   B (digital transformation, business systems, process automation, operational improvement,
+   and fitting technology to what the business needs) */
 
 export const audiences = [
   { name: 'Founders with an idea', detail: 'Get it on paper and tested before you pay anyone to build it.' },
-  { name: 'Teams changing a process', detail: 'Map how the work happens today and agree how it should change.' },
+  { name: 'Teams changing a process', detail: 'Map how the work happens today, fix it, then automate what is worth automating.' },
   { name: 'Organisations choosing a system', detail: 'Set out what you need first, then compare vendors against it.' },
+  { name: 'Leaders planning a transformation', detail: 'Sequence the change so people, processes and technology move together.' },
 ];
 
 export const beforeAfter = {
   before: {
-    label: 'Without a clear brief',
+    label: 'Without a clear plan',
     items: [
-      'The idea is clear in your head, but not on paper.',
-      'Developers and vendors quote against different assumptions.',
-      'Gaps show up in testing, when they cost the most to fix.',
+      'Processes live in people\'s heads and in spreadsheets.',
+      'Systems are bought before anyone agrees what they must do.',
+      'Repetitive manual work takes hours a machine could do.',
     ],
   },
   after: {
     label: 'With Practeva',
     items: [
-      'Requirements written down and agreed by the people who matter.',
-      'Processes mapped, so everyone can see what will change.',
-      'Builders quote against one agreed document.',
+      'Processes mapped and improved, so everyone sees what will change.',
+      'Systems chosen against requirements the business has agreed.',
+      'Repetitive work automated where it pays for itself.',
     ],
   },
 };
@@ -98,9 +101,24 @@ export const services = [
       'Elicited, analysed and written up as user stories, acceptance criteria and requirements documents your builders can work from.',
   },
   {
-    name: 'Process mapping',
-    detail:
-      'How work flows today and how it should flow, with the handoffs, delays and chances to automate made visible.',
+    name: 'Process mapping and improvement',
+    detail: 'How work flows today and how it should flow, with the handoffs and delays made visible and removed.',
+  },
+  {
+    name: 'Process automation',
+    detail: 'Finding the repetitive, rule-based work worth automating, and specifying the bots and workflows that take it on.',
+  },
+  {
+    name: 'Digital transformation',
+    detail: 'A roadmap for moving work onto digital systems, in an order your people and budget can carry.',
+  },
+  {
+    name: 'Business systems',
+    detail: 'Choosing the systems that run the business and comparing vendors against what it actually needs.',
+  },
+  {
+    name: 'Operational improvement',
+    detail: 'Turnaround times, controls and handoffs, measured and improved so the work runs with less friction.',
   },
   {
     name: 'Feasibility',
@@ -109,10 +127,6 @@ export const services = [
   {
     name: 'Stakeholder workshops',
     detail: 'Interviews and workshops that get the right people to agree on what is needed.',
-  },
-  {
-    name: 'Solution evaluation',
-    detail: 'Systems, vendors and options compared against what the business actually needs.',
   },
   {
     name: 'Testing and go-live',
