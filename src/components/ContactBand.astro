@@ -1,0 +1,65 @@
+---
+// The close of a page: a plain heading on the left, a short note and one pill on the right.
+import Arrow from './Arrow.astro';
+import { site } from '../data/site';
+
+interface Props {
+  title: string;
+  note: string;
+  cta: { label: string; href: string };
+  ground?: 'paper' | 'wash';
+}
+
+const { title, note, cta, ground = 'wash' } = Astro.props;
+---
+<section class:list={['contact-band', 'section', ground === 'wash' ? 'ground-wash' : 'ground-paper']} aria-labelledby="band-title">
+  <div class="container band-grid">
+    <h2 id="band-title" class="display">{title}</h2>
+    <div class="band-aside">
+      <p class="band-note">{note}</p>
+      <a class="btn" href={cta.href}>{cta.label}<Arrow /></a>
+      <p class="caption">Prefer email? <a class="link" href={`mailto:${site.email}`}>{site.email}</a></p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact-band {
+    --wash-x: 8%;
+    --wash-y: 100%;
+    --wash2-x: 96%;
+    --wash2-y: 40%;
+  }
+
+  .band-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+    gap: var(--space-8) clamp(32px, 6vw, 96px);
+    align-items: end;
+    padding-top: var(--space-8);
+    border-top: 1px solid var(--line);
+  }
+
+  h2 {
+    max-width: 13em;
+  }
+
+  .band-aside {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-6);
+  }
+
+  .band-note {
+    font-size: 17px;
+    line-height: 26px;
+    color: var(--ink-muted);
+  }
+
+  @media (max-width: 880px) {
+    .band-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

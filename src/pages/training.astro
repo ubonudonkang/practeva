@@ -1,0 +1,79 @@
+---
+import Page from '../layouts/Page.astro';
+import Arrow from '../components/Arrow.astro';
+import PageHero from '../components/PageHero.astro';
+import HeroFacts from '../components/HeroFacts.astro';
+import HowItWorks from '../components/HowItWorks.astro';
+import MarketDay from '../components/MarketDay.astro';
+import Founder from '../components/Founder.astro';
+import TeamTraining from '../components/TeamTraining.astro';
+import Faq from '../components/Faq.astro';
+import Waitlist from '../components/Waitlist.astro';
+import { cohort } from '../data/site';
+
+const faqs = [
+  {
+    q: 'When does the next cohort start?',
+    a: `The ${cohort.next} cohort starts at ${cohort.nextStart}. It opens to the waitlist first.`,
+  },
+  {
+    // TODO(ubon): confirm this answer reflects your entry requirements.
+    q: 'Do I need a technical background?',
+    a: 'No. The cohort is built for career changers and starts from the foundations of the role.',
+  },
+  {
+    q: 'How much time does it take each week?',
+    a: `Two live sessions a week (${cohort.schedule}), plus time on your weekly deliverable and a pod session your group arranges.`,
+  },
+  {
+    q: 'How much does it cost?',
+    a: `The fee is ${cohort.fee}, paid in full when you enrol. We don't offer instalments at the moment.`,
+  },
+  {
+    q: 'Can I defer to a later cohort?',
+    a: "No. We don't offer deferrals, so join the cohort you can commit to.",
+  },
+  {
+    q: 'Will I get a job at the end?',
+    a: "We don't promise jobs. You finish with real case work to show, a rewritten CV and a mock interview behind you.",
+  },
+  {
+    q: 'Can you train my team instead?',
+    a: 'Yes. Team training is run separately from the cohort, for organisations. Tell us about your team through the contact form.',
+  },
+];
+---
+<Page
+  tone="night"
+  title="Business analysis training | Practeva"
+  description={`Live cohorts, real case work and career support for people moving into IT business analysis, plus training for teams. Join the waitlist for the ${cohort.next} ${cohort.programme}.`}
+  cta={{ label: 'Join the waitlist', href: '#waitlist' }}
+>
+  <PageHero
+    tone="night"
+    crumbs={[{ label: 'Home', href: '/' }, { label: 'Training' }]}
+    eyebrow={`${cohort.programme}, ${cohort.next}`}
+    sub="Live cohorts, real case work and career support for people moving into IT business analysis."
+  >
+    <Fragment slot="title">Learn business analysis by <em class="accent">doing</em> the&nbsp;work.</Fragment>
+    <Fragment slot="actions">
+      <a class="btn" href="#waitlist">Join the waitlist<Arrow /></a>
+      <a class="link" href="#how">See how a cohort works</a>
+    </Fragment>
+    <HeroFacts
+      items={[
+        { term: 'Format', detail: cohort.format },
+        { term: 'Cohort size', detail: cohort.size },
+        { term: 'Next cohort', detail: `${cohort.next}, waitlist open` },
+        { term: `${cohort.previous} cohort`, detail: cohort.previousStatus },
+      ]}
+    />
+  </PageHero>
+
+  <HowItWorks />
+  <MarketDay />
+  <Founder id="trainer" title="Taught by a working business analyst." />
+  <TeamTraining />
+  <Faq items={faqs} />
+  <Waitlist />
+</Page>

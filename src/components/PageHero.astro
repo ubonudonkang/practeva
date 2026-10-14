@@ -1,0 +1,279 @@
+---
+// The first section of every page. Night heroes sit on a textured background under the
+// night overlay; wash heroes sit on paper with soft green light.
+// Slots: "title" fills the h1 (mark one word with <em class="accent">), "actions" holds
+// the pill and a text link, and the default slot sits under the copy (facts, an index).
+interface Crumb {
+  label: string;
+  href?: string;
+}
+
+interface Props {
+  tone?: 'night' | 'wash';
+  size?: 'full' | 'page';
+  crumbs?: Crumb[];
+  eyebrow?: string;
+  sub?: string;
+  /** Textured background for night heroes; always under the night overlay */
+  image?: string;
+}
+
+const {
+  tone = 'wash',
+  size = 'page',
+  crumbs,
+  eyebrow,
+  sub,
+  image = '/images/practeva-background-deep.webp',
+} = Astro.props;
+---
+<section
+  class:list={['page-hero', `hero-${size}`, tone === 'night' ? 'ground-night hero-night' : 'ground-wash hero-wash']}
+  aria-labelledby="page-title"
+  style={tone === 'night' ? `--hero-image: url('${image}')` : undefined}
+>
+  <!-- Two translucent planes cut to the shape of the leaves in the P -->
+  <div class="hero-planes" aria-hidden="true">
+    <span class="plane plane-upper"></span>
+    <span class="plane plane-lower"></span>
+  </div>
+
+  <div class="container hero-inner">
+    <div class="hero-copy">
+      {crumbs && (
+        <nav class="crumbs" aria-label="Breadcrumb">
+          <ol>
+            {crumbs.map((c) => (
+              <li>{c.href ? <a href={c.href}>{c.label}</a> : <span aria-current="page">{c.label}</span>}</li>
+            ))}
+          </ol>
+        </nav>
+      )}
+      {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+      <!-- The italic accent word is the brand's signature: once per page, and this is the one -->
+      <h1 id="page-title" class="hero-title"><slot name="title" /></h1>
+      {sub && <p class="hero-sub">{sub}</p>}
+      {Astro.slots.has('actions') && (
+        <div class="hero-actions">
+          <slot name="actions" />
+        </div>
+      )}
+    </div>
+    <slot />
+  </div>
+</section>
+
+<style>
+  .page-hero {
+    position: relative;
+    display: flex;
+    overflow: hidden;
+  }
+
+  .hero-full {
+    min-height: min(100svh, 960px);
+  }
+
+  /* A wash hero starts the page, so its glow can run right up under the header */
+  .hero-wash {
+    --wash-top: var(--paper-clear);
+  }
+
+  /* Brand rule: a textured photo always sits under night, never lighter than 55% */
+  .hero-night {
+    background-image:
+      linear-gradient(100deg, rgb(3 22 15 / 0.94) 0%, rgb(3 22 15 / 0.86) 42%, rgb(3 22 15 / 0.58) 100%),
+      var(--hero-image);
+    background-size: cover;
+    background-position: center 70%;
+  }
+
+  .hero-planes {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    --plane-w: clamp(360px, 40vw, 640px);
+    --plane-top: clamp(150px, 17vw, 230px);
+  }
+
+  .hero-page .hero-planes {
+    --plane-w: clamp(320px, 34vw, 540px);
+    --plane-top: clamp(120px, 11vw, 160px);
+  }
+
+  .plane {
+    position: absolute;
+    display: block;
+    aspect-ratio: 2 / 1;
+  }
+
+  /* Upper leaf: pointed top-right and bottom-left, rounded the other two corners */
+  .plane-upper {
+    top: var(--plane-top);
+    right: calc(var(--plane-w) * -0.22);
+    width: var(--plane-w);
+    border-radius: 50% 0 50% 0 / 100% 0 100% 0;
+    background: rgb(255 255 255 / 0.035);
+    border: 1px solid rgb(255 255 255 / 0.1);
+  }
+
+  /* Lower leaf: the mirror, overlapping the upper one where business meets technology */
+  .plane-lower {
+    top: calc(var(--plane-top) + var(--plane-w) * 0.38);
+    right: calc(var(--plane-w) * 0.1);
+    width: calc(var(--plane-w) * 0.9);
+    border-radius: 0 50% 0 50% / 0 100% 0 100%;
+    background: rgb(132 210 98 / 0.07);
+    border: 1px solid rgb(132 210 98 / 0.2);
+  }
+
+  /* On a wash the planes turn to frosted paper, catching the green light behind them */
+  .hero-wash .plane-upper {
+    background: rgb(255 255 255 / 0.42);
+    border-color: rgb(255 255 255 / 0.85);
+  }
+
+  .hero-wash .plane-lower {
+    background: rgb(255 255 255 / 0.22);
+    border-color: rgb(46 159 75 / 0.22);
+  }
+
+  .hero-inner {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-top: 168px;
+    padding-bottom: clamp(32px, 5vw, 56px);
+  }
+
+  .hero-page .hero-inner {
+    padding-top: clamp(148px, 15vw, 196px);
+    padding-bottom: clamp(56px, 8vw, 104px);
+  }
+
+  .hero-copy {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-6);
+  }
+
+  .crumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+  }
+
+  .crumbs li + li::before {
+    content: '/';
+    margin-right: var(--space-2);
+  }
+
+  .crumbs a {
+    text-decoration: none;
+  }
+
+  .crumbs a:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .crumbs [aria-current] {
+    color: var(--heading);
+  }
+
+  .hero-title {
+    max-width: 10.5em;
+    font-size: clamp(46px, 7.4vw, 108px);
+    line-height: 0.98;
+    font-weight: var(--weight-headline);
+    letter-spacing: -0.045em;
+    color: var(--heading);
+    text-wrap: balance;
+  }
+
+  .hero-page .hero-title {
+    max-width: 11.5em;
+    font-size: clamp(42px, 6.2vw, 88px);
+    line-height: 1;
+  }
+
+  .hero-title :global(.accent) {
+    padding-right: 0.04em;
+  }
+
+  .hero-sub {
+    max-width: 30em;
+    font-size: clamp(18px, 1.6vw, 21px);
+    line-height: 1.45;
+    color: var(--ink-muted);
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-4) var(--space-8);
+    margin-top: var(--space-2);
+  }
+
+  /* The page's one orchestrated moment: the hero settles in on load.
+     The call to action is settled by about 780ms. */
+  .hero-copy > * {
+    animation: rise 600ms var(--ease-out) both;
+  }
+
+  .hero-copy > :nth-child(2) {
+    animation-delay: 60ms;
+  }
+
+  .hero-copy > :nth-child(3) {
+    animation-delay: 120ms;
+  }
+
+  .hero-copy > :nth-child(n + 4) {
+    animation-delay: 180ms;
+  }
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(calc(16px * var(--motion)));
+    }
+  }
+
+  /* Reduced motion: one short fade, all together */
+  @media (prefers-reduced-motion: reduce) {
+    .hero-copy > :nth-child(n) {
+      animation-duration: var(--duration-ui);
+      animation-delay: 0ms;
+    }
+  }
+
+  @media (max-width: 1080px) {
+    .hero-planes {
+      display: none;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .hero-full {
+      min-height: auto;
+    }
+
+    .hero-full .hero-inner {
+      padding-top: 128px;
+    }
+
+    .hero-page .hero-inner {
+      padding-top: 120px;
+    }
+  }
+</style>

@@ -1,0 +1,104 @@
+---
+import Page from '../layouts/Page.astro';
+import Arrow from '../components/Arrow.astro';
+import PageHero from '../components/PageHero.astro';
+import SectionHead from '../components/SectionHead.astro';
+import OfferCards from '../components/OfferCards.astro';
+import ProcessFlow from '../components/ProcessFlow.astro';
+import ContactBand from '../components/ContactBand.astro';
+import { careerServices, careerSteps } from '../data/offers';
+import { cohort } from '../data/site';
+---
+<Page
+  tone="paper"
+  title="Careers support for business analysts | Practeva"
+  description="CV and profile rewrites, mock interviews and portfolio reviews for new and aspiring business analysts."
+>
+  <PageHero
+    crumbs={[{ label: 'Home', href: '/' }, { label: 'Careers' }]}
+    sub="CV and profile rewrites, mock interviews and portfolio reviews for new and aspiring business analysts."
+  >
+    <Fragment slot="title">Let employers see the <em class="accent">work</em> you can&nbsp;do.</Fragment>
+    <Fragment slot="actions">
+      <a class="btn" href="/contact?topic=careers">Book careers support<Arrow /></a>
+      <a class="link" href="#services">See what we offer</a>
+    </Fragment>
+  </PageHero>
+
+  <section class="ground-paper section" id="services" aria-labelledby="services-title">
+    <div class="container">
+      <SectionHead
+        id="services-title"
+        label="Careers support"
+        title="Three ways we help you apply."
+        note="Book one, or all three. Each one is one to one."
+      />
+      <OfferCards items={careerServices} topic="careers" />
+    </div>
+  </section>
+
+  <section class="ground-paper section process" aria-labelledby="process-title">
+    <div class="container">
+      <SectionHead id="process-title" label="How it works" title="From your first draft to your next application." />
+      <ProcessFlow steps={careerSteps} label="Careers support, step by step" />
+    </div>
+  </section>
+
+  <section class="honest ground-night section" aria-labelledby="honest-title">
+    <div class="container honest-grid">
+      <div class="honest-copy">
+        <p class="eyebrow">What we promise</p>
+        <h2 id="honest-title" class="display">We don't promise jobs. We make your work easy to see.</h2>
+      </div>
+      <div class="honest-aside">
+        <p class="lead">Nobody can promise you a job, a salary or a certification, and we won't. What we can do is make sure the analysis you have done comes through clearly on paper and in the room.</p>
+        <p class="caption">Need the skills first? The {cohort.programme} includes a CV rewrite and a mock interview. <a class="link" href="/training">See the cohort</a></p>
+      </div>
+    </div>
+  </section>
+
+  <ContactBand
+    title="Applying for analyst roles?"
+    note="Tell us where you are and the roles you're aiming for, and we'll suggest where to start."
+    cta={{ label: 'Book careers support', href: '/contact?topic=careers' }}
+  />
+</Page>
+
+<style>
+  .process {
+    padding-top: 0;
+  }
+
+  .honest {
+    background-image:
+      linear-gradient(rgb(3 22 15 / 0.88), rgb(3 22 15 / 0.88)),
+      url('/images/practeva-background-stripes.webp');
+    background-size: cover;
+    background-position: center;
+  }
+
+  .honest-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+    gap: var(--space-8) clamp(32px, 6vw, 96px);
+    align-items: end;
+  }
+
+  .honest-copy {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .honest-aside {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  @media (max-width: 960px) {
+    .honest-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

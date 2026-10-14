@@ -1,0 +1,117 @@
+---
+// Numbered columns divided by hairlines: a title, a line or two of detail, and a large
+// light numeral at the foot. For service areas, topics, audiences and principles.
+interface Props {
+  items: { name: string; detail: string }[];
+  cols?: 2 | 3 | 4;
+}
+
+const { items, cols = 3 } = Astro.props;
+---
+<ol class:list={['numbered', `cols-${cols}`]}>
+  {items.map((it, i) => (
+    <li>
+      <h3 class="ng-name">{it.name}</h3>
+      <p class="ng-detail">{it.detail}</p>
+      <span class="ng-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .numbered {
+    display: grid;
+    grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+    row-gap: clamp(32px, 4vw, 56px);
+  }
+
+  .cols-2 {
+    --cols: 2;
+  }
+
+  .cols-3 {
+    --cols: 3;
+  }
+
+  .cols-4 {
+    --cols: 4;
+  }
+
+  li {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    min-height: 240px;
+    padding: var(--space-2) var(--space-6) 0;
+    border-left: 1px solid var(--line);
+  }
+
+  /* The first column in each row lines up with the content edge */
+  .cols-2 li:nth-child(2n + 1),
+  .cols-3 li:nth-child(3n + 1),
+  .cols-4 li:nth-child(4n + 1) {
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .ng-name {
+    font-size: 20px;
+    line-height: 26px;
+    font-weight: var(--weight-title);
+    letter-spacing: -0.015em;
+    color: var(--heading);
+  }
+
+  .ng-detail {
+    max-width: 26em;
+    font-size: 16px;
+    line-height: 24px;
+    color: var(--ink-muted);
+  }
+
+  .ng-num {
+    margin-top: auto;
+    padding-top: var(--space-6);
+    font-size: clamp(36px, 3.6vw, 48px);
+    line-height: 1;
+    font-weight: 300;
+    letter-spacing: -0.03em;
+    color: var(--heading);
+  }
+
+  @media (max-width: 1080px) {
+    .cols-4 {
+      --cols: 2;
+    }
+
+    .cols-4 li:nth-child(n) {
+      padding-left: var(--space-6);
+      border-left: 1px solid var(--line);
+    }
+
+    .cols-4 li:nth-child(2n + 1) {
+      padding-left: 0;
+      border-left: 0;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .numbered {
+      --cols: 1;
+      row-gap: 0;
+    }
+
+    .numbered li:nth-child(n) {
+      min-height: 0;
+      padding: var(--space-6) 0;
+      border-left: 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .ng-num {
+      order: -1;
+      padding-top: 0;
+      font-size: 28px;
+    }
+  }
+</style>
