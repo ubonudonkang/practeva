@@ -10,11 +10,17 @@ import OfferCards from '../components/OfferCards.astro';
 import ProcessFlow from '../components/ProcessFlow.astro';
 import ContactBand from '../components/ContactBand.astro';
 import { audiences, beforeAfter, engagement, packages, services } from '../data/offers';
+import { company } from '../data/site';
+import { services as serviceNodes } from '../data/schema';
 ---
 <Page
   tone="paper"
-  title="Business analysis and digital transformation advisory | Practeva"
-  description="Business analysis, process automation, business systems and digital transformation advice for organisations and founders, from a quick read to a full feasibility study."
+  title="Business analysis consulting in Nigeria | Practeva advisory"
+  description="Business analysis consulting, process automation and digital transformation for organisations in Nigeria, from a quick read to a full feasibility study."
+  schema={[
+    ...serviceNodes('/advisory/', services, 'Business analysis and technology advisory'),
+    ...serviceNodes('/advisory/', packages, 'Advisory package'),
+  ]}
 >
   <PageHero
     crumbs={[{ label: 'Home', href: '/' }, { label: 'Advisory' }]}
@@ -29,7 +35,7 @@ import { audiences, beforeAfter, engagement, packages, services } from '../data/
       items={[
         { term: 'Who it is for', detail: 'Founders, product teams and operations leads' },
         { term: 'Where to start', detail: 'A quick read of what you have' },
-        { term: 'Experience', detail: 'Banking, automation and government systems' },
+        { term: 'Based in', detail: company.location },
       ]}
     />
   </PageHero>

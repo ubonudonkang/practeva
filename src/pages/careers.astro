@@ -8,11 +8,13 @@ import ProcessFlow from '../components/ProcessFlow.astro';
 import ContactBand from '../components/ContactBand.astro';
 import { careerServices, careerSteps } from '../data/offers';
 import { cohort } from '../data/site';
+import { services as serviceNodes } from '../data/schema';
 ---
 <Page
   tone="paper"
-  title="Careers support for business analysts | Practeva"
-  description="CV and profile rewrites, mock interviews and portfolio reviews for new and aspiring business analysts."
+  title="Business analyst CV and interview support in Nigeria | Practeva"
+  description="CV and LinkedIn rewrites, mock interviews and portfolio reviews for new and aspiring business analysts in Nigeria."
+  schema={serviceNodes('/careers/', careerServices, 'Career support for business analysts')}
 >
   <PageHero
     crumbs={[{ label: 'Home', href: '/' }, { label: 'Careers' }]}

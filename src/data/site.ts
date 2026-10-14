@@ -6,8 +6,11 @@ export const site = {
   email: 'info@practevahq.com',
   tagline: 'Your business analysis advisory, training and career partner.',
   description:
-    'Practeva is a business analysis and technology advisory firm. We help organisations improve their processes, automate repetitive work and choose systems that fit, train the analysts who do that work, and help them show it to employers.',
+    'Practeva is a business analysis and technology advisory firm in Lagos State, Nigeria. We help organisations improve their processes, automate repetitive work and choose systems that fit, train the analysts who do that work, and help them show it to employers.',
   legal: 'Practeva Limited · Registered in Nigeria, RC 9931539 · Lagos State, Nigeria',
+  // Social preview (1200 x 630) for every page, and what it shows
+  ogImage: '/og/practeva.png',
+  ogImageAlt: 'Practeva: business analysis and digital transformation in Nigeria',
 };
 
 // From the CAC certificate and status report. The site gives the company's location,
@@ -16,6 +19,7 @@ export const company = {
   legalName: 'Practeva Limited',
   rc: '9931539',
   registered: '12 October 2026',
+  registeredIso: '2026-10-12',
   type: 'Private company limited by shares, under the Companies and Allied Matters Act 2020',
   location: 'Lagos State, Nigeria',
 };

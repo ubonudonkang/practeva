@@ -20,7 +20,7 @@ import { cohort } from '../data/site';
 const faqs = [
   {
     q: 'What does Practeva do?',
-    a: 'Three things. Advisory for organisations: business analysis, process improvement and automation, business systems and digital transformation. Training: the BA Bridge Cohort for career changers, and workshops for teams. Careers: CV, profile, interview and portfolio support for analysts.',
+    a: 'Practeva is a business analysis and technology advisory firm in Lagos State, Nigeria, and it does three things. Advisory for organisations: business analysis, process improvement and automation, business systems and digital transformation. Training: the BA Bridge Cohort for career changers, and workshops for teams. Careers: CV, profile, interview and portfolio support for analysts.',
   },
   {
     q: 'Is it only business analysis?',
@@ -29,6 +29,10 @@ const faqs = [
   {
     q: 'Who do you work with?',
     a: 'Founders testing an idea, teams changing a process, organisations choosing a system and leaders planning a transformation. If you are not sure where you fit, a short call will tell us both.',
+  },
+  {
+    q: 'Where is Practeva based?',
+    a: 'In Lagos State, Nigeria. We serve organisations across Nigeria: most advisory work runs online, with workshops in person where they help, and the BA Bridge Cohort is taught live online.',
   },
   {
     q: 'How does an advisory engagement start?',
@@ -52,12 +56,15 @@ const faqs = [
   },
 ];
 ---
-<Page tone="night">
+<Page
+  tone="night"
+  description="Practeva is a business analysis and technology advisory firm in Lagos State, Nigeria. We improve processes, automate work and train business analysts."
+>
   <PageHero
     tone="night"
     size="full"
     eyebrow="Business and technology advisory"
-    sub="We help organisations map and improve their processes, automate the repetitive work and choose systems that fit, starting with clear requirements."
+    sub="We help organisations in Nigeria map and improve their processes, automate the repetitive work and choose systems that fit, starting with clear requirements."
   >
     <Fragment slot="title">Technology that fits the way your business&nbsp;<em class="accent">works</em>.</Fragment>
     <Fragment slot="actions">

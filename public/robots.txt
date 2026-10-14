@@ -1,0 +1,6 @@
+# practevahq.com welcomes every crawler, including search engines and AI search and
+# assistant crawlers (OAI-SearchBot, ChatGPT-User, PerplexityBot, Claude-SearchBot and others).
+User-agent: *
+Allow: /
+
+Sitemap: https://practevahq.com/sitemap.xml

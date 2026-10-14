@@ -41,3 +41,18 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      # Tells Bing and the other IndexNow engines (Bing's index also feeds ChatGPT search and
+      # Copilot) that the site changed, by sending every URL in the live sitemap. The key file
+      # in public/ named after the key proves the site is ours. A failure never fails the deploy.
+      - name: Notify search engines (IndexNow)
+        continue-on-error: true
+        env:
+          INDEXNOW_KEY: 8ae1a6f7bbdee44cfdb6e16c045553b7
+        run: |
+          sleep 20
+          urls=$(curl -fsS https://practevahq.com/sitemap.xml | grep -o '<loc>[^<]*' | sed 's/<loc>//' | jq -R . | jq -sc .)
+          curl -fsS -X POST https://api.indexnow.org/indexnow \
+            -H 'Content-Type: application/json; charset=utf-8' \
+            -d "{\"host\":\"practevahq.com\",\"key\":\"$INDEXNOW_KEY\",\"keyLocation\":\"https://practevahq.com/$INDEXNOW_KEY.txt\",\"urlList\":$urls}" \
+            -w 'IndexNow answered %{http_code}\n'
