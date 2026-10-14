@@ -22,7 +22,8 @@ Marketing site for Practeva Limited, a business analysis firm registered in Nige
 - `src/data/offers.ts`: what Practeva sells, in the site's words: pillars, advisory packages, services, engagement steps, team training, careers services, resources, principles.
 - `src/styles/global.css`: brand tokens, the three grounds (`.ground-paper`, `.ground-wash`, `.ground-night`), type styles, buttons, tags, form fields, leaf tiles.
 - `public/brand/`: the supplied logo files. Never redraw, recolour or retype the logo.
-- `public/images/`: textured brand backgrounds and brand renders (wall sign, notebook) as WebP.
+- `public/brand/patterns/`: the leaf pattern in its deep-green colourway (`column-3x5` and `band-12x3`). The full set, with other colourways, a repeat tile and a generator, is in Ubon's `practeva-leaf-pattern.zip`.
+- `public/images/`: textured brand backgrounds, brand renders (wall sign, notebook) and Ubon's portrait (`ubon-udonkang.webp`, 4:5), as WebP.
 
 Links into the contact form can preselect a topic and start the message: `/contact?topic=advisory&offer=quick-read`. Topics are in `site.ts`; offer slugs come from `packages` and `careerServices`.
 
@@ -60,8 +61,13 @@ Pillar colour coding (keep it consistent on every page)
 
 Logo
 - Night grounds: `practeva-lockup-horizontal-reversed.svg`. Light grounds: `practeva-lockup-horizontal-color.svg`. The header picks one from the page's `tone`.
-- Minimum heights on screen: horizontal lockup 64px, symbol 24px. Below 64px use the symbol alone (the header does this under 560px).
+- The header lockup is 40px tall, below the brand guide's 64px minimum, at Ubon's request; under 560px the symbol stands alone at 32px. Elsewhere keep the guide's minimums: horizontal lockup 64px, symbol 24px.
 - Clear space on every side equals the height of the capital P.
+
+Leaf pattern
+- The two leaves from the P in a checkerboard. Use it as a panel beside content (the home statement has one): never put text or the logo on it.
+- Highlight leaves on deep-green or night only; on paper, deep-green leaves. One leaf colour per pattern, leaves at their angle.
+- Scale the art to fit its panel (`background-size: contain` on a matching ground) rather than cropping, so no leaf is cut at an edge.
 
 Copy
 - Plain, calm, specific British English: programme, enrolment, organisation, practise (verb), practice (noun).
@@ -95,11 +101,9 @@ The site animates very little, on purpose. Before adding motion, it needs a reas
 5. About principles (`principles`): confirm they read the way you want Practeva to work.
 6. Confirm the February 2027 fee (`cohort.fee`) and that the November schedule still applies (Wed and Sat, 8 to 10pm WAT).
 7. Confirm the FAQ answer to "Do I need a technical background?" (`src/pages/training.astro`).
-8. Replace the placeholder artefact list in `MarketDay.astro` with the capstone's real deliverables.
-9. Replace the symbol in the founder tile (`Founder.astro`) and the contact page tile with a real photo of Ubon (4:5, WebP, under 200 KB).
-10. The footer and About page show the registered office, which the CAC report also lists as Ubon's residential address. Confirm that is intended.
-11. Add an `og:image` (1200 x 630) in `src/layouts/Base.astro`.
-12. Hosting: `.github/workflows/deploy.yml` builds the site and publishes it to GitHub Pages on every push to `main`. It needs `main` as the default branch, Settings → Pages → Source set to "GitHub Actions", the custom domain `practevahq.com` saved there, and the domain's DNS pointed at GitHub Pages. Keep `site` in `astro.config.mjs` in step with the domain. Old links to `/#waitlist` now need `/training#waitlist`.
+8. The footer and About page show the registered office, which the CAC report also lists as Ubon's residential address. Confirm that is intended.
+9. Add an `og:image` (1200 x 630) in `src/layouts/Base.astro`.
+10. Hosting: `.github/workflows/deploy.yml` builds the site and publishes it to GitHub Pages on every push to `main`. It needs `main` as the default branch, Settings → Pages → Source set to "GitHub Actions", the custom domain `practevahq.com` saved there, and the domain's DNS pointed at GitHub Pages. Keep `site` in `astro.config.mjs` in step with the domain. Old links to `/#waitlist` now need `/training#waitlist`.
 
 ## Likely next pages
 

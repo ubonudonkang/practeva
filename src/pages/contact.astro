@@ -21,10 +21,9 @@ import { founder, site } from '../data/site';
         <h1 id="page-title" class="contact-title">Tell us what you're <em class="accent">working</em> on.</h1>
         <p class="contact-sub">An idea to test, a process to fix, a team to train or a career move. Send a few lines and we'll reply by email to set up a call.</p>
 
-        <!-- TODO(ubon): replace this tile's contents with a real photo of you -->
-        <figure class="expert leaf-lg">
-          <div class="expert-mark">
-            <img src="/brand/practeva-symbol-reversed.svg" alt="" width="64" height="65" />
+        <figure class="expert">
+          <div class="expert-frame leaf-lg">
+            <img src={founder.photo} alt={founder.photoAlt} width="862" height="1080" />
           </div>
           <figcaption>
             <b>{founder.name}</b>
@@ -106,41 +105,44 @@ import { founder, site } from '../data/site';
     color: var(--ink-muted);
   }
 
-  /* The expert tile: a portrait crop in a leaf, like the reference's angled photo frames */
+  /* The expert tile: a portrait crop in a leaf, like the reference's angled photo frames.
+     The caption sits under the photo, where it reads against the page. */
   .expert {
-    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
     width: min(100%, 320px);
-    aspect-ratio: 4 / 5;
-    overflow: hidden;
     margin-top: var(--space-4);
-    background: var(--deep-green);
   }
 
-  .expert-mark {
-    display: grid;
-    place-items: center;
+  .expert-frame {
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    background: var(--line);
+  }
+
+  .expert-frame img {
+    width: 100%;
     height: 100%;
+    object-fit: cover;
   }
 
   .expert figcaption {
-    position: absolute;
-    left: var(--space-6);
-    bottom: var(--space-6);
     display: flex;
     flex-direction: column;
-    color: #ffffff;
   }
 
   .expert figcaption b {
     font-size: 17px;
     line-height: 22px;
     font-weight: 600;
+    color: var(--heading);
   }
 
   .expert figcaption span {
     font-size: 14px;
     line-height: 20px;
-    color: var(--on-deep-muted);
+    color: var(--ink-muted);
   }
 
   @media (max-width: 960px) {

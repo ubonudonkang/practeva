@@ -8,6 +8,11 @@ import { cohort, forms, site } from '../data/site';
       <p class="eyebrow">{cohort.next} cohort</p>
       <h2 id="waitlist-title" class="display">The next cohort opens to the waitlist first.</h2>
       <p class="lead">Add your details and we'll contact you when enrolment opens. Each cohort takes {cohort.size}.</p>
+      <ul class="perks">
+        <li>First access before public enrolment</li>
+        <li>Dates, timetable and fee sent to you first</li>
+        <li>Free to join, nothing to pay today</li>
+      </ul>
     </div>
 
     <form
@@ -67,6 +72,31 @@ import { cohort, forms, site } from '../data/site';
     display: flex;
     flex-direction: column;
     gap: var(--space-6);
+  }
+
+  .perks {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  /* A small highlight leaf before each line, as on the waitlist flyer's ticks */
+  .perks li {
+    position: relative;
+    padding-left: 26px;
+    font-size: 17px;
+    line-height: 24px;
+  }
+
+  .perks li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 6px;
+    width: 12px;
+    height: 12px;
+    border-radius: 6px 0 6px 0;
+    background: var(--highlight);
   }
 
   @media (max-width: 960px) {
