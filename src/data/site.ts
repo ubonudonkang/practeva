@@ -54,8 +54,8 @@ export const founder = {
   role: 'Founder and lead trainer',
   photo: '/images/ubon-udonkang.webp',
   photoAlt: 'Ubon Udonkang, seated, in a white kaftan with black embroidery and a black cap',
-  // Brand rule: name MTN Nigeria only as Ubon's employer and role, never his project work there.
-  bio: 'Ubon is a business analyst in the Architecture and Engineering team at MTN Nigeria, and previously worked at Access Bank. He holds the PSM I certification, is working towards CBAP, and his work spans fintech, banking operations, process automation and Open Banking regulation.',
+  // Earlier roles only: the site names no current employer for Ubon (see CLAUDE.md, Copy).
+  bio: 'Ubon is a working business analyst who previously worked at Access Bank. He holds the PSM I certification, is working towards CBAP, and his work spans fintech, banking operations, process automation and Open Banking regulation.',
   record: [
     // ₦351bn, as on ubonudonkang.com and its rights issue case study.
     { figure: '₦351bn', label: "Access Bank's rights issue, digitised with Ubon leading the analysis" },
