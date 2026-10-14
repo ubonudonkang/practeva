@@ -1,55 +1,62 @@
 ---
-import { cohort, site } from '../data/site';
+import SectionHead from './SectionHead.astro';
+import { cohort } from '../data/site';
+
+// One band per pillar, in the tagline's order; Advisory opens first because it leads.
+const bands = [
+  {
+    key: 'advisory',
+    name: 'Advisory',
+    tease: 'For founders and teams',
+    body: 'Clear requirements before you spend on building. We review your idea, product or process and set out what it needs, from a quick read to a viability review or a full feasibility study.',
+    facts: ['Quick read', 'Viability review', 'Full feasibility'],
+    link: { href: '/advisory', label: 'See advisory' },
+  },
+  {
+    key: 'training',
+    name: 'Training',
+    tease: 'For new analysts and teams',
+    body: 'Twelve weeks of live, case-based training for people moving into IT business analysis, and workshops for teams who want sharper analysis skills.',
+    facts: [cohort.programme, `Next cohort: ${cohort.next}`, 'Team training'],
+    link: { href: '/training', label: 'See training' },
+  },
+  {
+    key: 'careers',
+    name: 'Careers',
+    tease: 'For new and aspiring analysts',
+    body: 'Your CV and profile rewritten around business analysis work, mock interviews and portfolio reviews, so your skills come through on paper and in the room.',
+    facts: ['CV and profile rewrite', 'Mock interview', 'Portfolio review'],
+    link: { href: '/careers', label: 'See careers support' },
+  },
+];
 ---
 <section class="pillars ground-night section" id="what-we-do" aria-labelledby="pillars-title">
   <div class="container">
-    <div class="section-head">
-      <h2 id="pillars-title" class="display">What we do</h2>
-      <p class="note">Start where you are: building a product, changing careers or applying for roles.</p>
-    </div>
+    <SectionHead
+      id="pillars-title"
+      label="Advisory, training, careers"
+      title="What we do"
+      note="Start where you are: building a product, changing a process, learning the craft or applying for roles."
+    />
 
-    <!-- One band per pillar; the shared name makes them an exclusive accordion -->
+    <!-- The shared name makes the bands an exclusive accordion -->
     <div class="bands">
-      <details class="band band-advisory leaf" name="pillars">
-        <summary>
-          <span class="band-name">Advisory</span>
-          <span class="band-tease">For founders and teams</span>
-          <span class="band-icon" aria-hidden="true"></span>
-        </summary>
-        <div class="band-body">
-          <p>Clear requirements before you spend on building. We review your idea or product and set out what it needs, from a quick read to a viability review or a full feasibility study.</p>
-          <a class="band-link" href={`mailto:${site.email}?subject=Advisory%20enquiry`}>Book a call</a>
-        </div>
-      </details>
-
-      <details class="band band-training leaf" name="pillars" open>
-        <summary>
-          <span class="band-name">Training</span>
-          <span class="band-tease">{cohort.programme}</span>
-          <span class="band-icon" aria-hidden="true"></span>
-        </summary>
-        <div class="band-body">
-          <p>Twelve weeks of live, case-based training for people moving into IT business analysis. You work one change at a fictional bank, from the first brief to the board presentation.</p>
-          <ul class="band-facts">
-            <li>{cohort.schedule}</li>
-            <li>{cohort.size} per cohort</li>
-            <li>Next cohort: {cohort.next}</li>
-          </ul>
-          <a class="band-link" href="#how">See how a cohort works</a>
-        </div>
-      </details>
-
-      <details class="band band-careers leaf" name="pillars">
-        <summary>
-          <span class="band-name">Careers</span>
-          <span class="band-tease">For new and aspiring analysts</span>
-          <span class="band-icon" aria-hidden="true"></span>
-        </summary>
-        <div class="band-body">
-          <p>A CV rewritten around business analysis work and a one-to-one mock interview, so your new skills come through on paper and in the room.</p>
-          <a class="band-link" href={`mailto:${site.email}?subject=Careers%20support`}>Ask about careers support</a>
-        </div>
-      </details>
+      {bands.map((b, i) => (
+        <details class={`band band-${b.key} leaf`} name="pillars" open={i === 0}>
+          <summary>
+            <span class="band-name">{b.name}</span>
+            <span class="band-tease">{b.tease}</span>
+            <span class="band-icon" aria-hidden="true"></span>
+          </summary>
+          <div class="band-body">
+            <p>{b.body}</p>
+            <ul class="tags band-facts">
+              {b.facts.map((f) => <li>{f}</li>)}
+            </ul>
+            <a class="band-link" href={b.link.href}>{b.link.label}</a>
+          </div>
+        </details>
+      ))}
     </div>
   </div>
 </section>
@@ -107,7 +114,7 @@ import { cohort, site } from '../data/site';
   .band-name {
     font-size: clamp(24px, 2.4vw, 32px);
     line-height: 1.1;
-    font-weight: 700;
+    font-weight: var(--weight-headline);
     letter-spacing: -0.03em;
   }
 
@@ -192,25 +199,13 @@ import { cohort, site } from '../data/site';
 
   .band-facts {
     grid-column: 2;
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-  }
-
-  .band-facts li {
-    padding: 6px 14px;
-    border: 1px solid currentColor;
-    border-radius: var(--radius-pill);
-    font-size: 14px;
-    line-height: 20px;
-    font-weight: 600;
   }
 
   .band-link {
     grid-column: 2;
     justify-self: start;
     margin-top: var(--space-2);
-    font-weight: 700;
+    font-weight: 600;
     text-decoration: underline;
     text-decoration-thickness: 1.5px;
     text-underline-offset: 5px;

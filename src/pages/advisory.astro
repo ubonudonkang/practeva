@@ -1,0 +1,127 @@
+---
+import Page from '../layouts/Page.astro';
+import Arrow from '../components/Arrow.astro';
+import PageHero from '../components/PageHero.astro';
+import HeroFacts from '../components/HeroFacts.astro';
+import SectionHead from '../components/SectionHead.astro';
+import NumberedGrid from '../components/NumberedGrid.astro';
+import BeforeAfter from '../components/BeforeAfter.astro';
+import OfferCards from '../components/OfferCards.astro';
+import ProcessFlow from '../components/ProcessFlow.astro';
+import Record from '../components/Record.astro';
+import ContactBand from '../components/ContactBand.astro';
+import { audiences, beforeAfter, engagement, packages, services } from '../data/offers';
+---
+<Page
+  tone="paper"
+  title="Business analysis advisory | Practeva"
+  description="Requirements, process mapping and feasibility for founders and teams, from a quick read to a full feasibility study."
+>
+  <PageHero
+    crumbs={[{ label: 'Home', href: '/' }, { label: 'Advisory' }]}
+    sub="Requirements, process maps and feasibility, settled before money goes into building. Start with a quick read, or take it as far as a full feasibility study."
+  >
+    <Fragment slot="title">Business analysis for founders and <em class="accent">teams</em>.</Fragment>
+    <Fragment slot="actions">
+      <a class="btn" href="/contact?topic=advisory">Book a call<Arrow /></a>
+      <a class="link" href="#packages">See the packages</a>
+    </Fragment>
+    <HeroFacts
+      items={[
+        { term: 'Who it is for', detail: 'Founders, product teams and operations leads' },
+        { term: 'Where to start', detail: 'A quick read of what you have' },
+        { term: 'Experience', detail: 'Banking, fintech and government systems' },
+      ]}
+    />
+  </PageHero>
+
+  <section class="ground-paper section" aria-labelledby="who-title">
+    <div class="container">
+      <SectionHead id="who-title" label="Who we help" title="Bring us in before the build starts." />
+      <NumberedGrid items={audiences} cols={3} />
+    </div>
+  </section>
+
+  <section class="ground-paper section difference" aria-labelledby="difference-title">
+    <div class="container">
+      <SectionHead
+        id="difference-title"
+        label="The difference"
+        title="What changes when the analysis comes first."
+        note="The same project, with and without the requirements, processes and decisions written down before anyone builds."
+      />
+      <BeforeAfter before={beforeAfter.before} after={beforeAfter.after} />
+    </div>
+  </section>
+
+  <section class="ground-wash section packages" id="packages" aria-labelledby="packages-title">
+    <div class="container">
+      <SectionHead
+        id="packages-title"
+        label="Packages"
+        title="Three ways to start."
+        note="Pick the depth you need now. A quick read can always grow into a fuller study later."
+      />
+      <OfferCards items={packages} topic="advisory" />
+    </div>
+  </section>
+
+  <section class="ground-paper section" id="services" aria-labelledby="services-title">
+    <div class="container">
+      <SectionHead
+        id="services-title"
+        label="What we take on"
+        title="The analysis behind every package."
+        note="Bring us one piece of this, or the whole of it."
+      />
+      <NumberedGrid items={services} cols={3} />
+    </div>
+  </section>
+
+  <section class="ground-paper section process" id="process" aria-labelledby="process-title">
+    <div class="container">
+      <SectionHead
+        id="process-title"
+        label="How it works"
+        title="How an engagement runs."
+        note="Every engagement follows the same path, so you always know what comes next."
+      />
+      <ProcessFlow steps={engagement} label="An advisory engagement, step by step" />
+    </div>
+  </section>
+
+  <section class="ground-night section" aria-labelledby="record-title">
+    <div class="container">
+      <SectionHead
+        id="record-title"
+        label="Experience"
+        title="Who does the work."
+        note="Advisory work is led by Ubon Udonkang, a working business analyst. These are results from his work before Practeva."
+      >
+        <a slot="aside" class="link" href="/about">About Ubon</a>
+      </SectionHead>
+      <Record cols={4} />
+    </div>
+  </section>
+
+  <ContactBand
+    title="Start with a quick read."
+    note="Send us what you have, or book a call to talk it through. We'll tell you plainly whether we can help."
+    cta={{ label: 'Book a call', href: '/contact?topic=advisory' }}
+  />
+</Page>
+
+<style>
+  /* Paper sections that follow one another share a hairline instead of a gap */
+  .difference,
+  .process {
+    padding-top: 0;
+  }
+
+  .packages {
+    --wash-x: 100%;
+    --wash-y: 40%;
+    --wash2-x: 0%;
+    --wash2-y: 70%;
+  }
+</style>

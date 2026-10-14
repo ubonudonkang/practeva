@@ -1,0 +1,133 @@
+---
+import Page from '../layouts/Page.astro';
+import Arrow from '../components/Arrow.astro';
+import PageHero from '../components/PageHero.astro';
+import SectionHead from '../components/SectionHead.astro';
+import ContactBand from '../components/ContactBand.astro';
+import { resources } from '../data/offers';
+---
+<Page
+  tone="paper"
+  title="Business analysis templates and resources | Practeva"
+  description="Templates for the documents business analysts write: requirements, user stories, process maps, stakeholder maps and test plans."
+>
+  <PageHero
+    crumbs={[{ label: 'Home', href: '/' }, { label: 'Resources' }]}
+    sub="Requirements, user stories, process maps and test plans, set out the way we teach them. The first templates are on their way."
+  >
+    <Fragment slot="title">Templates for the documents every analyst <em class="accent">writes</em>.</Fragment>
+    <Fragment slot="actions">
+      <a class="btn" href="/contact?topic=resources">Ask for early access<Arrow /></a>
+    </Fragment>
+  </PageHero>
+
+  <section class="ground-paper section" aria-labelledby="library-title">
+    <div class="container library-grid">
+      <div class="library-main">
+        <SectionHead id="library-title" label="The library" title="What's coming first." />
+        <ul class="resources">
+          {resources.map((r) => (
+            <li class="resource">
+              <div>
+                <h3>{r.name}</h3>
+                <p>{r.detail}</p>
+              </div>
+              <span class="status">Coming soon</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <figure class="notebook leaf-lg">
+        <img src="/images/practeva-notebook.webp" alt="A deep green Practeva notebook with the leaf symbol in gold foil" width="960" height="1200" loading="lazy" />
+      </figure>
+    </div>
+  </section>
+
+  <ContactBand
+    title="Need a template we haven't listed?"
+    note="Tell us the document you're stuck on. It helps us decide what to make next."
+    cta={{ label: 'Suggest a template', href: '/contact?topic=resources' }}
+  />
+</Page>
+
+<style>
+  .library-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+    gap: var(--space-14) clamp(32px, 6vw, 96px);
+    align-items: start;
+  }
+
+  .resources {
+    border-top: 1px solid var(--line);
+  }
+
+  .resource {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-6);
+    padding-block: var(--space-6);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .resource h3 {
+    font-size: 20px;
+    line-height: 26px;
+    font-weight: var(--weight-title);
+    letter-spacing: -0.015em;
+    color: var(--heading);
+  }
+
+  .resource p {
+    max-width: 34em;
+    margin-top: var(--space-2);
+    font-size: 16px;
+    line-height: 24px;
+    color: var(--ink-muted);
+  }
+
+  .status {
+    flex-shrink: 0;
+    padding: 4px 12px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-pill);
+    font-size: 13px;
+    line-height: 18px;
+    font-weight: 600;
+    color: var(--ink-muted);
+  }
+
+  .notebook {
+    position: sticky;
+    top: var(--space-8);
+    overflow: hidden;
+    aspect-ratio: 4 / 5;
+    background: var(--night);
+  }
+
+  .notebook img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @media (max-width: 960px) {
+    .library-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .notebook {
+      position: static;
+      max-width: 420px;
+      order: -1;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .resource {
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+  }
+</style>

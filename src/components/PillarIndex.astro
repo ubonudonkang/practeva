@@ -1,0 +1,120 @@
+---
+// The three pillars as numbered doors along the foot of the home hero.
+// Each keeps its pillar colour on the leaf mark.
+import { pillars } from '../data/offers';
+---
+<nav class="pillar-index" aria-label="What we do">
+  <ol>
+    {pillars.map((p, i) => (
+      <li class={`pi-${p.key}`}>
+        <a href={p.href}>
+          <span class="pi-num">0{i + 1}</span>
+          <span class="pi-name"><i class="chip" aria-hidden="true"></i>{p.name}</span>
+          <span class="pi-line">{p.line}</span>
+        </a>
+      </li>
+    ))}
+  </ol>
+</nav>
+
+<style>
+  .pillar-index {
+    margin-top: clamp(56px, 8vw, 104px);
+  }
+
+  ol {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    border-top: 1px solid var(--line);
+  }
+
+  li + li {
+    border-left: 1px solid var(--line);
+  }
+
+  a {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    height: 100%;
+    padding: var(--space-6) var(--space-6) var(--space-2);
+    text-decoration: none;
+  }
+
+  li:first-child a {
+    padding-left: 0;
+  }
+
+  .pi-num {
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    color: var(--ink-muted);
+  }
+
+  .pi-name {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: clamp(22px, 2.2vw, 28px);
+    line-height: 1.1;
+    font-weight: var(--weight-headline);
+    letter-spacing: -0.02em;
+    color: var(--heading);
+    align-self: flex-start;
+    padding-bottom: 2px;
+    background: linear-gradient(currentColor, currentColor) left bottom / 0 1px no-repeat;
+    transition: background-size var(--duration-ui) var(--ease-out);
+  }
+
+  .pi-line {
+    max-width: 22em;
+    font-size: 15px;
+    line-height: 22px;
+    color: var(--ink-muted);
+  }
+
+  /* A small leaf mark in the pillar's colour. On night a white hairline keeps the deep-green one visible. */
+  .chip {
+    flex-shrink: 0;
+    width: 14px;
+    height: 14px;
+    border-radius: 7px 0 7px 0;
+    background: var(--chip);
+    border: 1px solid rgb(255 255 255 / 0.35);
+  }
+
+  .pi-advisory {
+    --chip: var(--deep-green);
+  }
+
+  .pi-training {
+    --chip: var(--leaf-green);
+  }
+
+  .pi-careers {
+    --chip: var(--forest-green);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    a:hover .pi-name {
+      background-size: 100% 1px;
+    }
+  }
+
+  @media (max-width: 760px) {
+    ol {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    li + li {
+      border-left: 0;
+      border-top: 1px solid var(--line);
+    }
+
+    a {
+      padding: var(--space-4) 0;
+    }
+  }
+</style>

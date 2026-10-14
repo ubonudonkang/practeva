@@ -4,26 +4,34 @@ import { site } from '../data/site';
 const year = new Date().getFullYear();
 const columns = [
   {
+    title: 'Advisory',
+    links: [
+      { href: '/advisory#packages', label: 'Packages' },
+      { href: '/advisory#services', label: 'What we take on' },
+      { href: '/advisory#process', label: 'How it works' },
+    ],
+  },
+  {
     title: 'Training',
     links: [
-      { href: '#how', label: 'How a cohort works' },
-      { href: '#market-day', label: 'Project Market Day' },
-      { href: '#faq', label: 'Questions' },
+      { href: '/training', label: 'BA Bridge Cohort' },
+      { href: '/training#team', label: 'Team training' },
+      { href: '/training#waitlist', label: 'Join the waitlist' },
     ],
   },
   {
     title: 'Practeva',
     links: [
-      { href: '#what-we-do', label: 'What we do' },
-      { href: '#trainer', label: 'Your trainer' },
-      { href: '#waitlist', label: 'Join the waitlist' },
+      { href: '/careers', label: 'Careers support' },
+      { href: '/resources', label: 'Resources' },
+      { href: '/about', label: 'About' },
     ],
   },
   {
     title: 'Contact',
     links: [
+      { href: '/contact', label: 'Book a call' },
       { href: `mailto:${site.email}`, label: site.email },
-      { href: site.url, label: 'practevahq.com' },
     ],
   },
 ];
@@ -61,7 +69,7 @@ const columns = [
 
   .footer-top {
     display: grid;
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
     gap: var(--space-8) clamp(32px, 6vw, 96px);
   }
 
@@ -69,13 +77,13 @@ const columns = [
     max-width: 16em;
     font-size: clamp(22px, 2.2vw, 28px);
     line-height: 1.25;
-    font-weight: 600;
+    font-weight: var(--weight-headline);
     letter-spacing: -0.02em;
   }
 
   .footer-cols {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: var(--space-6);
   }
 
@@ -121,19 +129,16 @@ const columns = [
     color: var(--ink-muted);
   }
 
-  @media (max-width: 960px) {
+  @media (max-width: 1080px) {
     .footer-top {
       grid-template-columns: minmax(0, 1fr);
     }
   }
 
-  @media (max-width: 560px) {
+  @media (max-width: 640px) {
     .footer-cols {
       grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .footer-cols > div:last-child {
-      grid-column: 1 / -1;
+      row-gap: var(--space-8);
     }
   }
 </style>

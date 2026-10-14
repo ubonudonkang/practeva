@@ -1,5 +1,7 @@
 ---
-// A process drawn the way business analysts draw it: start event, tasks, end event.
+import ProcessFlow from './ProcessFlow.astro';
+import SectionHead from './SectionHead.astro';
+
 const steps = [
   { name: 'Learn the craft', detail: 'Live classes, twice a week' },
   { name: 'Work the case', detail: 'Weekly deliverables for Lantern MFB' },
@@ -12,27 +14,14 @@ const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 ---
 <section class="how ground-paper section" id="how" aria-labelledby="how-title">
   <div class="container">
-    <div class="section-head">
-      <h2 id="how-title" class="display">How a cohort works</h2>
-      <p class="note">Twelve weeks, live online, built around one case from the first brief to the final presentation.</p>
-    </div>
+    <SectionHead
+      id="how-title"
+      label="How it works"
+      title="How a cohort works"
+      note="Twelve weeks, live online, built around one case from the first brief to the final presentation."
+    />
 
-    <div class="flow">
-      <span class="event event-start" aria-hidden="true"></span>
-      <ol class="steps">
-        {steps.map((s, i) => (
-          <li class:list={['step-item', { final: i === steps.length - 1 }]}>
-            <span class="arrow" aria-hidden="true"></span>
-            <div class="step">
-              <b>{s.name}</b>
-              <span>{s.detail}</span>
-            </div>
-          </li>
-        ))}
-      </ol>
-      <span class="arrow" aria-hidden="true"></span>
-      <span class="event event-end" aria-hidden="true"></span>
-    </div>
+    <ProcessFlow steps={steps} label="The cohort, step by step" />
 
     <div class="week-panel">
       <div class="week-intro">
@@ -68,100 +57,6 @@ const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 </section>
 
 <style>
-  /* Flow diagram */
-  .flow {
-    display: flex;
-    align-items: center;
-  }
-
-  .steps {
-    display: flex;
-    flex: 1;
-    min-width: 0;
-  }
-
-  .step-item {
-    display: flex;
-    align-items: stretch;
-    flex: 1;
-    min-width: 0;
-  }
-
-  .step-item .arrow {
-    align-self: center;
-  }
-
-  .event {
-    flex-shrink: 0;
-    width: 28px;
-    height: 28px;
-    border: 2px solid var(--deep-green);
-    border-radius: 50%;
-    background: var(--surface-raised);
-  }
-
-  .event-end {
-    border-width: 7px;
-  }
-
-  .arrow {
-    position: relative;
-    flex-shrink: 0;
-    width: 28px;
-    height: 2px;
-    background: var(--deep-green);
-  }
-
-  .arrow::after {
-    content: '';
-    position: absolute;
-    right: -2px;
-    top: -5px;
-    border-left: 9px solid var(--deep-green);
-    border-block: 6px solid transparent;
-  }
-
-  .step {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    gap: 6px;
-    min-width: 0;
-    min-height: 116px;
-    margin-left: 4px;
-    margin-right: 2px;
-    padding: 18px 18px 20px;
-    border: 2px solid var(--deep-green);
-    border-radius: var(--radius-step);
-    background: var(--surface-raised);
-  }
-
-  .step b {
-    font-size: 17px;
-    line-height: 21px;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    color: var(--deep-green);
-  }
-
-  .step span {
-    font-size: 14px;
-    line-height: 19px;
-    color: var(--ink-muted);
-  }
-
-  .final .step {
-    background: var(--deep-green);
-  }
-
-  .final .step b {
-    color: #ffffff;
-  }
-
-  .final .step span {
-    color: var(--on-deep-muted);
-  }
-
   /* Week swimlane */
   .week-panel {
     margin-top: clamp(48px, 7vw, 88px);
@@ -235,7 +130,7 @@ const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   .slot b {
     font-size: 15px;
     line-height: 19px;
-    font-weight: 700;
+    font-weight: var(--weight-title);
     letter-spacing: -0.01em;
     color: var(--deep-green);
   }
@@ -268,55 +163,8 @@ const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     white-space: nowrap;
   }
 
-  @media (max-width: 1080px) {
-    .flow,
-    .steps,
-    .step-item {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-
-    .flow {
-      padding-left: 0;
-    }
-
-    .steps,
-    .step-item {
-      width: 100%;
-    }
-
-    .event {
-      margin-left: 6px;
-    }
-
-    .arrow,
-    .step-item .arrow {
-      align-self: flex-start;
-      width: 2px;
-      height: 26px;
-      margin-left: 19px;
-    }
-
-    .arrow::after {
-      top: auto;
-      right: auto;
-      bottom: -2px;
-      left: -5px;
-      border-left: 6px solid transparent;
-      border-right: 6px solid transparent;
-      border-top: 9px solid var(--deep-green);
-      border-bottom: 0;
-    }
-
-    .step {
-      width: 100%;
-      max-width: 520px;
-      min-height: 0;
-      margin: 4px 0 2px;
-    }
-  }
-
-  @media (max-width: 760px) {
+  /* The swimlane needs about 760px of its own; below that, the list reads better */
+  @media (max-width: 960px) {
     .week {
       display: none;
     }
