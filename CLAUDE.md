@@ -16,7 +16,7 @@ Marketing site for Practeva Limited, a business analysis firm registered in Nige
   - Page structure: `Header`, `Footer`, `PageHero` (night or wash, with breadcrumbs, facts and actions), `HeroFacts`, `PillarIndex`, `SectionHead`, `ContactBand`.
   - Content blocks: `Statement`, `Pillars`, `BeforeAfter`, `OfferCards`, `NumberedGrid`, `ProcessFlow`, `Record`, `Founder`, `CohortBanner`, `TeamTraining`.
   - Cohort: `HowItWorks`, `MarketDay`, `Faq`, `Waitlist`.
-  - Forms: `ContactForm`, `Waitlist`, with shared behaviour in `src/scripts/forms.ts`.
+  - Forms: `ContactForm`, `Waitlist`, with shared behaviour in `src/scripts/forms.ts`. Both post to the Apps Script described under Forms below.
   - `Arrow`: the one arrow, inside CTA pills only.
 - `src/data/site.ts`: every repeated fact (company details, nav, cohort dates, size, schedule, fee, founder bio and record, form endpoints, contact topics). Change facts here, not in components.
 - `src/data/offers.ts`: what Practeva sells, in the site's words: pillars, advisory packages, services, engagement steps, team training, careers services, resources, principles.
@@ -26,6 +26,18 @@ Marketing site for Practeva Limited, a business analysis firm registered in Nige
 - `public/images/`: textured brand backgrounds, brand renders (wall sign, notebook) and Ubon's portrait (`ubon-udonkang.webp`, 4:5), as WebP.
 
 Links into the contact form can preselect a topic and start the message: `/contact?topic=advisory&offer=quick-read`. Topics are in `site.ts`; offer slugs come from `packages` and `careerServices`.
+
+## Forms
+
+Both forms post to the one Apps Script web app behind ubonudonkang.com's forms. Its source is `scripts/site_forms.gs` in the `ubonudonkang/ubonudonkang.github.io` repo, and its README section "Forms and the Apps Script" says how to redeploy it. The `/exec` URL is `forms` in `src/data/site.ts`.
+
+- The script routes a post by `form_name` and keeps only the fields it knows, so the forms send exactly those:
+  - Waitlist (`form_name` `ba-waitlist-feb-2027`, the same as ubonudonkang.com): `name`, `email`, `cohort`, `consent` (must be `Yes`) and `type` ("BA Bridge February 2027 waitlist (practevahq.com)"). It lands in the `Waitlist` tab, and a repeat email and cohort is skipped, so someone who joins on both sites appears once.
+  - Contact (`form_name` `contact`): `first_name`, `last_name`, `email`, `company`, `type` and `message`, plus a `submission_id`. On submit the topic becomes `type` as "Practeva: <topic label>", and an optional phone number is added to the end of the message, because the Contact tab has no phone column.
+- `_gotcha` is the honeypot. Notifications for both go to the script's `SITE_NOTIFY_EMAIL`.
+- `src/scripts/forms.ts` sends URL-encoded data, reads the script's `{"result":"ok"}` answer, and if the browser cannot read it, resends once with `no-cors`. The dedupe keys make that resend safe; a blind send is not proof of a save, so check the sheet after any change to the script or its deployment.
+- To keep a new field (a WhatsApp number on the waitlist, say), add it to `FORM_TABS` in the script and redeploy it first: the script adds the column on the right. A field the script does not know is dropped silently.
+- When the cohort changes, update `cohort.next`, `waitlistFormName` and `waitlistType` together, matching the personal site's waitlist.
 
 ## Brand rules (from the Practeva Brand Guide; follow them in every change)
 
@@ -75,9 +87,10 @@ Copy
 - Never use em dashes. Use a comma, semicolon or full stop.
 - Calls to action are a verb plus an object ("Book a call", "Join the waitlist"). One pill per section; a second action is a text link. One arrow, only inside a CTA pill (the `Arrow` component).
 - Never promise jobs, salaries or certifications. Say what people build and practise.
-- Practeva has no client case studies yet. Proof is Ubon's record from earlier roles, always labelled as such, and the cohort facts. Never invent clients, testimonials or results.
+- Practeva has no client case studies yet. Proof is Ubon's record from earlier roles, always labelled as such, and the cohort facts. Never invent clients, testimonials or results. Keep the figures in step with ubonudonkang.com (the rights issue is ₦351bn there).
 - The founder sections name MTN Nigeria only as Ubon's employer and role. Do not add details of his MTN project work, or imply it ("telecoms").
 - Contact is info@practevahq.com and practevahq.com; never a personal address or site.
+- The company's location is "Lagos State, Nigeria" (`company.location`), in the legal line and on About. The registered office on the CAC record is not published on the site; use the CAC record where a document needs it.
 
 ## Motion (keep it rare and quick)
 
@@ -94,14 +107,14 @@ The site animates very little, on purpose. Before adding motion, it needs a reas
 
 ## Open items before launch
 
-1. Forms: set `forms.waitlist` and `forms.contact` in `src/data/site.ts`. Both POST `FormData` and expect a 2xx. Until then the waitlist tells people to email, and the contact form opens the visitor's email app with their message filled in.
+1. Forms: both post to the Apps Script (see Forms above). After the first deploy, submit one test of each and confirm a row and a notification arrive. The contact notification's sender name comes from the script (`name: 'ubonudonkang.com'`); change it there if Practeva enquiries should say practevahq.com.
 2. Advisory packages (`packages` in `offers.ts`): confirm what each includes, turnaround and price. Empty prices show "Quoted after an intro call".
 3. Careers services and team training (`careerServices`, `teamTraining`): confirm contents and prices.
 4. Resources (`resources`): the list is a placeholder marked "Coming soon". Replace with the real templates, formats, prices and links.
 5. About principles (`principles`): confirm they read the way you want Practeva to work.
-6. Confirm the February 2027 fee (`cohort.fee`) and that the November schedule still applies (Wed and Sat, 8 to 10pm WAT).
+6. Set the February 2027 fee (`cohort.fee`) once it is fixed; until then the FAQ says it goes to the waitlist first and quotes the November fee (₦80,000, `cohort.previousFee`). Confirm the November schedule still applies (Wed and Sat, 8 to 10pm WAT).
 7. Confirm the FAQ answer to "Do I need a technical background?" (`src/pages/training.astro`).
-8. The footer and About page show the registered office, which the CAC report also lists as Ubon's residential address. Confirm that is intended.
+8. Confirm the government accounting system record (`founder.record`): the site says 14 modules with Ubon as the sole business analyst, while ubonudonkang.com describes two portals and eight finance modules and does not say "sole".
 9. Add an `og:image` (1200 x 630) in `src/layouts/Base.astro`.
 10. Hosting: `.github/workflows/deploy.yml` builds the site and publishes it to GitHub Pages on every push to `main`. It needs `main` as the default branch, Settings → Pages → Source set to "GitHub Actions", the custom domain `practevahq.com` saved there, and the domain's DNS pointed at GitHub Pages. Keep `site` in `astro.config.mjs` in step with the domain. Old links to `/#waitlist` now need `/training#waitlist`.
 

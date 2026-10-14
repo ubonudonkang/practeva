@@ -27,7 +27,9 @@ const faqs = [
   },
   {
     q: 'How much does it cost?',
-    a: `The fee is ${cohort.fee}, paid in full when you enrol. We don't offer instalments at the moment.`,
+    a: cohort.fee
+      ? `The fee is ${cohort.fee}, paid in full when you enrol. We don't offer instalments at the moment.`
+      : `The ${cohort.next} fee goes to the waitlist first, before public enrolment. The ${cohort.previous} cohort was ${cohort.previousFee}, paid in full when you enrolled. We don't offer instalments at the moment.`,
   },
   {
     q: 'Can I defer to a later cohort?',

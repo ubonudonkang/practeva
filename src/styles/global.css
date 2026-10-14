@@ -377,6 +377,29 @@ a {
   border-radius: 12px;
 }
 
+/* A consent tick: the box and its sentence share one large hit area */
+.check {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  font-size: 15px;
+  line-height: 22px;
+  cursor: pointer;
+}
+
+.check input {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin: 1px 0 0;
+  accent-color: var(--cta);
+}
+
+.check input:focus-visible {
+  outline: 3px solid var(--accent-text);
+  outline-offset: 2px;
+}
+
 .form-card .btn {
   align-self: flex-start;
   margin-top: var(--space-2);
