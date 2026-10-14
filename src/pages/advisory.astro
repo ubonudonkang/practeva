@@ -8,7 +8,6 @@ import NumberedGrid from '../components/NumberedGrid.astro';
 import BeforeAfter from '../components/BeforeAfter.astro';
 import OfferCards from '../components/OfferCards.astro';
 import ProcessFlow from '../components/ProcessFlow.astro';
-import Record from '../components/Record.astro';
 import ContactBand from '../components/ContactBand.astro';
 import { audiences, beforeAfter, engagement, packages, services } from '../data/offers';
 ---
@@ -87,20 +86,6 @@ import { audiences, beforeAfter, engagement, packages, services } from '../data/
         note="Every engagement follows the same path, so you always know what comes next."
       />
       <ProcessFlow steps={engagement} label="An advisory engagement, step by step" />
-    </div>
-  </section>
-
-  <section class="ground-night section" aria-labelledby="record-title">
-    <div class="container">
-      <SectionHead
-        id="record-title"
-        label="Experience"
-        title="Who does the work."
-        note="Advisory work is led by Ubon Udonkang, a working business analyst. These are results from his work before Practeva."
-      >
-        <a slot="aside" class="link" href="/about">About Practeva</a>
-      </SectionHead>
-      <Record cols={4} />
     </div>
   </section>
 

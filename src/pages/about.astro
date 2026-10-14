@@ -4,7 +4,6 @@ import Arrow from '../components/Arrow.astro';
 import PageHero from '../components/PageHero.astro';
 import SectionHead from '../components/SectionHead.astro';
 import NumberedGrid from '../components/NumberedGrid.astro';
-import Founder from '../components/Founder.astro';
 import ContactBand from '../components/ContactBand.astro';
 import { pillars, principles } from '../data/offers';
 import { company, site } from '../data/site';
@@ -12,16 +11,16 @@ import { company, site } from '../data/site';
 <Page
   tone="paper"
   title="About Practeva | Business analysis, automation and digital transformation"
-  description="Practeva Limited is a business analysis firm registered in Nigeria, founded by Ubon Udonkang."
+  description="Practeva Limited is a business analysis and technology advisory firm registered in Nigeria."
 >
   <PageHero
     crumbs={[{ label: 'Home', href: '/' }, { label: 'About' }]}
     sub={`${company.legalName} was registered in Nigeria in October 2026 to do three things well: advise organisations on their processes, systems and automation, train the analysts who do that work, and help them show it to employers.`}
   >
-    <Fragment slot="title">A business analysis and technology firm, built by a working <em class="accent">analyst</em>.</Fragment>
+    <Fragment slot="title">A business and technology firm that thinks like an <em class="accent">analyst</em>.</Fragment>
     <Fragment slot="actions">
       <a class="btn" href="/contact">Book a call<Arrow /></a>
-      <a class="link" href="#founder">Meet the founder</a>
+      <a class="link" href="#how-we-work">How we work</a>
     </Fragment>
   </PageHero>
 
@@ -44,9 +43,7 @@ import { company, site } from '../data/site';
     <img src="/images/practeva-wall-sign.webp" alt="The Practeva logo as a sign on a softly lit wall" width="1600" height="900" loading="lazy" />
   </section>
 
-  <Founder id="founder" eyebrow="The founder" title="Meet Ubon Udonkang." />
-
-  <section class="ground-wash section principles" aria-labelledby="principles-title">
+  <section class="ground-wash section principles" id="how-we-work" aria-labelledby="principles-title">
     <div class="container">
       <SectionHead
         id="principles-title"

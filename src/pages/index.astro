@@ -10,7 +10,6 @@ import SectionHead from '../components/SectionHead.astro';
 import BeforeAfter from '../components/BeforeAfter.astro';
 import OfferCards from '../components/OfferCards.astro';
 import Pillars from '../components/Pillars.astro';
-import Record from '../components/Record.astro';
 import CohortBanner from '../components/CohortBanner.astro';
 import Faq from '../components/Faq.astro';
 import ContactBand from '../components/ContactBand.astro';
@@ -50,10 +49,6 @@ const faqs = [
   {
     q: 'I want to move into business analysis. Where do I start?',
     a: `With the ${cohort.programme}: ${cohort.format.toLowerCase()}, built for career changers. The ${cohort.next} cohort opens to the waitlist first. If you are already applying for roles, careers support can help with your CV, profile and interviews.`,
-  },
-  {
-    q: 'Who is behind Practeva?',
-    a: 'Ubon Udonkang, a working business analyst whose earlier roles include automation and digital work at Access Bank. Practeva Limited was registered in Nigeria in October 2026, so the results we show come from his work before Practeva.',
   },
 ];
 ---
@@ -95,20 +90,6 @@ const faqs = [
   </section>
 
   <Pillars />
-
-  <section class="experience ground-paper section" aria-labelledby="experience-title">
-    <div class="container">
-      <SectionHead
-        id="experience-title"
-        label="Experience"
-        title="Analysis and automation that shipped in banking and government."
-        note="Practeva is led by Ubon Udonkang, a working business analyst. These are results from his work before Practeva."
-      >
-        <a slot="aside" class="link" href="/about">About Practeva</a>
-      </SectionHead>
-      <Record cols={4} />
-    </div>
-  </section>
 
   <CohortBanner />
 

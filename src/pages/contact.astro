@@ -1,7 +1,7 @@
 ---
 import Page from '../layouts/Page.astro';
 import ContactForm from '../components/ContactForm.astro';
-import { founder, site } from '../data/site';
+import { site } from '../data/site';
 ---
 <Page
   tone="paper"
@@ -21,15 +21,6 @@ import { founder, site } from '../data/site';
         <h1 id="page-title" class="contact-title">Tell us what you're <em class="accent">working</em> on.</h1>
         <p class="contact-sub">An idea to test, a process to fix or automate, a team to train or a career move. Send a few lines and we'll reply by email to set up a call.</p>
 
-        <figure class="expert">
-          <div class="expert-frame">
-            <img src={founder.photo} alt={founder.photoAlt} width="862" height="1080" />
-          </div>
-          <figcaption>
-            <b>{founder.name}</b>
-            <span>{founder.role}</span>
-          </figcaption>
-        </figure>
 
         <p class="caption">Prefer email? <a class="link" href={`mailto:${site.email}`}>{site.email}</a></p>
       </div>
@@ -105,53 +96,9 @@ import { founder, site } from '../data/site';
     color: var(--ink-muted);
   }
 
-  /* The expert tile: a square-cornered portrait crop. The caption sits under the photo,
-     where it reads against the page. */
-  .expert {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
-    width: min(100%, 320px);
-    margin-top: var(--space-4);
-  }
-
-  .expert-frame {
-    aspect-ratio: 4 / 5;
-    overflow: hidden;
-    background: var(--line);
-  }
-
-  .expert-frame img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .expert figcaption {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .expert figcaption b {
-    font-size: 17px;
-    line-height: 22px;
-    font-weight: 600;
-    color: var(--heading);
-  }
-
-  .expert figcaption span {
-    font-size: 14px;
-    line-height: 20px;
-    color: var(--ink-muted);
-  }
-
   @media (max-width: 960px) {
     .contact-grid {
       grid-template-columns: minmax(0, 1fr);
-    }
-
-    .expert {
-      display: none;
     }
   }
 
