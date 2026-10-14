@@ -7,9 +7,9 @@ const bands = [
   {
     key: 'advisory',
     name: 'Advisory',
-    tease: 'For founders and teams',
-    body: 'Clear requirements before you spend on building. We review your idea, product or process and set out what it needs, from a quick read to a viability review or a full feasibility study.',
-    facts: ['Quick read', 'Viability review', 'Full feasibility'],
+    tease: 'For organisations and founders',
+    body: 'Business analysis, process improvement and automation, business systems and digital transformation. We start with what the business needs, then help change the process and the technology to match.',
+    facts: ['Business analysis', 'Process automation', 'Digital transformation'],
     link: { href: '/advisory', label: 'See advisory' },
   },
   {
@@ -42,7 +42,7 @@ const bands = [
     <!-- The shared name makes the bands an exclusive accordion -->
     <div class="bands">
       {bands.map((b, i) => (
-        <details class={`band band-${b.key} leaf`} name="pillars" open={i === 0}>
+        <details class={`band band-${b.key}`} name="pillars" open={i === 0}>
           <summary>
             <span class="band-name">{b.name}</span>
             <span class="band-tease">{b.tease}</span>

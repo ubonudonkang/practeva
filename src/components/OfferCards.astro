@@ -1,5 +1,5 @@
 ---
-// Offers as a row of leaf-tile cards; the first is filled deep-green as the place to start.
+// Offers as a row of flat, square cards; the first is filled deep-green as the place to start.
 // 'full' shows what each includes and links to the contact form with the offer preselected;
 // 'compact' shows the summary and links to the page that sells them.
 interface Offer {
@@ -25,7 +25,7 @@ const { items, topic, variant = 'full', href = '/contact' } = Astro.props;
 ---
 <ol class:list={['offers', variant]}>
   {items.map((o, i) => (
-    <li class:list={['offer', 'leaf', { featured: i === 0 }]}>
+    <li class:list={['offer', { featured: i === 0 }]}>
       {o.tag && <p class="offer-tag">{o.tag}</p>}
       <h3 class="offer-name">{o.name}</h3>
       <p class="offer-summary">{o.summary}</p>

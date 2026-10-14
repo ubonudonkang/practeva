@@ -19,10 +19,10 @@ import { founder, site } from '../data/site';
         </nav>
         <!-- The italic accent word is the brand's signature: once per page, and this is the one -->
         <h1 id="page-title" class="contact-title">Tell us what you're <em class="accent">working</em> on.</h1>
-        <p class="contact-sub">An idea to test, a process to fix, a team to train or a career move. Send a few lines and we'll reply by email to set up a call.</p>
+        <p class="contact-sub">An idea to test, a process to fix or automate, a team to train or a career move. Send a few lines and we'll reply by email to set up a call.</p>
 
         <figure class="expert">
-          <div class="expert-frame leaf-lg">
+          <div class="expert-frame">
             <img src={founder.photo} alt={founder.photoAlt} width="862" height="1080" />
           </div>
           <figcaption>
@@ -105,8 +105,8 @@ import { founder, site } from '../data/site';
     color: var(--ink-muted);
   }
 
-  /* The expert tile: a portrait crop in a leaf, like the reference's angled photo frames.
-     The caption sits under the photo, where it reads against the page. */
+  /* The expert tile: a square-cornered portrait crop. The caption sits under the photo,
+     where it reads against the page. */
   .expert {
     display: flex;
     flex-direction: column;
