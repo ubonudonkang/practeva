@@ -9,6 +9,7 @@ import TeamTraining from '../components/TeamTraining.astro';
 import Faq from '../components/Faq.astro';
 import Waitlist from '../components/Waitlist.astro';
 import { cohort } from '../data/site';
+import { orgId, pageUrl } from '../data/schema';
 
 const faqs = [
   {
@@ -19,6 +20,10 @@ const faqs = [
     // TODO(ubon): confirm this answer reflects your entry requirements.
     q: 'Do I need a technical background?',
     a: 'No. The cohort is built for career changers and starts from the foundations of the role.',
+  },
+  {
+    q: 'Can I join from outside Lagos?',
+    a: 'Yes. The cohort is taught live online on West Africa Time, so you can join from anywhere in Nigeria, or from further afield if the times work for you.',
   },
   {
     q: 'How much time does it take each week?',
@@ -43,18 +48,59 @@ const faqs = [
     a: 'Yes. Team training is run separately from the cohort, for organisations. Tell us about your team through the contact form.',
   },
 ];
+
+// The cohort as a Course for search results and AI assistants: only what the page says.
+// No price until the February fee is set (cohort.fee).
+const course = {
+  '@type': 'Course',
+  '@id': `${pageUrl('/training/')}#course`,
+  name: cohort.programme,
+  description: `Twelve weeks of live, case-based business analysis training for career changers in Nigeria. You work one case for a fictional microfinance bank and leave with a requirements document, BPMN process maps, a user story backlog and a UAT plan, plus a CV rewrite and a mock interview.`,
+  provider: { '@id': orgId },
+  url: pageUrl('/training/'),
+  inLanguage: 'en',
+  educationalLevel: 'Beginner',
+  teaches: [
+    'Requirements elicitation and business requirements documents',
+    'BPMN process mapping',
+    'User stories and acceptance criteria',
+    'User acceptance testing and traceability',
+    'Stakeholder engagement',
+    'Presenting a recommendation',
+  ],
+  hasCourseInstance: {
+    '@type': 'CourseInstance',
+    name: `${cohort.programme}, ${cohort.next}`,
+    courseMode: 'Online',
+    location: { '@type': 'VirtualLocation', url: pageUrl('/training/') },
+    courseSchedule: {
+      '@type': 'Schedule',
+      repeatFrequency: 'P1W',
+      byDay: ['https://schema.org/Wednesday', 'https://schema.org/Saturday'],
+      startTime: '20:00',
+      endTime: '22:00',
+      scheduleTimezone: 'Africa/Lagos',
+      duration: 'PT2H',
+      repeatCount: 24,
+    },
+  },
+  ...(cohort.fee && {
+    offers: { '@type': 'Offer', category: 'Paid', priceCurrency: 'NGN', price: cohort.fee.replace(/[^\d.]/g, '') },
+  }),
+};
 ---
 <Page
   tone="night"
-  title="Business analysis training | Practeva"
-  description={`Live cohorts, real case work and career support for people moving into IT business analysis, plus training for teams. Join the waitlist for the ${cohort.next} ${cohort.programme}.`}
+  title="Business analysis training in Nigeria | BA Bridge Cohort"
+  description={`Twelve weeks of live online, case-based business analysis training for career changers in Nigeria. Join the waitlist for the ${cohort.next} ${cohort.programme}.`}
+  schema={[course]}
   cta={{ label: 'Join the waitlist', href: '#waitlist' }}
 >
   <PageHero
     tone="night"
     crumbs={[{ label: 'Home', href: '/' }, { label: 'Training' }]}
     eyebrow={`${cohort.programme}, ${cohort.next}`}
-    sub="Live cohorts, real case work and career support for people moving into IT business analysis."
+    sub="Live online cohorts, real case work and career support for people in Nigeria moving into IT business analysis."
   >
     <Fragment slot="title">Learn business analysis by <em class="accent">doing</em> the&nbsp;work.</Fragment>
     <Fragment slot="actions">
