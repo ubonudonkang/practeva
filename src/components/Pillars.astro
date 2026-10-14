@@ -1,0 +1,230 @@
+---
+import { cohort, site } from '../data/site';
+---
+<section class="pillars ground-night section" id="what-we-do" aria-labelledby="pillars-title">
+  <div class="container">
+    <div class="section-head">
+      <h2 id="pillars-title" class="display">What we do</h2>
+      <p class="note">Start where you are: building a product, changing careers or applying for roles.</p>
+    </div>
+
+    <!-- One band per pillar; the shared name makes them an exclusive accordion -->
+    <div class="bands">
+      <details class="band band-advisory leaf" name="pillars">
+        <summary>
+          <span class="band-name">Advisory</span>
+          <span class="band-tease">For founders and teams</span>
+          <span class="band-icon" aria-hidden="true"></span>
+        </summary>
+        <div class="band-body">
+          <p>Clear requirements before you spend on building. We review your idea or product and set out what it needs, from a quick read to a viability review or a full feasibility study.</p>
+          <a class="band-link" href={`mailto:${site.email}?subject=Advisory%20enquiry`}>Book a call</a>
+        </div>
+      </details>
+
+      <details class="band band-training leaf" name="pillars" open>
+        <summary>
+          <span class="band-name">Training</span>
+          <span class="band-tease">{cohort.programme}</span>
+          <span class="band-icon" aria-hidden="true"></span>
+        </summary>
+        <div class="band-body">
+          <p>Twelve weeks of live, case-based training for people moving into IT business analysis. You work one change at a fictional bank, from the first brief to the board presentation.</p>
+          <ul class="band-facts">
+            <li>{cohort.schedule}</li>
+            <li>{cohort.size} per cohort</li>
+            <li>Next cohort: {cohort.next}</li>
+          </ul>
+          <a class="band-link" href="#how">See how a cohort works</a>
+        </div>
+      </details>
+
+      <details class="band band-careers leaf" name="pillars">
+        <summary>
+          <span class="band-name">Careers</span>
+          <span class="band-tease">For new and aspiring analysts</span>
+          <span class="band-icon" aria-hidden="true"></span>
+        </summary>
+        <div class="band-body">
+          <p>A CV rewritten around business analysis work and a one-to-one mock interview, so your new skills come through on paper and in the room.</p>
+          <a class="band-link" href={`mailto:${site.email}?subject=Careers%20support`}>Ask about careers support</a>
+        </div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<style>
+  .bands {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  /* Pillar colours. Text pairs checked for contrast:
+     white on deep-green 10.4:1, night on leaf-green 5.5:1, white on forest-green 5.4:1 */
+  .band-advisory {
+    --band-bg: var(--deep-green);
+    --band-fg: #ffffff;
+  }
+
+  .band-training {
+    --band-bg: var(--leaf-green);
+    --band-fg: var(--night);
+  }
+
+  .band-careers {
+    --band-bg: var(--forest-green);
+    --band-fg: #ffffff;
+  }
+
+  .band {
+    background: var(--band-bg);
+    color: var(--band-fg);
+    overflow: hidden;
+  }
+
+  summary {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) 44px;
+    align-items: center;
+    gap: var(--space-6);
+    min-height: 84px;
+    padding: var(--space-4) var(--space-6) var(--space-4) var(--space-8);
+    list-style: none;
+    cursor: pointer;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary:focus-visible {
+    outline: 3px solid var(--band-fg);
+    outline-offset: -6px;
+  }
+
+  .band-name {
+    font-size: clamp(24px, 2.4vw, 32px);
+    line-height: 1.1;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+
+  .band-tease {
+    font-size: 15px;
+    line-height: 20px;
+    font-weight: 500;
+  }
+
+  .band-icon {
+    position: relative;
+    width: 44px;
+    height: 44px;
+    border: 1.5px solid currentColor;
+    border-radius: 50%;
+    justify-self: end;
+    transition: transform 240ms ease;
+  }
+
+  .band-icon::before,
+  .band-icon::after {
+    content: '';
+    position: absolute;
+    inset: 50% auto auto 50%;
+    width: 14px;
+    height: 1.5px;
+    background: currentColor;
+    transform: translate(-50%, -50%);
+  }
+
+  .band-icon::after {
+    transform: translate(-50%, -50%) rotate(90deg);
+  }
+
+  .band[open] .band-icon {
+    transform: rotate(45deg);
+  }
+
+  .band-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+    gap: var(--space-4) var(--space-6);
+    padding: var(--space-2) var(--space-8) var(--space-8);
+  }
+
+  .band-body p {
+    grid-column: 2;
+    max-width: 34em;
+    font-size: 18px;
+    line-height: 27px;
+  }
+
+  .band-facts {
+    grid-column: 2;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .band-facts li {
+    padding: 6px 14px;
+    border: 1px solid currentColor;
+    border-radius: var(--radius-pill);
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 600;
+  }
+
+  .band-link {
+    grid-column: 2;
+    justify-self: start;
+    margin-top: var(--space-2);
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 5px;
+  }
+
+  .band-link:focus-visible {
+    outline-color: var(--band-fg);
+  }
+
+  @media (max-width: 760px) {
+    summary {
+      grid-template-columns: minmax(0, 1fr) 44px;
+      row-gap: 2px;
+      padding: var(--space-4) var(--space-4) var(--space-4) var(--space-6);
+    }
+
+    .band-name {
+      grid-row: 1;
+    }
+
+    .band-tease {
+      grid-row: 2;
+      grid-column: 1;
+    }
+
+    .band-icon {
+      grid-row: 1 / span 2;
+      grid-column: 2;
+    }
+
+    .band-body {
+      grid-template-columns: minmax(0, 1fr);
+      padding: 0 var(--space-6) var(--space-6);
+    }
+
+    .band-body p,
+    .band-facts,
+    .band-link {
+      grid-column: 1;
+    }
+
+    .band-body p {
+      font-size: 17px;
+      line-height: 26px;
+    }
+  }
+</style>

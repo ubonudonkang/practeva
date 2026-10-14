@@ -1,0 +1,113 @@
+---
+// TODO(ubon): swap these for the actual deliverables of the capstone.
+// They are standard BA artefacts, written as placeholders for the real weekly list.
+const artefacts = [
+  { name: 'Stakeholder map', detail: 'Who the change touches, and what each of them needs.' },
+  { name: 'Process maps', detail: 'How the bank works today, and the process you propose.' },
+  { name: 'User stories', detail: 'Requirements written so a developer can build from them.' },
+  { name: 'Requirements document', detail: 'The full picture, ready for sign-off by the business.' },
+];
+---
+<section class="market ground-night section" id="market-day" aria-labelledby="market-title">
+  <div class="container market-grid">
+    <div class="market-copy">
+      <p class="eyebrow">Project Market Day</p>
+      <h2 id="market-title" class="display">One bank. One brief. Twelve weeks.</h2>
+      <p class="lead">You join the project team at Lantern MFB, a fictional microfinance bank, and work one change from the first brief to the board presentation.</p>
+      <p class="caption">The bank is made up. The work you produce for it is real, and it is yours to show.</p>
+    </div>
+
+    <ul class="artefacts" aria-label="What you produce">
+      {artefacts.map((a) => (
+        <li class="artefact leaf">
+          <b>{a.name}</b>
+          <span>{a.detail}</span>
+        </li>
+      ))}
+      <li class="artefact artefact-final leaf">
+        <b>Board presentation</b>
+        <span>Your recommendation, presented to the bank's board.</span>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<style>
+  .market {
+    background-image:
+      linear-gradient(rgb(3 22 15 / 0.86), rgb(3 22 15 / 0.86)),
+      url('/images/practeva-background-glow.webp');
+    background-size: cover;
+    background-position: center;
+  }
+
+  .market-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: var(--space-14) clamp(32px, 6vw, 96px);
+    align-items: start;
+  }
+
+  .market-copy {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .artefacts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3);
+  }
+
+  .artefact {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    min-height: 152px;
+    padding: var(--space-6);
+    border: 1px solid var(--line);
+    background: var(--surface-raised);
+  }
+
+  .artefact b {
+    font-size: 20px;
+    line-height: 26px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  .artefact span {
+    font-size: 15px;
+    line-height: 22px;
+    color: var(--ink-muted);
+  }
+
+  .artefact-final {
+    grid-column: 1 / -1;
+    min-height: 0;
+    border-color: transparent;
+    background: var(--highlight);
+    color: var(--on-highlight);
+  }
+
+  .artefact-final span {
+    color: var(--on-highlight);
+  }
+
+  @media (max-width: 960px) {
+    .market-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  @media (max-width: 560px) {
+    .artefacts {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .artefact {
+      min-height: 0;
+    }
+  }
+</style>

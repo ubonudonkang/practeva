@@ -1,0 +1,59 @@
+---
+// The company in one sentence. Each pillar keeps its colour everywhere on the site:
+// Advisory = deep-green, Training = leaf-green, Careers = forest-green.
+---
+<section class="promise ground-paper section" aria-label="What Practeva does">
+  <div class="container">
+    <p class="statement">
+      Practeva is a business analysis company. We{' '}
+      <span class="pillar pillar-advisory"><span class="lead-word"><i class="chip" aria-hidden="true"></i>advise</span> founders and teams before they build</span>,{' '}
+      <span class="pillar pillar-training"><span class="lead-word"><i class="chip" aria-hidden="true"></i>train</span> career changers to do the work</span>, and{' '}
+      <span class="pillar pillar-careers"><span class="lead-word"><i class="chip" aria-hidden="true"></i>help</span> them show that work to employers</span>.
+    </p>
+  </div>
+</section>
+
+<style>
+  .statement {
+    max-width: 23em;
+    font-size: clamp(28px, 3.6vw, 48px);
+    line-height: 1.16;
+    font-weight: 400;
+    letter-spacing: -0.03em;
+    color: var(--ink-muted);
+    text-wrap: pretty;
+  }
+
+  .pillar {
+    font-weight: 600;
+    color: var(--heading);
+  }
+
+  /* Keeps the leaf mark on the same line as the word it introduces */
+  .lead-word {
+    white-space: nowrap;
+  }
+
+  /* A small leaf mark in the pillar's colour, shaped like the upper leaf of the P */
+  .chip {
+    display: inline-block;
+    width: 0.6em;
+    height: 0.6em;
+    margin-right: 0.2em;
+    border-radius: 0.3em 0 0.3em 0;
+    vertical-align: 0.02em;
+    background: var(--chip);
+  }
+
+  .pillar-advisory {
+    --chip: var(--deep-green);
+  }
+
+  .pillar-training {
+    --chip: var(--leaf-green);
+  }
+
+  .pillar-careers {
+    --chip: var(--forest-green);
+  }
+</style>

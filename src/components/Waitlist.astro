@@ -1,0 +1,200 @@
+---
+import Arrow from './Arrow.astro';
+import { cohort, site, waitlist } from '../data/site';
+---
+<section class="waitlist ground-night section" id="waitlist" aria-labelledby="waitlist-title">
+  <div class="container waitlist-grid">
+    <div class="waitlist-copy">
+      <p class="eyebrow">{cohort.next} cohort</p>
+      <h2 id="waitlist-title" class="display">The next cohort opens to the waitlist first.</h2>
+      <p class="lead">Add your details and we'll contact you when enrolment opens. Each cohort takes {cohort.size}.</p>
+    </div>
+
+    <form class="waitlist-form" data-endpoint={waitlist.endpoint} data-email={site.email} novalidate>
+      <div class="field">
+        <label for="wl-name">Full name</label>
+        <input id="wl-name" name="name" type="text" autocomplete="name" required />
+      </div>
+      <div class="field">
+        <label for="wl-email">Email</label>
+        <input id="wl-email" name="email" type="email" autocomplete="email" required />
+      </div>
+      <div class="field">
+        <label for="wl-phone">WhatsApp number</label>
+        <input id="wl-phone" name="phone" type="tel" autocomplete="tel" placeholder="+234" />
+      </div>
+      <div class="field">
+        <label for="wl-role">What do you do now? <span class="optional">Optional</span></label>
+        <input id="wl-role" name="role" type="text" autocomplete="organization-title" />
+      </div>
+      <button class="btn" type="submit">Join the waitlist<Arrow /></button>
+      <p class="form-note">We only use these details to contact you about Practeva cohorts.</p>
+      <p class="form-status" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('.waitlist-form');
+  if (form) {
+    const status = form.querySelector<HTMLElement>('.form-status')!;
+    const button = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+    const say = (text: string, tone: 'ok' | 'error') => {
+      status.textContent = text;
+      status.dataset.tone = tone;
+    };
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = form.elements.namedItem('name') as HTMLInputElement;
+      const email = form.elements.namedItem('email') as HTMLInputElement;
+      if (!name.value.trim()) {
+        say('Add your full name so we know who to contact.', 'error');
+        name.focus();
+        return;
+      }
+      if (!email.validity.valid || !email.value) {
+        say('Add an email address we can reach you on, like name@example.com.', 'error');
+        email.focus();
+        return;
+      }
+
+      const endpoint = form.dataset.endpoint;
+      if (!endpoint) {
+        say(`The waitlist form is not connected yet. Email ${form.dataset.email} and we'll add you.`, 'error');
+        return;
+      }
+
+      button.disabled = true;
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { Accept: 'application/json' },
+          body: new FormData(form),
+        });
+        if (!res.ok) throw new Error(String(res.status));
+        form.reset();
+        say("You're on the waitlist. We'll email you when enrolment opens.", 'ok');
+      } catch {
+        say(`We couldn't add you just now. Try again, or email ${form.dataset.email}.`, 'error');
+      } finally {
+        button.disabled = false;
+      }
+    });
+  }
+</script>
+
+<style>
+  .waitlist {
+    background-image:
+      linear-gradient(rgb(3 22 15 / 0.9), rgb(3 22 15 / 0.9)),
+      url('/images/practeva-background-maze.webp');
+    background-size: cover;
+    background-position: center;
+  }
+
+  .waitlist-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+    gap: var(--space-14) clamp(32px, 6vw, 96px);
+    align-items: center;
+  }
+
+  .waitlist-copy {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .waitlist-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: clamp(24px, 3vw, 40px);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-card);
+    background: var(--surface-raised);
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  label {
+    font-size: 15px;
+    line-height: 20px;
+    font-weight: 600;
+  }
+
+  .optional {
+    margin-left: var(--space-2);
+    font-weight: 400;
+    color: var(--ink-muted);
+  }
+
+  input {
+    min-height: 52px;
+    padding: 0 var(--space-4);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--night);
+    color: var(--ink);
+    font: 400 17px/1 var(--font-sans);
+  }
+
+  input::placeholder {
+    color: #8fa398;
+  }
+
+  input:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 1px;
+    border-radius: 12px;
+  }
+
+  .waitlist-form .btn {
+    align-self: flex-start;
+    margin-top: var(--space-2);
+  }
+
+  .waitlist-form .btn:disabled {
+    opacity: 0.7;
+    cursor: progress;
+  }
+
+  .form-note {
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--ink-muted);
+  }
+
+  .form-status:empty {
+    display: none;
+  }
+
+  .form-status {
+    padding: var(--space-3) var(--space-4);
+    border-radius: 12px;
+    font-size: 15px;
+    line-height: 22px;
+    font-weight: 600;
+  }
+
+  .form-status[data-tone='ok'] {
+    background: var(--highlight);
+    color: var(--on-highlight);
+  }
+
+  .form-status[data-tone='error'] {
+    border: 1px solid var(--highlight);
+    color: var(--ink);
+  }
+
+  @media (max-width: 960px) {
+    .waitlist-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>
