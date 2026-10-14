@@ -40,7 +40,7 @@ const bands = [
     />
 
     <!-- The shared name makes the bands an exclusive accordion -->
-    <div class="bands">
+    <div class="bands" data-accordion>
       {bands.map((b, i) => (
         <details class={`band band-${b.key}`} name="pillars" open={i === 0}>
           <summary>
@@ -60,6 +60,11 @@ const bands = [
     </div>
   </div>
 </section>
+
+<script>
+  import { smoothAccordion } from '../scripts/accordion';
+  document.querySelectorAll<HTMLElement>('.bands[data-accordion]').forEach(smoothAccordion);
+</script>
 
 <style>
   .bands {
@@ -169,6 +174,14 @@ const bands = [
   .band[open]::details-content {
     block-size: auto;
     opacity: 1;
+  }
+
+  /* With the script running it animates the height itself; switch the CSS-only path off so
+     the two don't fight */
+  .bands[data-smooth] .band::details-content {
+    block-size: auto;
+    opacity: 1;
+    transition: none;
   }
 
   @media (prefers-reduced-motion: reduce) {

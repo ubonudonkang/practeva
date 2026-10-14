@@ -18,7 +18,7 @@ const { items, title = 'Questions people ask', joined = true } = Astro.props;
       <p class="caption">Something else? Email <a class="link" href={`mailto:${site.email}`}>{site.email}</a></p>
     </div>
 
-    <div class="faq-list">
+    <div class="faq-list" data-accordion>
       {items.map((f, i) => (
         <details name="faq" open={i === 0}>
           <summary>
@@ -31,6 +31,11 @@ const { items, title = 'Questions people ask', joined = true } = Astro.props;
     </div>
   </div>
 </section>
+
+<script>
+  import { smoothAccordion } from '../scripts/accordion';
+  document.querySelectorAll<HTMLElement>('.faq-list[data-accordion]').forEach(smoothAccordion);
+</script>
 
 <style>
   .faq-grid {
@@ -126,6 +131,13 @@ const { items, title = 'Questions people ask', joined = true } = Astro.props;
   details[open]::details-content {
     block-size: auto;
     opacity: 1;
+  }
+
+  /* With the script running it animates the height itself; switch the CSS-only path off */
+  .faq-list[data-smooth] details::details-content {
+    block-size: auto;
+    opacity: 1;
+    transition: none;
   }
 
   @media (prefers-reduced-motion: reduce) {
