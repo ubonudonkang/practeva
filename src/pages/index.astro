@@ -12,8 +12,50 @@ import OfferCards from '../components/OfferCards.astro';
 import Pillars from '../components/Pillars.astro';
 import Record from '../components/Record.astro';
 import CohortBanner from '../components/CohortBanner.astro';
+import Faq from '../components/Faq.astro';
 import ContactBand from '../components/ContactBand.astro';
 import { beforeAfter, packages } from '../data/offers';
+import { cohort } from '../data/site';
+
+// Questions about the company as a whole; the training page keeps the cohort's own FAQ.
+const faqs = [
+  {
+    q: 'What does Practeva do?',
+    a: 'Three things. Advisory for organisations: business analysis, process improvement and automation, business systems and digital transformation. Training: the BA Bridge Cohort for career changers, and workshops for teams. Careers: CV, profile, interview and portfolio support for analysts.',
+  },
+  {
+    q: 'Is it only business analysis?',
+    a: 'No. Business analysis is where we start, because mapped processes and clear requirements make every later decision cheaper. From there we help you automate repetitive work, choose and roll out business systems, improve how operations run and plan a wider digital transformation.',
+  },
+  {
+    q: 'Who do you work with?',
+    a: 'Founders testing an idea, teams changing a process, organisations choosing a system and leaders planning a transformation. If you are not sure where you fit, a short call will tell us both.',
+  },
+  {
+    q: 'How does an advisory engagement start?',
+    a: 'With an intro call about what you are working on. We then agree the package, timeline and price before any work starts. Discovery and analysis follow, and we finish by presenting our findings with clear next steps.',
+  },
+  {
+    q: 'How much does it cost?',
+    a: `Advisory and careers support are quoted after a short call, once we know what you need. ${
+      cohort.fee
+        ? `The ${cohort.next} BA Bridge Cohort is ${cohort.fee}.`
+        : `The ${cohort.next} BA Bridge Cohort fee goes to the waitlist first; the ${cohort.previous} cohort was ${cohort.previousFee}.`
+    }`,
+  },
+  {
+    q: 'Can you train our team?',
+    a: 'Yes. Team training runs separately from the cohort and covers business analysis foundations, process improvement, agile delivery and digital skills, online, in person or blended.',
+  },
+  {
+    q: 'I want to move into business analysis. Where do I start?',
+    a: `With the ${cohort.programme}: ${cohort.format.toLowerCase()}, built for career changers. The ${cohort.next} cohort opens to the waitlist first. If you are already applying for roles, careers support can help with your CV, profile and interviews.`,
+  },
+  {
+    q: 'Who is behind Practeva?',
+    a: 'Ubon Udonkang, a working business analyst at MTN Nigeria who previously worked at Access Bank. Practeva Limited was registered in Nigeria in October 2026, so the results we show come from his work before Practeva.',
+  },
+];
 ---
 <Page tone="night">
   <PageHero
@@ -69,6 +111,8 @@ import { beforeAfter, packages } from '../data/offers';
   </section>
 
   <CohortBanner />
+
+  <Faq items={faqs} joined={false} />
 
   <ContactBand
     title="Tell us what you're working on."

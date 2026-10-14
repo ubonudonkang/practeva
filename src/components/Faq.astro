@@ -4,11 +4,14 @@ import { site } from '../data/site';
 interface Props {
   items: { q: string; a: string }[];
   title?: string;
+  /** True when a paper section comes before it: it shares that section's spacing and sits
+      under a hairline. False after a night or wash section, so it keeps its own top spacing. */
+  joined?: boolean;
 }
 
-const { items, title = 'Questions people ask' } = Astro.props;
+const { items, title = 'Questions people ask', joined = true } = Astro.props;
 ---
-<section class="faq ground-paper section" id="faq" aria-labelledby="faq-title">
+<section class:list={['faq', 'ground-paper', 'section', { joined }]} id="faq" aria-labelledby="faq-title">
   <div class="container faq-grid">
     <div class="faq-head">
       <h2 id="faq-title" class="display">{title}</h2>
@@ -30,14 +33,17 @@ const { items, title = 'Questions people ask' } = Astro.props;
 </section>
 
 <style>
-  .faq {
-    padding-top: 0;
-  }
-
   .faq-grid {
     display: grid;
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
     gap: var(--space-8) clamp(32px, 6vw, 96px);
+  }
+
+  .joined {
+    padding-top: 0;
+  }
+
+  .joined .faq-grid {
     padding-top: var(--section-y);
     /* A hairline that lines up with the content, not the container's padding */
     background: linear-gradient(var(--line), var(--line)) center top / calc(100% - 2 * var(--gutter)) 1px no-repeat;
