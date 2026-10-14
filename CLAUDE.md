@@ -106,12 +106,12 @@ Copy
 The site animates very little, on purpose. Before adding motion, it needs a reason: feedback, showing where something came from, making a state change legible, or stopping content from jumping. "It looks nice" is not a reason.
 
 - Tokens in `global.css`: `--ease-out` (all UI), `--ease-in-out`, `--duration-press` 160ms, `--duration-ui` 200ms, `--duration-panel` 280ms. Never use the built-in `ease` or a one-off curve; UI motion stays under 300ms.
-- Animate `transform` and `opacity` only. The one exception is accordion height, done through `details::details-content` with `interpolate-size: allow-keywords`.
+- Animate `transform` and `opacity` only. The one exception is accordion height: `src/scripts/accordion.ts` animates the `<details>` height with the Web Animations API (280ms, `--ease-in-out`) in every browser, and the `details::details-content` CSS with `interpolate-size` stays as the no-JS fallback. Wrap a new accordion in an element with `data-accordion` and call `smoothAccordion` on it.
 - Hover effects go inside `@media (hover: hover) and (pointer: fine)`, so taps on phones don't leave them stuck.
 - Pressable controls scale to 0.97 on `:active` (`.btn`, or add `.press`).
 - Distances are multiplied by `--motion`, which is 0 under reduced motion: fades stay, movement goes. Rotations and height changes switch themselves off in each component's reduced-motion block.
 - Entrances use `@starting-style`; browsers without it simply show the element, which is fine.
-- What moves today: each page's hero load sequence (its one orchestrated moment, settled by about 780ms), button press and arrow nudge, underline growth on nav and pillar links, the pillar and FAQ accordions, the mobile menu panel, and form messages.
+- What moves today: each page's hero load sequence (its one orchestrated moment, settled by about 780ms), button press and arrow nudge, underline growth on nav and pillar links, the pillar and FAQ accordions, the mobile menu (revealed down from the bar with clip-path, links staggered 20ms, quicker close), and form messages.
 - Deliberately not animated: scroll-triggered section reveals, process flows, the hero leaf planes, the washes and the italic accent word. Keep it that way.
 
 ## Open items before launch
