@@ -96,7 +96,7 @@ Copy
 - Calls to action are a verb plus an object ("Book a call", "Join the waitlist"). One pill per section; a second action is a text link. One arrow, only inside a CTA pill (the `Arrow` component).
 - Never promise jobs, salaries or certifications. Say what people build and practise.
 - Practeva has no client case studies yet. Proof is Ubon's record from earlier roles, always labelled as such, and the cohort facts. Never invent clients, testimonials or results. Keep the figures in step with ubonudonkang.com (the rights issue is ₦351bn there).
-- The founder sections name MTN Nigeria only as Ubon's employer and role. Do not add details of his MTN project work, or imply it ("telecoms").
+- Name no current employer for Ubon anywhere on the site, in code comments or in this file, and nothing that hints at one (a team name, a sector). Earlier roles (Access Bank) are fine. This holds until Ubon says otherwise.
 - Contact is info@practevahq.com and practevahq.com; never a personal address or site.
 - The company's location is "Lagos State, Nigeria" (`company.location`), in the legal line and on About. The registered office on the CAC record is not published on the site; use the CAC record where a document needs it.
 
