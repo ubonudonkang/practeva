@@ -8,6 +8,11 @@ import { cohort, forms, site } from '../data/site';
       <p class="eyebrow">{cohort.next} cohort</p>
       <h2 id="waitlist-title" class="display">The next cohort opens to the waitlist first.</h2>
       <p class="lead">Add your details and we'll contact you when enrolment opens. Each cohort takes {cohort.size}.</p>
+      <ul class="perks">
+        <li>First access before public enrolment</li>
+        <li>Dates, timetable and fee sent to you first</li>
+        <li>Free to join, nothing to pay today</li>
+      </ul>
     </div>
 
     <form
@@ -19,6 +24,12 @@ import { cohort, forms, site } from '../data/site';
       data-offline={`The waitlist form is not connected yet. Email ${site.email} and we'll add you.`}
       novalidate
     >
+      <!-- What the Apps Script's Waitlist tab keeps: name, email, cohort, consent and type.
+           form_name routes the post; _gotcha is the honeypot that bots fill in. -->
+      <input type="hidden" name="form_name" value={cohort.waitlistFormName} />
+      <input type="hidden" name="type" value={cohort.waitlistType} />
+      <input type="hidden" name="cohort" value={cohort.next} />
+      <input type="text" name="_gotcha" class="visually-hidden" tabindex="-1" autocomplete="off" aria-hidden="true" />
       <div class="field">
         <label for="wl-name">Full name</label>
         <input id="wl-name" name="name" type="text" autocomplete="name" required data-error="Add your full name so we know who to contact." />
@@ -27,16 +38,12 @@ import { cohort, forms, site } from '../data/site';
         <label for="wl-email">Email</label>
         <input id="wl-email" name="email" type="email" autocomplete="email" required data-error="Add an email address we can reach you on, like name@example.com." />
       </div>
-      <div class="field">
-        <label for="wl-phone">WhatsApp number</label>
-        <input id="wl-phone" name="phone" type="tel" autocomplete="tel" placeholder="+234" />
-      </div>
-      <div class="field">
-        <label for="wl-role">What do you do now? <span class="optional">Optional</span></label>
-        <input id="wl-role" name="role" type="text" autocomplete="organization-title" />
-      </div>
+      <label class="check">
+        <input name="consent" type="checkbox" value="Yes" required data-error="Tick the box so we can contact you about the cohort." />
+        <span>I agree to be contacted about the {cohort.programme} {cohort.next} cohort. My details are used only for this waitlist.</span>
+      </label>
       <button class="btn" type="submit"><span class="btn-label">Join the waitlist</span><Arrow /></button>
-      <p class="form-note">We only use these details to contact you about Practeva cohorts.</p>
+      <p class="form-note">Joining is free and does not reserve a place.</p>
       <p class="form-status" role="status" aria-live="polite"></p>
     </form>
   </div>
@@ -67,6 +74,31 @@ import { cohort, forms, site } from '../data/site';
     display: flex;
     flex-direction: column;
     gap: var(--space-6);
+  }
+
+  .perks {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  /* A small highlight leaf before each line, as on the waitlist flyer's ticks */
+  .perks li {
+    position: relative;
+    padding-left: 26px;
+    font-size: 17px;
+    line-height: 24px;
+  }
+
+  .perks li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 6px;
+    width: 12px;
+    height: 12px;
+    border-radius: 6px 0 6px 0;
+    background: var(--highlight);
   }
 
   @media (max-width: 960px) {

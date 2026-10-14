@@ -23,11 +23,13 @@ const faqs = [
   },
   {
     q: 'How much time does it take each week?',
-    a: `Two live sessions a week (${cohort.schedule}), plus time on your weekly deliverable and a pod session your group arranges.`,
+    a: `Two live sessions a week (${cohort.schedule}), both recorded, plus time on your weekly deliverable and a pod session your group arranges.`,
   },
   {
     q: 'How much does it cost?',
-    a: `The fee is ${cohort.fee}, paid in full when you enrol. We don't offer instalments at the moment.`,
+    a: cohort.fee
+      ? `The fee is ${cohort.fee}, paid in full when you enrol. We don't offer instalments at the moment.`
+      : `The ${cohort.next} fee goes to the waitlist first, before public enrolment. The ${cohort.previous} cohort was ${cohort.previousFee}, paid in full when you enrolled. We don't offer instalments at the moment.`,
   },
   {
     q: 'Can I defer to a later cohort?',

@@ -1,45 +1,56 @@
 // Shared behaviour for the site's forms: plain validation messages, a pending state and a
-// polite status line. Each form says where it posts in data-endpoint (from src/data/site.ts).
+// polite status line. Both forms post to the Apps Script web app in src/data/site.ts, the same
+// one ubonudonkang.com uses (its scripts/site_forms.gs), which answers {"result":"ok"} once the
+// row is saved.
 //
 // Form attributes:
-//   data-endpoint   where to POST the FormData; any 2xx counts as success
+//   data-endpoint   where to POST; empty means the form is not connected
 //   data-email      the address to fall back to
 //   data-success    what to say once it has gone
 //   data-pending    the button label while sending
 //   data-offline    what to say while the endpoint is empty
-//   data-mailto     when present and the endpoint is empty, open the visitor's email app
-//                   with the message filled in instead
 // Field attributes:
 //   data-error      what to say when a required field is empty or invalid
+// A form can reshape what it sends with a prepare function (the contact form does).
 
 type Tone = 'ok' | 'error';
+export type Params = Record<string, string>;
 
-function valueOf(form: HTMLFormElement, name: string): string {
-  const field = form.elements.namedItem(name);
-  if (field instanceof HTMLSelectElement) {
-    return field.value ? field.selectedOptions[0]?.textContent?.trim() ?? '' : '';
+// As in ubonudonkang.com's js/forms.js: read the JSON answer when the browser allows it, so a
+// rejected save is reported. Apps Script's redirect can lack CORS headers; the answer is then
+// unreadable, so the request is sent again blind (no-cors). Every post carries a unique
+// submission id, or an email and cohort, which the script dedupes on, so the resend cannot add
+// a second row. A blind send is not proof of a save.
+async function send(endpoint: string, params: Params) {
+  const body = new URLSearchParams(params);
+  let answer: { result?: string } | null;
+  try {
+    answer = await (await fetch(endpoint, { method: 'POST', body })).json();
+  } catch {
+    await fetch(endpoint, { method: 'POST', mode: 'no-cors', body });
+    return;
   }
-  return field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement ? field.value.trim() : '';
+  if (!answer || answer.result !== 'ok') throw new Error('rejected');
 }
 
-function mailtoFor(form: HTMLFormElement): string {
-  const topic = valueOf(form, 'topic');
-  const phone = valueOf(form, 'phone');
-  const organisation = valueOf(form, 'organisation');
-  const lines = [`Name: ${valueOf(form, 'name')}`, `Email: ${valueOf(form, 'email')}`];
-  if (phone) lines.push(`Phone: ${phone}`);
-  if (organisation) lines.push(`Organisation: ${organisation}`);
-  lines.push('', valueOf(form, 'message'));
-  const subject = topic ? `Website enquiry: ${topic}` : 'Website enquiry';
-  return `mailto:${form.dataset.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join('\n'))}`;
+function collect(form: HTMLFormElement): Params {
+  const out: Params = {};
+  new FormData(form).forEach((value, key) => {
+    if (typeof value === 'string') out[key] = value.trim();
+  });
+  return out;
 }
 
-export function wireForm(form: HTMLFormElement | null) {
+export const uniqueId = () =>
+  window.crypto?.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2);
+
+export function wireForm(form: HTMLFormElement | null, prepare?: (params: Params, form: HTMLFormElement) => Params) {
   if (!form) return;
   const status = form.querySelector<HTMLElement>('.form-status')!;
   const button = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
   const label = button.querySelector<HTMLElement>('.btn-label')!;
   const idleLabel = label.textContent ?? '';
+  let sending = false;
 
   // Clearing first means a repeated message still animates in and is announced again
   const say = (text: string, tone: Tone) => {
@@ -51,6 +62,7 @@ export function wireForm(form: HTMLFormElement | null) {
   };
 
   const setPending = (pending: boolean) => {
+    sending = pending;
     button.disabled = pending;
     form.setAttribute('aria-busy', String(pending));
     label.textContent = pending ? form.dataset.pending ?? 'Sending…' : idleLabel;
@@ -58,6 +70,7 @@ export function wireForm(form: HTMLFormElement | null) {
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    if (sending) return;
 
     const required = form.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('[required]');
     for (const field of required) {
@@ -70,23 +83,14 @@ export function wireForm(form: HTMLFormElement | null) {
 
     const endpoint = form.dataset.endpoint;
     if (!endpoint) {
-      if (form.dataset.mailto !== undefined) {
-        window.location.href = mailtoFor(form);
-        say(`Your email app should open with your message ready to send. If it doesn't, email ${form.dataset.email}.`, 'ok');
-      } else {
-        say(form.dataset.offline ?? `This form is not connected yet. Email ${form.dataset.email}.`, 'error');
-      }
+      say(form.dataset.offline ?? `This form is not connected yet. Email ${form.dataset.email}.`, 'error');
       return;
     }
 
+    const params = prepare ? prepare(collect(form), form) : collect(form);
     setPending(true);
     try {
-      const res = await fetch(endpoint, {
-        method: 'POST',
-        headers: { Accept: 'application/json' },
-        body: new FormData(form),
-      });
-      if (!res.ok) throw new Error(String(res.status));
+      await send(endpoint, params);
       form.reset();
       say(form.dataset.success ?? 'Thanks, it has gone through.', 'ok');
     } catch {

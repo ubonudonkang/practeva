@@ -7,17 +7,17 @@ export const site = {
   tagline: 'Your business analysis advisory, training and career partner.',
   description:
     'Practeva is a business analysis firm. We advise founders and teams before they build, train the analysts who do the work, and help them show that work to employers.',
-  legal:
-    'Practeva Limited · Registered in Nigeria, RC 9931539 · No. 21, Abuja Road, Iriebe, Rivers State',
+  legal: 'Practeva Limited · Registered in Nigeria, RC 9931539 · Lagos State, Nigeria',
 };
 
-// From the CAC certificate and status report.
+// From the CAC certificate and status report. The site gives the company's location,
+// Lagos State; the registered office on the CAC record is not published here.
 export const company = {
   legalName: 'Practeva Limited',
   rc: '9931539',
   registered: '12 October 2026',
   type: 'Private company limited by shares, under the Companies and Allied Matters Act 2020',
-  office: 'No. 21, Abuja Road, Iriebe, Rivers State, Nigeria',
+  location: 'Lagos State, Nigeria',
 };
 
 export const nav = [
@@ -37,32 +37,47 @@ export const cohort = {
   size: '10 to 15 people',
   format: 'Twelve weeks, live online',
   schedule: 'Wednesdays and Saturdays, 8 to 10pm WAT',
-  // TODO(ubon): confirm the February 2027 fee. This is the November 2026 fee.
-  fee: '₦100,000',
+  // TODO(ubon): set the February 2027 fee once it is fixed. While it is empty, the FAQ says
+  // the fee goes to the waitlist first and quotes the November fee.
+  fee: '',
+  // The November 2026 BA Bridge product sold at ₦80,000 (ubonudonkang.com README, and
+  // EXPECTED_AMOUNT in the Apps Script).
+  previousFee: '₦80,000',
+  // Matches the personal site's waitlist, so a signup on either site lands once in the same
+  // Waitlist tab (the Apps Script skips a repeat email and cohort).
+  waitlistFormName: 'ba-waitlist-feb-2027',
+  waitlistType: 'BA Bridge February 2027 waitlist (practevahq.com)',
 };
 
 export const founder = {
   name: 'Ubon Udonkang',
   role: 'Founder and lead trainer',
+  photo: '/images/ubon-udonkang.webp',
+  photoAlt: 'Ubon Udonkang, seated, in a white kaftan with black embroidery and a black cap',
   // Brand rule: name MTN Nigeria only as Ubon's employer and role, never his project work there.
   bio: 'Ubon is a business analyst in the Architecture and Engineering team at MTN Nigeria, and previously worked at Access Bank. He holds the PSM I certification, is working towards CBAP, and his work spans fintech, banking operations, process automation and Open Banking regulation.',
   record: [
-    { figure: '₦365bn', label: "Access Bank's rights issue, digitised with Ubon leading the analysis" },
-    { figure: '89%', label: 'Less time on general ledger reconciliation, from 8 hours to 45 minutes, using RPA' },
+    // ₦351bn, as on ubonudonkang.com and its rights issue case study.
+    { figure: '₦351bn', label: "Access Bank's rights issue, digitised with Ubon leading the analysis" },
+    // 8 hours (480 minutes) down to 45 is 91% less time.
+    { figure: '91%', label: 'Less time on general ledger reconciliation, from 8 hours to 45 minutes, using RPA' },
     { figure: '13+', label: 'African subsidiaries reached by cross-border automation he delivered at Access Bank' },
     { figure: '14', label: 'Modules in a government accounting system, with Ubon as the sole business analyst' },
   ],
 };
 
-// Where each form POSTs its FormData; any 2xx counts as success.
-// While an endpoint is empty, that form tells people to email instead.
+// The one Apps Script web app behind ubonudonkang.com's forms (its scripts/site_forms.gs).
+// It routes a post by form_name: 'ba-waitlist-*' to the Waitlist tab, 'contact' to the Contact
+// tab, and answers {"result":"ok"} once the row is saved. It stores only the fields it knows:
+//   waitlist: name, email, cohort, consent ('Yes'), type
+//   contact:  first_name, last_name, email, company, type, message, submission_id
+// Both forms post here; an empty endpoint makes a form tell people to email instead.
+const appsScript =
+  'https://script.google.com/macros/s/AKfycby94krvGfIS7mXVT-szoGHHM_pCLIU11Bh_AemMxE_nsK-X_Hm1y8yaK69zNKfU20LT/exec';
+
 export const forms = {
-  // TODO(ubon): paste the waitlist endpoint (fields: name, email, phone, role).
-  // The same service the old ubonudonkang.github.io/ba-training form used works.
-  waitlist: '',
-  // TODO(ubon): paste the contact endpoint (fields: name, email, phone, organisation, topic, message).
-  // Until then the contact form opens the visitor's email app with their message filled in.
-  contact: '',
+  waitlist: appsScript,
+  contact: appsScript,
 };
 
 // The topics the contact form offers. Links pass one as ?topic= to preselect it.

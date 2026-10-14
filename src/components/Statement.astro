@@ -3,20 +3,49 @@
 // Advisory = deep-green, Training = leaf-green, Careers = forest-green.
 ---
 <section class="promise ground-paper section" aria-label="What Practeva does">
-  <div class="container">
+  <div class="container promise-grid">
     <p class="statement">
       Practeva is a business analysis company. We{' '}
       <span class="pillar pillar-advisory"><span class="lead-word"><i class="chip" aria-hidden="true"></i>advise</span> founders and teams before they build</span>,{' '}
       <span class="pillar pillar-training"><span class="lead-word"><i class="chip" aria-hidden="true"></i>train</span> career changers to do the work</span>, and{' '}
       <span class="pillar pillar-careers"><span class="lead-word"><i class="chip" aria-hidden="true"></i>help</span> them show that work to employers</span>.
     </p>
+    <!-- The leaf pattern as a panel beside the text, never under it: the column on wide screens, the band on phones -->
+    <div class="pattern leaf" aria-hidden="true"></div>
   </div>
 </section>
 
 <style>
+  .promise-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 8fr) minmax(0, 3fr);
+    gap: var(--space-8) clamp(32px, 5vw, 80px);
+    align-items: stretch;
+  }
+
+  /* Highlight leaves on deep-green, the pattern's reference colourway. The art keeps its
+     margins and is scaled to fit, so no leaf is ever cut at the edge. */
+  .pattern {
+    min-height: 320px;
+    background: var(--deep-green) url('/brand/patterns/practeva-leaf-pattern-column-3x5-deep-green.svg') center / contain no-repeat;
+  }
+
+  @media (max-width: 760px) {
+    .promise-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .pattern {
+      min-height: 0;
+      aspect-ratio: 760 / 220;
+      background-image: url('/brand/patterns/practeva-leaf-pattern-band-12x3-deep-green.svg');
+    }
+  }
+
   .statement {
+    align-self: center;
     max-width: 23em;
-    font-size: clamp(28px, 3.6vw, 48px);
+    font-size: clamp(28px, 3.4vw, 44px);
     line-height: 1.16;
     font-weight: 400;
     letter-spacing: -0.03em;
