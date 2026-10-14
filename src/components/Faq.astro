@@ -1,5 +1,6 @@
 ---
 import { site } from '../data/site';
+import { faqPage } from '../data/schema';
 
 interface Props {
   items: { q: string; a: string }[];
@@ -10,7 +11,11 @@ interface Props {
 }
 
 const { items, title = 'Questions people ask', joined = true } = Astro.props;
+
+// The same questions as an FAQPage, so search engines and AI assistants can quote the answers
+const faqLd = JSON.stringify({ '@context': 'https://schema.org', ...faqPage(Astro.url.pathname, items) });
 ---
+<script is:inline type="application/ld+json" set:html={faqLd} />
 <section class:list={['faq', 'ground-paper', 'section', { joined }]} id="faq" aria-labelledby="faq-title">
   <div class="container faq-grid">
     <div class="faq-head">

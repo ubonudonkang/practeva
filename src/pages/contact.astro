@@ -2,11 +2,14 @@
 import Page from '../layouts/Page.astro';
 import ContactForm from '../components/ContactForm.astro';
 import { site } from '../data/site';
+import { breadcrumbs } from '../data/schema';
 ---
 <Page
   tone="paper"
   title="Contact Practeva | Book a call"
-  description="Tell us what you're working on: advisory, team training, the BA Bridge Cohort or careers support."
+  description="Book a call with Practeva in Lagos State, Nigeria: business analysis advisory, team training, the BA Bridge Cohort or careers support."
+  pageType="ContactPage"
+  schema={[breadcrumbs('/contact/', [{ label: 'Home', href: '/' }, { label: 'Contact' }])]}
 >
   <section class="contact ground-wash" aria-labelledby="page-title">
     <div class="container contact-grid">

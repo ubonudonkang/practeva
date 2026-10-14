@@ -3,6 +3,7 @@
 import Base from './Base.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import type { Node } from '../data/schema';
 
 interface Props {
   title?: string;
@@ -11,11 +12,15 @@ interface Props {
   tone?: 'night' | 'paper';
   /** The header's call to action, when a page has a more specific one than booking a call */
   cta?: { label: string; href: string };
+  /** Passed to Base: the page's schema.org type, extra JSON-LD, and noindex */
+  pageType?: string;
+  schema?: Node[];
+  noindex?: boolean;
 }
 
-const { title, description, tone = 'night', cta } = Astro.props;
+const { title, description, tone = 'night', cta, pageType, schema, noindex } = Astro.props;
 ---
-<Base title={title} description={description}>
+<Base title={title} description={description} pageType={pageType} schema={schema} noindex={noindex}>
   <Header tone={tone} cta={cta} />
   <main id="main">
     <slot />
