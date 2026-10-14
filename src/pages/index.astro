@@ -10,10 +10,47 @@ import SectionHead from '../components/SectionHead.astro';
 import BeforeAfter from '../components/BeforeAfter.astro';
 import OfferCards from '../components/OfferCards.astro';
 import Pillars from '../components/Pillars.astro';
-import Record from '../components/Record.astro';
 import CohortBanner from '../components/CohortBanner.astro';
+import Faq from '../components/Faq.astro';
 import ContactBand from '../components/ContactBand.astro';
 import { beforeAfter, packages } from '../data/offers';
+import { cohort } from '../data/site';
+
+// Questions about the company as a whole; the training page keeps the cohort's own FAQ.
+const faqs = [
+  {
+    q: 'What does Practeva do?',
+    a: 'Three things. Advisory for organisations: business analysis, process improvement and automation, business systems and digital transformation. Training: the BA Bridge Cohort for career changers, and workshops for teams. Careers: CV, profile, interview and portfolio support for analysts.',
+  },
+  {
+    q: 'Is it only business analysis?',
+    a: 'No. Business analysis is where we start, because mapped processes and clear requirements make every later decision cheaper. From there we help you automate repetitive work, choose and roll out business systems, improve how operations run and plan a wider digital transformation.',
+  },
+  {
+    q: 'Who do you work with?',
+    a: 'Founders testing an idea, teams changing a process, organisations choosing a system and leaders planning a transformation. If you are not sure where you fit, a short call will tell us both.',
+  },
+  {
+    q: 'How does an advisory engagement start?',
+    a: 'With an intro call about what you are working on. We then agree the package, timeline and price before any work starts. Discovery and analysis follow, and we finish by presenting our findings with clear next steps.',
+  },
+  {
+    q: 'How much does it cost?',
+    a: `Advisory and careers support are quoted after a short call, once we know what you need. ${
+      cohort.fee
+        ? `The ${cohort.next} BA Bridge Cohort is ${cohort.fee}.`
+        : `The ${cohort.next} BA Bridge Cohort fee goes to the waitlist first; the ${cohort.previous} cohort was ${cohort.previousFee}.`
+    }`,
+  },
+  {
+    q: 'Can you train our team?',
+    a: 'Yes. Team training runs separately from the cohort and covers business analysis foundations, process improvement, agile delivery and digital skills, online, in person or blended.',
+  },
+  {
+    q: 'I want to move into business analysis. Where do I start?',
+    a: `With the ${cohort.programme}: ${cohort.format.toLowerCase()}, built for career changers. The ${cohort.next} cohort opens to the waitlist first. If you are already applying for roles, careers support can help with your CV, profile and interviews.`,
+  },
+];
 ---
 <Page tone="night">
   <PageHero
@@ -54,21 +91,9 @@ import { beforeAfter, packages } from '../data/offers';
 
   <Pillars />
 
-  <section class="experience ground-paper section" aria-labelledby="experience-title">
-    <div class="container">
-      <SectionHead
-        id="experience-title"
-        label="Experience"
-        title="Analysis and automation that shipped in banking and government."
-        note="Practeva is led by Ubon Udonkang, a working business analyst. These are results from his work before Practeva."
-      >
-        <a slot="aside" class="link" href="/about">About Practeva</a>
-      </SectionHead>
-      <Record cols={4} />
-    </div>
-  </section>
-
   <CohortBanner />
+
+  <Faq items={faqs} joined={false} />
 
   <ContactBand
     title="Tell us what you're working on."
