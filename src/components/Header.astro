@@ -18,9 +18,10 @@ const logo = tone === 'night' ? 'reversed' : 'color';
 <header class:list={['site-header', tone === 'night' ? 'ground-night' : 'ground-paper']}>
   <div class="container bar">
     <a href="/" class="brand">
-      <!-- Horizontal lockup at its 64px minimum; below that width the symbol stands alone, per the brand guide -->
-      <img class="brand-lockup" src={`/brand/practeva-lockup-horizontal-${logo}.svg`} alt="Practeva home" width="254" height="64" />
-      <img class="brand-symbol" src={`/brand/practeva-symbol-${logo}.svg`} alt="Practeva home" width="40" height="40" />
+      <!-- Horizontal lockup at 40px tall (smaller than the brand guide's 64px minimum, by Ubon's choice);
+           on phones the symbol stands alone at 32px -->
+      <img class="brand-lockup" src={`/brand/practeva-lockup-horizontal-${logo}.svg`} alt="Practeva home" width="159" height="40" />
+      <img class="brand-symbol" src={`/brand/practeva-symbol-${logo}.svg`} alt="Practeva home" width="32" height="32" />
     </a>
 
     <nav class="nav" aria-label="Main">
@@ -92,14 +93,14 @@ const logo = tone === 'night' ? 'reversed' : 'color';
   }
 
   .brand-lockup {
-    width: 254px;
-    height: 64px;
+    width: 159px;
+    height: 40px;
   }
 
   .brand-symbol {
     display: none;
-    width: 40px;
-    height: 40px;
+    width: 32px;
+    height: 32px;
   }
 
   .nav {
