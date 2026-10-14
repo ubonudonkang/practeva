@@ -120,12 +120,17 @@ const { steps, label } = Astro.props;
     color: var(--on-deep-muted);
   }
 
+  /* Stacked: one column as wide as the steps, with the events and arrows on its centre line */
   @media (max-width: 1080px) {
     .flow,
     .steps,
     .step-item {
       flex-direction: column;
-      align-items: flex-start;
+      align-items: center;
+    }
+
+    .flow {
+      max-width: 520px;
     }
 
     .steps,
@@ -133,16 +138,11 @@ const { steps, label } = Astro.props;
       width: 100%;
     }
 
-    .event {
-      margin-left: 6px;
-    }
-
     .arrow,
     .step-item .arrow {
-      align-self: flex-start;
+      align-self: center;
       width: 2px;
       height: 26px;
-      margin-left: 19px;
     }
 
     .arrow::after {
@@ -158,7 +158,6 @@ const { steps, label } = Astro.props;
 
     .step {
       width: 100%;
-      max-width: 520px;
       min-height: 0;
       margin: 4px 0 2px;
     }
