@@ -1,6 +1,6 @@
 # 002: The mobile menu drops from the bar instead of popping in
 
-- Status: TODO
+- Status: DONE
 - Written at commit: 6a513b4
 - Severity: HIGH (category: physicality and origin, browser coverage)
 - Files: `src/components/Header.astro`, `CLAUDE.md`

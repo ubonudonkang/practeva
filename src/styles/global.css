@@ -40,6 +40,8 @@
   --space-8: 32px;
   --space-14: 56px;
   --section-y: clamp(72px, 10vw, 136px);
+  /* Height of the fixed header bar; anchors scroll to just below it */
+  --header-h: 84px;
   --gutter: clamp(16px, 4vw, 48px);
   --max: 1280px;
 
@@ -118,6 +120,13 @@
 html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--header-h) + var(--space-4));
+}
+
+@media (max-width: 560px) {
+  :root {
+    --header-h: 72px;
+  }
 }
 
 body {

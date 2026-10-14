@@ -16,28 +16,29 @@ const isCurrent = (href: string) => path === href || path.startsWith(`${href}/`)
 const logo = tone === 'night' ? 'reversed' : 'color';
 ---
 <header class:list={['site-header', tone === 'night' ? 'ground-night' : 'ground-paper']}>
-  <div class="container bar">
-    <a href="/" class="brand">
-      <!-- Horizontal lockup at 40px tall (smaller than the brand guide's 64px minimum, by request);
-           on phones the symbol stands alone at 32px -->
-      <img class="brand-lockup" src={`/brand/practeva-lockup-horizontal-${logo}.svg`} alt="Practeva home" width="159" height="40" />
-      <img class="brand-symbol" src={`/brand/practeva-symbol-${logo}.svg`} alt="Practeva home" width="32" height="32" />
-    </a>
+  <div class="bar-wrap">
+    <div class="container bar">
+      <a href="/" class="brand">
+        <!-- The full horizontal lockup at every width, 40px tall (smaller than the brand guide's
+             64px minimum, by request) -->
+        <img class="brand-lockup" src={`/brand/practeva-lockup-horizontal-${logo}.svg`} alt="Practeva home" width="159" height="40" />
+      </a>
 
-    <nav class="nav" aria-label="Main">
-      <ul>
-        {nav.map((l) => (
-          <li><a href={l.href} aria-current={isCurrent(l.href) ? 'page' : undefined}>{l.label}</a></li>
-        ))}
-      </ul>
-    </nav>
+      <nav class="nav" aria-label="Main">
+        <ul>
+          {nav.map((l) => (
+            <li><a href={l.href} aria-current={isCurrent(l.href) ? 'page' : undefined}>{l.label}</a></li>
+          ))}
+        </ul>
+      </nav>
 
-    <a class="btn header-cta" href={cta.href}>{cta.label}<Arrow /></a>
+      <a class="btn header-cta" href={cta.href}>{cta.label}<Arrow /></a>
 
-    <button class="menu-toggle press" type="button" aria-expanded="false" aria-controls="mobile-menu">
-      <span class="menu-icon" aria-hidden="true"></span>
-      <span>Menu</span>
-    </button>
+      <button class="menu-toggle press" type="button" aria-expanded="false" aria-controls="mobile-menu">
+        <span class="menu-icon" aria-hidden="true"></span>
+        <span>Menu</span>
+      </button>
+    </div>
   </div>
 
   <div class="mobile-menu" id="mobile-menu" data-state="closed" hidden>
@@ -86,21 +87,56 @@ const logo = tone === 'night' ? 'reversed' : 'color';
       }
     });
   }
+
+  // The header stays at the top. Once the page has scrolled, its bar gets a solid fill so it
+  // reads over any section; a sentinel at the very top of the page says when that happens.
+  const header = document.querySelector<HTMLElement>('.site-header');
+  if (header && 'IntersectionObserver' in window) {
+    const sentinel = document.createElement('div');
+    sentinel.setAttribute('aria-hidden', 'true');
+    sentinel.style.cssText = 'position:absolute;top:0;left:0;width:1px;height:8px;pointer-events:none';
+    document.body.prepend(sentinel);
+    new IntersectionObserver(([entry]) => header.toggleAttribute('data-scrolled', !entry.isIntersecting)).observe(sentinel);
+  }
 </script>
 
 <style>
+  /* Fixed at the top on every page. Clear over the hero; after the first few pixels of scroll the
+     bar fades in a solid fill in the page's tone (night or paper) with a hairline, so the logo
+     and links read over any section. The fill is a separate layer, so only its opacity animates. */
   .site-header {
-    position: absolute;
+    position: fixed;
     inset: 0 0 auto 0;
     z-index: 10;
     background: transparent;
+  }
+
+  .bar-wrap {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .bar-wrap::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-bottom: 1px solid var(--line);
+    background: var(--surface);
+    opacity: 0;
+    transition: opacity var(--duration-ui) var(--ease-out);
+  }
+
+  .site-header[data-scrolled] .bar-wrap::before,
+  .site-header:has(.mobile-menu[data-state='open']) .bar-wrap::before {
+    opacity: 1;
   }
 
   .bar {
     display: flex;
     align-items: center;
     gap: var(--space-8);
-    padding-block: 28px;
+    min-height: var(--header-h);
   }
 
   .brand {
@@ -111,12 +147,6 @@ const logo = tone === 'night' ? 'reversed' : 'color';
   .brand-lockup {
     width: 159px;
     height: 40px;
-  }
-
-  .brand-symbol {
-    display: none;
-    width: 32px;
-    height: 32px;
   }
 
   .nav {
@@ -200,9 +230,13 @@ const logo = tone === 'night' ? 'reversed' : 'color';
   /* The panel is revealed downward from the bar that opened it, and its links follow in a
      short stagger. Closing is quicker and all at once. The script sets data-state, so this
      works without @starting-style. */
+  /* The bar's fill shows while the menu is open and carries the top hairline. A short screen
+     (a phone on its side) scrolls the menu instead of cutting it off. */
   .mobile-menu {
+    max-height: calc(100dvh - var(--header-h));
+    overflow-y: auto;
     background: var(--surface);
-    border-block: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
     clip-path: inset(0 0 100% 0);
     opacity: 0;
     transition:
@@ -312,15 +346,7 @@ const logo = tone === 'night' ? 'reversed' : 'color';
 
   @media (max-width: 560px) {
     .bar {
-      padding-block: 20px;
-    }
-
-    .brand-lockup {
-      display: none;
-    }
-
-    .brand-symbol {
-      display: block;
+      gap: var(--space-4);
     }
   }
 </style>
