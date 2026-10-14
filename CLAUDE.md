@@ -21,7 +21,8 @@ Copy that describes Advisory should name both, not business analysis alone.
 - `src/components/`:
   - Page structure: `Header`, `Footer`, `PageHero` (night or wash, with breadcrumbs, facts and actions), `HeroFacts`, `PillarIndex`, `SectionHead`, `ContactBand`.
   - Content blocks: `Statement`, `Pillars`, `BeforeAfter`, `OfferCards`, `NumberedGrid`, `ProcessFlow`, `Record`, `Founder`, `CohortBanner`, `TeamTraining`.
-  - Cohort: `HowItWorks`, `MarketDay`, `Faq`, `Waitlist`.
+  - Cohort: `HowItWorks`, `MarketDay`, `Waitlist`.
+  - `Faq`: the accordion on home (questions about the company as a whole) and on training (questions about the cohort). Each page keeps its questions at the top of its own file and builds any fact (dates, fees, format) from `site.ts`, so the answers change with the facts. Pass `joined={false}` when it follows a night or wash section.
   - Forms: `ContactForm`, `Waitlist`, with shared behaviour in `src/scripts/forms.ts`. Both post to the Apps Script described under Forms below.
   - `Arrow`: the one arrow, inside CTA pills only.
 - `src/data/site.ts`: every repeated fact (company details, nav, cohort dates, size, schedule, fee, founder bio and record, form endpoints, contact topics). Change facts here, not in components.
