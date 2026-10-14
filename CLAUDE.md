@@ -17,7 +17,7 @@ Copy that describes Advisory should name both, not business analysis alone.
 ## Where things are
 
 - `src/pages/`: `index` (home), `advisory`, `training`, `careers`, `resources`, `about`, `contact`, `404`. Each is assembled from components in order.
-- `src/layouts/Page.astro`: every page's shell (header, main, footer). Pass `tone="night"` or `tone="paper"` to match the first section, and `cta` to change the header button (the training page uses "Join the waitlist").
+- `src/layouts/Page.astro`: every page's shell (header, main, footer). Pass `tone="night"` or `tone="paper"` to match the first section, and `cta` to change the header button (the training page uses "Join the waitlist"). The header is fixed at the top: clear over the hero, then its bar fades in a solid fill in the page's tone once the page scrolls. Its height is `--header-h` (84px, 72px under 560px); anchors land below it through `scroll-padding-top`, and anything sticky must offset by it.
 - `src/components/`:
   - Page structure: `Header`, `Footer`, `PageHero` (night or wash, with breadcrumbs, facts and actions), `HeroFacts`, `PillarIndex`, `SectionHead`, `ContactBand`.
   - Content blocks: `Statement`, `Pillars`, `BeforeAfter`, `OfferCards`, `NumberedGrid`, `ProcessFlow`, `CohortBanner`, `TeamTraining`.
@@ -73,7 +73,7 @@ Shape
 - Cards, panels, bands, photo frames, form fields and messages are flat and square: `--radius-card` is 0. Rounded and leaf-cornered cards read as generated; do not bring them back.
 - Buttons and tags are pills. Process steps keep `--radius-step` (20px), the rounded corners of a BPMN task box, and so do the tasks in the week swimlane.
 - The leaf shape survives only as small markers (pillar chips, list bullets) and in the leaf pattern.
-- Processes are drawn the way BAs draw them (`ProcessFlow`): start circle, task boxes, arrows, end circle, final box filled deep-green.
+- Processes are drawn the way BAs draw them (`ProcessFlow`): start circle, task boxes, arrows, end circle, final box filled deep-green. Below 1080px the flow stacks in a column up to 520px wide, with the events and arrows on its centre line.
 - From the reference sites: a short label over a hairline above each section heading (`SectionHead`), numbered columns divided by hairlines (`NumberedGrid`), breadcrumbs on inner pages.
 
 Pillar colour coding (keep it consistent on every page)
@@ -81,7 +81,7 @@ Pillar colour coding (keep it consistent on every page)
 
 Logo
 - Night grounds: `practeva-lockup-horizontal-reversed.svg`. Light grounds: `practeva-lockup-horizontal-color.svg`. The header picks one from the page's `tone`.
-- The header lockup is 40px tall, below the brand guide's 64px minimum, by request; under 560px the symbol stands alone at 32px. Elsewhere keep the guide's minimums: horizontal lockup 64px, symbol 24px.
+- The header shows the full horizontal lockup at every width, 40px tall, below the brand guide's 64px minimum, by request. Elsewhere keep the guide's minimums: horizontal lockup 64px, symbol 24px.
 - Clear space on every side equals the height of the capital P.
 
 Leaf pattern
@@ -106,12 +106,12 @@ Copy
 The site animates very little, on purpose. Before adding motion, it needs a reason: feedback, showing where something came from, making a state change legible, or stopping content from jumping. "It looks nice" is not a reason.
 
 - Tokens in `global.css`: `--ease-out` (all UI), `--ease-in-out`, `--duration-press` 160ms, `--duration-ui` 200ms, `--duration-panel` 280ms. Never use the built-in `ease` or a one-off curve; UI motion stays under 300ms.
-- Animate `transform` and `opacity` only. The one exception is accordion height, done through `details::details-content` with `interpolate-size: allow-keywords`.
+- Animate `transform` and `opacity` only. The one exception is accordion height: `src/scripts/accordion.ts` animates the `<details>` height with the Web Animations API (280ms, `--ease-in-out`) in every browser, and the `details::details-content` CSS with `interpolate-size` stays as the no-JS fallback. Wrap a new accordion in an element with `data-accordion` and call `smoothAccordion` on it.
 - Hover effects go inside `@media (hover: hover) and (pointer: fine)`, so taps on phones don't leave them stuck.
 - Pressable controls scale to 0.97 on `:active` (`.btn`, or add `.press`).
 - Distances are multiplied by `--motion`, which is 0 under reduced motion: fades stay, movement goes. Rotations and height changes switch themselves off in each component's reduced-motion block.
 - Entrances use `@starting-style`; browsers without it simply show the element, which is fine.
-- What moves today: each page's hero load sequence (its one orchestrated moment, settled by about 780ms), button press and arrow nudge, underline growth on nav and pillar links, the pillar and FAQ accordions, the mobile menu panel, and form messages.
+- What moves today: each page's hero load sequence (its one orchestrated moment, settled by about 780ms), button press and arrow nudge, underline growth on nav and pillar links, the pillar and FAQ accordions, the mobile menu (revealed down from the bar with clip-path, links staggered 20ms, quicker close), the header bar's fill fading in on scroll (opacity, 200ms), and form messages.
 - Deliberately not animated: scroll-triggered section reveals, process flows, the hero leaf planes, the washes and the italic accent word. Keep it that way.
 
 ## Open items before launch

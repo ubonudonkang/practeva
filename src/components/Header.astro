@@ -16,39 +16,40 @@ const isCurrent = (href: string) => path === href || path.startsWith(`${href}/`)
 const logo = tone === 'night' ? 'reversed' : 'color';
 ---
 <header class:list={['site-header', tone === 'night' ? 'ground-night' : 'ground-paper']}>
-  <div class="container bar">
-    <a href="/" class="brand">
-      <!-- Horizontal lockup at 40px tall (smaller than the brand guide's 64px minimum, by request);
-           on phones the symbol stands alone at 32px -->
-      <img class="brand-lockup" src={`/brand/practeva-lockup-horizontal-${logo}.svg`} alt="Practeva home" width="159" height="40" />
-      <img class="brand-symbol" src={`/brand/practeva-symbol-${logo}.svg`} alt="Practeva home" width="32" height="32" />
-    </a>
+  <div class="bar-wrap">
+    <div class="container bar">
+      <a href="/" class="brand">
+        <!-- The full horizontal lockup at every width, 40px tall (smaller than the brand guide's
+             64px minimum, by request) -->
+        <img class="brand-lockup" src={`/brand/practeva-lockup-horizontal-${logo}.svg`} alt="Practeva home" width="159" height="40" />
+      </a>
 
-    <nav class="nav" aria-label="Main">
-      <ul>
-        {nav.map((l) => (
-          <li><a href={l.href} aria-current={isCurrent(l.href) ? 'page' : undefined}>{l.label}</a></li>
-        ))}
-      </ul>
-    </nav>
+      <nav class="nav" aria-label="Main">
+        <ul>
+          {nav.map((l) => (
+            <li><a href={l.href} aria-current={isCurrent(l.href) ? 'page' : undefined}>{l.label}</a></li>
+          ))}
+        </ul>
+      </nav>
 
-    <a class="btn header-cta" href={cta.href}>{cta.label}<Arrow /></a>
+      <a class="btn header-cta" href={cta.href}>{cta.label}<Arrow /></a>
 
-    <button class="menu-toggle press" type="button" aria-expanded="false" aria-controls="mobile-menu">
-      <span class="menu-icon" aria-hidden="true"></span>
-      <span>Menu</span>
-    </button>
+      <button class="menu-toggle press" type="button" aria-expanded="false" aria-controls="mobile-menu">
+        <span class="menu-icon" aria-hidden="true"></span>
+        <span>Menu</span>
+      </button>
+    </div>
   </div>
 
-  <div class="mobile-menu" id="mobile-menu" hidden>
+  <div class="mobile-menu" id="mobile-menu" data-state="closed" hidden>
     <nav class="container" aria-label="Main, mobile">
       <ul>
-        {nav.map((l) => (
-          <li><a href={l.href} aria-current={isCurrent(l.href) ? 'page' : undefined}>{l.label}</a></li>
+        {nav.map((l, i) => (
+          <li style={`--i: ${i}`}><a href={l.href} aria-current={isCurrent(l.href) ? 'page' : undefined}>{l.label}</a></li>
         ))}
-        <li><a href="/contact" aria-current={isCurrent('/contact') ? 'page' : undefined}>Contact</a></li>
+        <li style={`--i: ${nav.length}`}><a href="/contact" aria-current={isCurrent('/contact') ? 'page' : undefined}>Contact</a></li>
       </ul>
-      <a class="btn" href={cta.href}>{cta.label}<Arrow /></a>
+      <a class="btn" style={`--i: ${nav.length + 1}`} href={cta.href}>{cta.label}<Arrow /></a>
     </nav>
   </div>
 </header>
@@ -57,34 +58,85 @@ const logo = tone === 'night' ? 'reversed' : 'color';
   const toggle = document.querySelector<HTMLButtonElement>('.menu-toggle');
   const menu = document.getElementById('mobile-menu');
   if (toggle && menu) {
+    let hideTimer = 0;
+    const isOpen = () => menu.dataset.state === 'open';
+
+    // Open: unhide, let the closed styles apply for one frame, then switch to open so the
+    // transitions run. Close: switch to closed, and hide only once the close has finished.
     const setOpen = (open: boolean) => {
       toggle.setAttribute('aria-expanded', String(open));
-      menu.hidden = !open;
+      window.clearTimeout(hideTimer);
+      if (open) {
+        menu.hidden = false;
+        menu.getBoundingClientRect();
+        menu.dataset.state = 'open';
+      } else {
+        menu.dataset.state = 'closed';
+        hideTimer = window.setTimeout(() => {
+          if (!isOpen()) menu.hidden = true;
+        }, 220);
+      }
     };
-    toggle.addEventListener('click', () => setOpen(menu.hidden));
+
+    toggle.addEventListener('click', () => setOpen(!isOpen()));
     menu.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setOpen(false)));
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && !menu.hidden) {
+      if (e.key === 'Escape' && isOpen()) {
         setOpen(false);
         toggle.focus();
       }
     });
   }
+
+  // The header stays at the top. Once the page has scrolled, its bar gets a solid fill so it
+  // reads over any section; a sentinel at the very top of the page says when that happens.
+  const header = document.querySelector<HTMLElement>('.site-header');
+  if (header && 'IntersectionObserver' in window) {
+    const sentinel = document.createElement('div');
+    sentinel.setAttribute('aria-hidden', 'true');
+    sentinel.style.cssText = 'position:absolute;top:0;left:0;width:1px;height:8px;pointer-events:none';
+    document.body.prepend(sentinel);
+    new IntersectionObserver(([entry]) => header.toggleAttribute('data-scrolled', !entry.isIntersecting)).observe(sentinel);
+  }
 </script>
 
 <style>
+  /* Fixed at the top on every page. Clear over the hero; after the first few pixels of scroll the
+     bar fades in a solid fill in the page's tone (night or paper) with a hairline, so the logo
+     and links read over any section. The fill is a separate layer, so only its opacity animates. */
   .site-header {
-    position: absolute;
+    position: fixed;
     inset: 0 0 auto 0;
     z-index: 10;
     background: transparent;
+  }
+
+  .bar-wrap {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .bar-wrap::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-bottom: 1px solid var(--line);
+    background: var(--surface);
+    opacity: 0;
+    transition: opacity var(--duration-ui) var(--ease-out);
+  }
+
+  .site-header[data-scrolled] .bar-wrap::before,
+  .site-header:has(.mobile-menu[data-state='open']) .bar-wrap::before {
+    opacity: 1;
   }
 
   .bar {
     display: flex;
     align-items: center;
     gap: var(--space-8);
-    padding-block: 28px;
+    min-height: var(--header-h);
   }
 
   .brand {
@@ -95,12 +147,6 @@ const logo = tone === 'night' ? 'reversed' : 'color';
   .brand-lockup {
     width: 159px;
     height: 40px;
-  }
-
-  .brand-symbol {
-    display: none;
-    width: 32px;
-    height: 32px;
   }
 
   .nav {
@@ -181,37 +227,67 @@ const logo = tone === 'night' ? 'reversed' : 'color';
     transform: translateY(-6px) rotate(-90deg);
   }
 
-  /* The panel drops from the bar that opened it and leaves the same way, a little faster.
-     Browsers without @starting-style or discrete display transitions show and hide it instantly. */
+  /* The panel is revealed downward from the bar that opened it, and its links follow in a
+     short stagger. Closing is quicker and all at once. The script sets data-state, so this
+     works without @starting-style. */
+  /* The bar's fill shows while the menu is open and carries the top hairline. A short screen
+     (a phone on its side) scrolls the menu instead of cutting it off. */
   .mobile-menu {
+    max-height: calc(100dvh - var(--header-h));
+    overflow-y: auto;
     background: var(--surface);
-    border-block: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    clip-path: inset(0 0 100% 0);
+    opacity: 0;
+    transition:
+      clip-path var(--duration-ui) var(--ease-out),
+      opacity var(--duration-ui) var(--ease-out);
+  }
+
+  .mobile-menu[data-state='open'] {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+    transition:
+      clip-path var(--duration-panel) var(--ease-out),
+      opacity var(--duration-ui) var(--ease-out);
+  }
+
+  .mobile-menu li,
+  .mobile-menu .btn {
+    opacity: 0;
+    transform: translateY(calc(8px * var(--motion)));
+    transition:
+      opacity var(--duration-ui) var(--ease-out),
+      transform var(--duration-ui) var(--ease-out);
+  }
+
+  .mobile-menu[data-state='open'] li,
+  .mobile-menu[data-state='open'] .btn {
     opacity: 1;
     transform: translateY(0);
     transition:
       opacity var(--duration-ui) var(--ease-out),
-      transform var(--duration-ui) var(--ease-out),
-      display var(--duration-ui) allow-discrete;
+      transform 240ms var(--ease-out);
+    transition-delay: calc(var(--i, 0) * 20ms);
   }
 
-  .mobile-menu[hidden] {
-    display: none;
-    opacity: 0;
-    transform: translateY(calc(-8px * var(--motion)));
-    transition-duration: 150ms;
-  }
-
-  @starting-style {
-    .mobile-menu {
-      opacity: 0;
-      transform: translateY(calc(-8px * var(--motion)));
-    }
+  /* The rule above outranks .btn:active, so keep the pill's press here, without the stagger delay */
+  .mobile-menu[data-state='open'] .btn:active {
+    transform: scale(calc(1 - 0.03 * var(--motion)));
+    transition-delay: 0s;
   }
 
   @media (prefers-reduced-motion: reduce) {
     .menu-icon,
     .menu-icon::before {
       transition: none;
+    }
+
+    /* Fades stay; the reveal and the rise go */
+    .mobile-menu,
+    .mobile-menu[data-state='open'] {
+      clip-path: none;
+      transition: opacity var(--duration-ui) var(--ease-out);
     }
   }
 
@@ -270,15 +346,7 @@ const logo = tone === 'night' ? 'reversed' : 'color';
 
   @media (max-width: 560px) {
     .bar {
-      padding-block: 20px;
-    }
-
-    .brand-lockup {
-      display: none;
-    }
-
-    .brand-symbol {
-      display: block;
+      gap: var(--space-4);
     }
   }
 </style>

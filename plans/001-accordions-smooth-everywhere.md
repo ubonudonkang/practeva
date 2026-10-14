@@ -1,6 +1,6 @@
 # 001: Accordions open and close smoothly in every browser
 
-- Status: TODO
+- Status: DONE
 - Written at commit: 6a513b4
 - Severity: HIGH (category: easing and duration, browser coverage)
 - Files: `src/scripts/accordion.ts` (new), `src/components/Pillars.astro`, `src/components/Faq.astro`, `CLAUDE.md`

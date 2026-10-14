@@ -195,8 +195,10 @@ const { items, topic, variant = 'full', href = '/contact' } = Astro.props;
     color: var(--highlight);
   }
 
-  .offer-link:hover {
-    text-decoration-thickness: 2.5px;
+  @media (hover: hover) and (pointer: fine) {
+    .offer-link:hover {
+      text-decoration-thickness: 2.5px;
+    }
   }
 
   @media (max-width: 960px) {

@@ -1,6 +1,6 @@
 # 003: No grey tap flash, and no sticky hover on phones
 
-- Status: TODO
+- Status: DONE
 - Written at commit: 6a513b4
 - Severity: LOW (category: accessibility and touch polish)
 - Files: `src/styles/global.css`, `src/components/OfferCards.astro`, `src/components/Footer.astro`
