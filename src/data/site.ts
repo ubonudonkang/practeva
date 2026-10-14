@@ -1,4 +1,4 @@
-// One place for the facts the site repeats. Update these before each cohort.
+// One place for the facts the site repeats. Change facts here, not in components.
 
 export const site = {
   name: 'Practeva',
@@ -6,10 +6,27 @@ export const site = {
   email: 'info@practevahq.com',
   tagline: 'Your business analysis advisory, training and career partner.',
   description:
-    'Live cohorts, real case work and career support for people moving into IT business analysis. Join the waitlist for the February 2027 BA Bridge Cohort.',
+    'Practeva is a business analysis firm. We advise founders and teams before they build, train the analysts who do the work, and help them show that work to employers.',
   legal:
     'Practeva Limited · Registered in Nigeria, RC 9931539 · No. 21, Abuja Road, Iriebe, Rivers State',
 };
+
+// From the CAC certificate and status report.
+export const company = {
+  legalName: 'Practeva Limited',
+  rc: '9931539',
+  registered: '12 October 2026',
+  type: 'Private company limited by shares, under the Companies and Allied Matters Act 2020',
+  office: 'No. 21, Abuja Road, Iriebe, Rivers State, Nigeria',
+};
+
+export const nav = [
+  { href: '/advisory', label: 'Advisory' },
+  { href: '/training', label: 'Training' },
+  { href: '/careers', label: 'Careers' },
+  { href: '/resources', label: 'Resources' },
+  { href: '/about', label: 'About' },
+];
 
 export const cohort = {
   programme: 'BA Bridge Cohort',
@@ -24,9 +41,36 @@ export const cohort = {
   fee: '₦100,000',
 };
 
-// TODO(ubon): paste the endpoint the waitlist form should POST to
-// (the same service the old ubonudonkang.github.io/ba-training form used works).
-// While this is empty, the form tells people to email instead.
-export const waitlist = {
-  endpoint: '',
+export const founder = {
+  name: 'Ubon Udonkang',
+  role: 'Founder and lead trainer',
+  // Brand rule: name MTN Nigeria only as Ubon's employer and role, never his project work there.
+  bio: 'Ubon is a business analyst in the Architecture and Engineering team at MTN Nigeria, and previously worked at Access Bank. He holds the PSM I certification, is working towards CBAP, and his work spans fintech, banking operations, process automation and Open Banking regulation.',
+  record: [
+    { figure: '₦365bn', label: "Access Bank's rights issue, digitised with Ubon leading the analysis" },
+    { figure: '89%', label: 'Less time on general ledger reconciliation, from 8 hours to 45 minutes, using RPA' },
+    { figure: '13+', label: 'African subsidiaries reached by cross-border automation he delivered at Access Bank' },
+    { figure: '14', label: 'Modules in a government accounting system, with Ubon as the sole business analyst' },
+  ],
 };
+
+// Where each form POSTs its FormData; any 2xx counts as success.
+// While an endpoint is empty, that form tells people to email instead.
+export const forms = {
+  // TODO(ubon): paste the waitlist endpoint (fields: name, email, phone, role).
+  // The same service the old ubonudonkang.github.io/ba-training form used works.
+  waitlist: '',
+  // TODO(ubon): paste the contact endpoint (fields: name, email, phone, organisation, topic, message).
+  // Until then the contact form opens the visitor's email app with their message filled in.
+  contact: '',
+};
+
+// The topics the contact form offers. Links pass one as ?topic= to preselect it.
+export const topics = [
+  { value: 'advisory', label: 'Advisory for my organisation' },
+  { value: 'team-training', label: 'Training for my team' },
+  { value: 'cohort', label: 'The BA Bridge Cohort' },
+  { value: 'careers', label: 'Careers support' },
+  { value: 'resources', label: 'Templates and resources' },
+  { value: 'other', label: 'Something else' },
+];

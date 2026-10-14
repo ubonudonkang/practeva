@@ -1,0 +1,15 @@
+---
+import Page from '../layouts/Page.astro';
+import Arrow from '../components/Arrow.astro';
+import PageHero from '../components/PageHero.astro';
+---
+<Page tone="paper" title="Page not found | Practeva">
+  <PageHero sub="The page may have moved when the site grew from one page to several. These will get you back on track.">
+    <Fragment slot="title">We couldn't find that <em class="accent">page</em>.</Fragment>
+    <Fragment slot="actions">
+      <a class="btn" href="/">Go to the home page<Arrow /></a>
+      <a class="link" href="/training">BA Bridge Cohort</a>
+      <a class="link" href="/advisory">Advisory</a>
+    </Fragment>
+  </PageHero>
+</Page>

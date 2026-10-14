@@ -1,0 +1,115 @@
+---
+// Two panels side by side: how things stand without the work, and with it.
+// Together they form one leaf tile: the light panel rounds top left, the dark one bottom right.
+interface Side {
+  label: string;
+  items: string[];
+}
+
+interface Props {
+  before: Side;
+  after: Side;
+}
+
+const { before, after } = Astro.props;
+---
+<div class="ba leaf-lg">
+  <div class="ba-panel ba-before">
+    <p class="ba-label">{before.label}</p>
+    <ul>
+      {before.items.map((item) => <li>{item}</li>)}
+    </ul>
+  </div>
+  <div class="ba-panel ba-after ground-night">
+    <p class="ba-label">{after.label}</p>
+    <ul>
+      {after.items.map((item) => <li>{item}</li>)}
+    </ul>
+  </div>
+</div>
+
+<style>
+  .ba {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    overflow: hidden;
+    border: 1px solid var(--line);
+  }
+
+  .ba-panel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+    padding: clamp(28px, 4vw, 56px);
+  }
+
+  /* Frosted paper with green light in one corner, like the wash heroes */
+  .ba-before {
+    background:
+      radial-gradient(80% 90% at 0% 0%, var(--wash-glow), transparent 70%),
+      var(--surface-raised);
+  }
+
+  /* Deep-green rather than night, so it reads as the outcome; text pairs: white 10.4:1, highlight 5.6:1 */
+  .ba-after {
+    background: var(--deep-green);
+  }
+
+  .ba-label {
+    font-size: 13px;
+    line-height: 18px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .ba-before .ba-label {
+    color: var(--ink-muted);
+  }
+
+  .ba-after .ba-label {
+    color: var(--highlight);
+  }
+
+  ul {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  li {
+    position: relative;
+    max-width: 24em;
+    padding-left: 34px;
+    font-size: clamp(18px, 1.6vw, 21px);
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+  }
+
+  li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.32em;
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Before: an empty circle, like an open task */
+  .ba-before li::before {
+    border: 1.5px solid var(--ink-muted);
+    border-radius: 50%;
+  }
+
+  /* After: a highlight leaf */
+  .ba-after li::before {
+    border-radius: 8px 0 8px 0;
+    background: var(--highlight);
+  }
+
+  @media (max-width: 760px) {
+    .ba {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>
