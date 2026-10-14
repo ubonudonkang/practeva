@@ -13,10 +13,11 @@ const { id, title, eyebrow } = Astro.props;
 ---
 <section class="founder ground-paper section" id={id} aria-labelledby={`${id}-title`}>
   <div class="container founder-grid">
-    <!-- TODO(ubon): replace this tile's contents with a real photo:
-         <img src="/images/ubon-udonkang.webp" alt="Ubon Udonkang teaching a live session" /> -->
-    <figure class="portrait leaf-lg">
-      <img class="portrait-mark" src="/brand/practeva-symbol-reversed.svg" alt="" width="96" height="97" />
+    <!-- The caption sits under the photo: white text would not read on its light background -->
+    <figure class="portrait">
+      <div class="portrait-frame leaf-lg">
+        <img src={founder.photo} alt={founder.photoAlt} width="862" height="1080" loading="lazy" />
+      </div>
       <figcaption>
         <b>{founder.name}</b>
         <span>{founder.role}</span>
@@ -43,44 +44,39 @@ const { id, title, eyebrow } = Astro.props;
   }
 
   .portrait {
-    position: relative;
-    display: grid;
-    place-items: center;
-    aspect-ratio: 4 / 5;
-    overflow: hidden;
-    background: var(--deep-green);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
   }
 
-  .portrait img:not(.portrait-mark) {
+  .portrait-frame {
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    background: var(--line);
+  }
+
+  .portrait-frame img {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
 
-  .portrait-mark {
-    width: 96px;
-    height: auto;
-  }
-
   .portrait figcaption {
-    position: absolute;
-    left: var(--space-6);
-    bottom: var(--space-6);
     display: flex;
     flex-direction: column;
-    color: #ffffff;
   }
 
   .portrait figcaption b {
     font-size: 18px;
     line-height: 24px;
     font-weight: 600;
+    color: var(--heading);
   }
 
   .portrait figcaption span {
     font-size: 14px;
     line-height: 20px;
-    color: var(--on-deep-muted);
+    color: var(--ink-muted);
   }
 
   .founder-copy {
