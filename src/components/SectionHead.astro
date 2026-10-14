@@ -1,0 +1,76 @@
+---
+// The head of a section: a short label over a hairline, then the heading on the left
+// and a note or a link on the right.
+interface Props {
+  id: string;
+  title: string;
+  label?: string;
+  note?: string;
+}
+
+const { id, title, label, note } = Astro.props;
+const hasAside = Boolean(note) || Astro.slots.has('aside');
+---
+<div class="section-head">
+  {label && <p class="label kicker">{label}</p>}
+  <div class:list={['head-row', { 'has-aside': hasAside }]}>
+    <h2 id={id} class="display">{title}</h2>
+    {hasAside && (
+      <div class="head-aside">
+        {note && <p class="note">{note}</p>}
+        <slot name="aside" />
+      </div>
+    )}
+  </div>
+</div>
+
+<style>
+  .section-head {
+    margin-bottom: clamp(40px, 6vw, 72px);
+  }
+
+  .kicker {
+    margin-bottom: clamp(24px, 4vw, 48px);
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .head-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-6) var(--space-14);
+  }
+
+  /* Heading left, note right, both sitting on the same baseline */
+  .has-aside {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+    align-items: end;
+  }
+
+  h2 {
+    max-width: 14em;
+  }
+
+  .head-aside {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4);
+    max-width: 24em;
+  }
+
+  .note {
+    font-size: 15px;
+    line-height: 22px;
+    color: var(--ink-muted);
+  }
+
+  @media (max-width: 880px) {
+    .has-aside {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

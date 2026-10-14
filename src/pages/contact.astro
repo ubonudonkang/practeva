@@ -1,0 +1,161 @@
+---
+import Page from '../layouts/Page.astro';
+import ContactForm from '../components/ContactForm.astro';
+import { founder, site } from '../data/site';
+---
+<Page
+  tone="paper"
+  title="Contact Practeva | Book a call"
+  description="Tell us what you're working on: advisory, team training, the BA Bridge Cohort or careers support."
+>
+  <section class="contact ground-wash" aria-labelledby="page-title">
+    <div class="container contact-grid">
+      <div class="contact-copy">
+        <nav class="crumbs" aria-label="Breadcrumb">
+          <ol>
+            <li><a href="/">Home</a></li>
+            <li><span aria-current="page">Contact</span></li>
+          </ol>
+        </nav>
+        <!-- The italic accent word is the brand's signature: once per page, and this is the one -->
+        <h1 id="page-title" class="contact-title">Tell us what you're <em class="accent">working</em> on.</h1>
+        <p class="contact-sub">An idea to test, a process to fix, a team to train or a career move. Send a few lines and we'll reply by email to set up a call.</p>
+
+        <!-- TODO(ubon): replace this tile's contents with a real photo of you -->
+        <figure class="expert leaf-lg">
+          <div class="expert-mark">
+            <img src="/brand/practeva-symbol-reversed.svg" alt="" width="64" height="65" />
+          </div>
+          <figcaption>
+            <b>{founder.name}</b>
+            <span>{founder.role}</span>
+          </figcaption>
+        </figure>
+
+        <p class="caption">Prefer email? <a class="link" href={`mailto:${site.email}`}>{site.email}</a></p>
+      </div>
+
+      <ContactForm />
+    </div>
+  </section>
+</Page>
+
+<style>
+  .contact {
+    --wash-top: var(--paper-clear);
+    --wash-x: 0%;
+    --wash-y: 0%;
+    --wash2-x: 100%;
+    --wash2-y: 100%;
+    padding-top: clamp(148px, 15vw, 196px);
+    padding-bottom: var(--section-y);
+  }
+
+  .contact-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    gap: var(--space-14) clamp(32px, 6vw, 96px);
+    align-items: start;
+  }
+
+  .contact-copy {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-6);
+  }
+
+  .crumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+  }
+
+  .crumbs li + li::before {
+    content: '/';
+    margin-right: var(--space-2);
+  }
+
+  .crumbs a {
+    text-decoration: none;
+  }
+
+  .crumbs [aria-current] {
+    color: var(--heading);
+  }
+
+  .contact-title {
+    font-size: clamp(40px, 4.6vw, 64px);
+    line-height: 1;
+    font-weight: var(--weight-headline);
+    letter-spacing: -0.045em;
+    color: var(--heading);
+    text-wrap: balance;
+  }
+
+  .contact-sub {
+    max-width: 28em;
+    font-size: clamp(17px, 1.5vw, 19px);
+    line-height: 1.5;
+    color: var(--ink-muted);
+  }
+
+  /* The expert tile: a portrait crop in a leaf, like the reference's angled photo frames */
+  .expert {
+    position: relative;
+    width: min(100%, 320px);
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    margin-top: var(--space-4);
+    background: var(--deep-green);
+  }
+
+  .expert-mark {
+    display: grid;
+    place-items: center;
+    height: 100%;
+  }
+
+  .expert figcaption {
+    position: absolute;
+    left: var(--space-6);
+    bottom: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    color: #ffffff;
+  }
+
+  .expert figcaption b {
+    font-size: 17px;
+    line-height: 22px;
+    font-weight: 600;
+  }
+
+  .expert figcaption span {
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--on-deep-muted);
+  }
+
+  @media (max-width: 960px) {
+    .contact-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .expert {
+      display: none;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .contact {
+      padding-top: 120px;
+    }
+  }
+</style>

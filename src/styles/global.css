@@ -18,9 +18,18 @@
   --on-highlight: #04301f;
   --on-deep-muted: #d8e6dc;
 
+  /* Washes: soft green light on paper grounds, never behind small accent text */
+  --wash-glow: rgb(132 210 98 / 0.34);
+  --wash-leaf: rgb(46 159 75 / 0.13);
+  --wash-mist: #f8f8f3;
+  --paper-clear: rgb(245 244 239 / 0);
+
   /* Type */
   --font-sans: "Onest Variable", "Onest", "Helvetica Neue", Arial, sans-serif;
   --font-serif: "Instrument Serif", Georgia, serif;
+  /* Headlines are set light and tight; titles of cards and steps stay semibold */
+  --weight-headline: 450;
+  --weight-title: 600;
 
   /* Spacing (multiples of 4) */
   --space-1: 4px;
@@ -54,8 +63,11 @@
   interpolate-size: allow-keywords;
 }
 
-/* Grounds. Every section sits on one of these; components read the semantic names. */
-.ground-paper {
+/* Grounds. Every section sits on one of these; components read the semantic names.
+   --accent colours the italic word (large, so 3:1 is enough); --accent-text colours
+   small accent text such as eyebrows and links, which needs 4.5:1. */
+.ground-paper,
+.ground-wash {
   --surface: var(--paper);
   --surface-raised: var(--white);
   --line: #cfe0d4;
@@ -63,10 +75,24 @@
   --ink-muted: #4a6458;
   --heading: var(--deep-green);
   --accent: var(--forest-green);
+  --accent-text: var(--forest-green);
   --cta: var(--deep-green);
   --on-cta: var(--white);
   background-color: var(--surface);
   color: var(--ink);
+}
+
+/* Paper with soft green light. Forest-green falls under 4.5:1 where the wash is strongest,
+   so small accent text switches to deep-green here. */
+.ground-wash {
+  --accent-text: var(--deep-green);
+  /* The top layer fades the wash back to paper at both edges, so it meets paper sections
+     without a seam. Heroes, which start the page, set --wash-top to clear to keep their glow. */
+  background-image:
+    linear-gradient(180deg, var(--wash-top, var(--paper)) 0%, var(--paper-clear) 16%, var(--paper-clear) 84%, var(--paper) 100%),
+    radial-gradient(56% 72% at var(--wash-x, 90%) var(--wash-y, 6%), var(--wash-glow), transparent 72%),
+    radial-gradient(42% 60% at var(--wash2-x, 58%) var(--wash2-y, 104%), var(--wash-leaf), transparent 70%),
+    linear-gradient(180deg, var(--wash-mist), var(--paper));
 }
 
 .ground-night {
@@ -77,6 +103,7 @@
   --ink-muted: #c7d2ca;
   --heading: #ffffff;
   --accent: var(--highlight);
+  --accent-text: var(--highlight);
   --cta: var(--highlight);
   --on-cta: var(--on-highlight);
   background-color: var(--surface);
@@ -134,7 +161,7 @@ a {
 }
 
 :focus-visible {
-  outline: 3px solid var(--accent, var(--highlight));
+  outline: 3px solid var(--accent-text, var(--highlight));
   outline-offset: 3px;
   border-radius: 4px;
 }
@@ -151,37 +178,29 @@ a {
   padding-block: var(--section-y);
 }
 
-.section-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--space-6) var(--space-14);
-  margin-bottom: clamp(40px, 6vw, 72px);
-}
-
-.section-head .note {
-  max-width: 24em;
-  font-size: 15px;
-  line-height: 22px;
-  color: var(--ink-muted);
-}
-
 /* Type styles */
-.eyebrow {
+.eyebrow,
+.label {
   font-size: 13px;
   line-height: 18px;
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--accent);
+}
+
+.eyebrow {
+  color: var(--accent-text);
+}
+
+.label {
+  color: var(--ink-muted);
 }
 
 .display {
-  font-weight: 700;
-  font-size: clamp(34px, 4.4vw, 56px);
+  font-weight: var(--weight-headline);
+  font-size: clamp(34px, 4.6vw, 60px);
   line-height: 1.04;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.035em;
   color: var(--heading);
   text-wrap: balance;
 }
@@ -189,7 +208,7 @@ a {
 .subheading {
   font-size: 22px;
   line-height: 30px;
-  font-weight: 600;
+  font-weight: var(--weight-title);
   letter-spacing: -0.01em;
   color: var(--heading);
 }
@@ -215,7 +234,7 @@ a {
   color: var(--ink-muted);
 }
 
-/* Actions: one pill per action, a quieter text link beside it */
+/* Actions: one pill per section, a quieter text link beside it */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -226,7 +245,7 @@ a {
   border-radius: var(--radius-pill);
   background: var(--cta);
   color: var(--on-cta);
-  font: 700 17px/1 var(--font-sans);
+  font: 600 17px/1 var(--font-sans);
   letter-spacing: -0.01em;
   text-decoration: none;
   cursor: pointer;
@@ -258,7 +277,7 @@ a {
 }
 
 .link {
-  color: var(--accent);
+  color: var(--accent-text);
   font-weight: 600;
   text-decoration: underline;
   text-decoration-thickness: 1.5px;
@@ -267,6 +286,148 @@ a {
 
 .link:hover {
   text-decoration-thickness: 2.5px;
+}
+
+/* Tags: small outlined pills for facts and formats */
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.tags li {
+  padding: 6px 14px;
+  border: 1px solid currentColor;
+  border-radius: var(--radius-pill);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+}
+
+/* Forms. The card and fields read the ground's tokens, so the same markup works on night and paper. */
+.form-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: clamp(24px, 3vw, 40px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--surface-raised);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.field label {
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 600;
+}
+
+.field .optional {
+  margin-left: var(--space-2);
+  font-weight: 400;
+  color: var(--ink-muted);
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  min-height: 52px;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink);
+  font: 400 17px/1.4 var(--font-sans);
+}
+
+.field textarea {
+  min-height: 140px;
+  padding-block: 14px;
+  resize: vertical;
+}
+
+/* A drawn chevron, so the select matches the inputs on every browser */
+.field select {
+  appearance: none;
+  padding-right: 44px;
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%),
+    linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: calc(100% - 22px) 50%, calc(100% - 16px) 50%;
+  background-size: 6px 6px;
+  background-repeat: no-repeat;
+}
+
+.field input::placeholder,
+.field textarea::placeholder {
+  color: var(--ink-muted);
+  opacity: 0.8;
+}
+
+.field input:focus-visible,
+.field select:focus-visible,
+.field textarea:focus-visible {
+  outline: 3px solid var(--accent-text);
+  outline-offset: 1px;
+  border-radius: 12px;
+}
+
+.form-card .btn {
+  align-self: flex-start;
+  margin-top: var(--space-2);
+}
+
+.form-card .btn:disabled {
+  opacity: 0.7;
+  cursor: progress;
+}
+
+.form-note {
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--ink-muted);
+}
+
+.form-status:empty {
+  display: none;
+}
+
+.form-status {
+  padding: var(--space-3) var(--space-4);
+  border-radius: 12px;
+  font-size: 15px;
+  line-height: 22px;
+  font-weight: 600;
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 240ms var(--ease-out),
+    transform 240ms var(--ease-out);
+}
+
+/* Messages rise into place instead of popping in */
+@starting-style {
+  .form-status {
+    opacity: 0;
+    transform: translateY(calc(4px * var(--motion)));
+  }
+}
+
+/* Success is the one moment that earns a slightly longer beat; still no bounce */
+.form-status[data-tone='ok'] {
+  background: var(--cta);
+  color: var(--on-cta);
+  transition-duration: 320ms;
+}
+
+.form-status[data-tone='error'] {
+  border: 1px solid var(--accent-text);
+  color: var(--ink);
 }
 
 /* Leaf tiles */

@@ -1,0 +1,59 @@
+---
+// Training for organisations: the topics we teach teams, the formats, and one way in.
+import Arrow from './Arrow.astro';
+import NumberedGrid from './NumberedGrid.astro';
+import SectionHead from './SectionHead.astro';
+import { teamTraining } from '../data/offers';
+---
+<section class="team ground-wash section" id="team" aria-labelledby="team-title">
+  <div class="container">
+    <SectionHead
+      id="team-title"
+      label="Team training"
+      title="Training for your team"
+      note="Workshops and courses for organisations whose people need to analyse, document and improve the way work gets done."
+    />
+
+    <NumberedGrid items={teamTraining.topics} cols={4} />
+
+    <div class="team-foot">
+      <div class="formats">
+        <p class="label">Formats</p>
+        <ul class="tags">
+          {teamTraining.formats.map((f) => <li>{f}</li>)}
+        </ul>
+      </div>
+      <a class="btn" href="/contact?topic=team-training">Ask about team training<Arrow /></a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .team {
+    --wash-x: 4%;
+    --wash-y: 40%;
+    --wash2-x: 92%;
+    --wash2-y: 100%;
+  }
+
+  .team-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-6);
+    margin-top: clamp(40px, 6vw, 72px);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--line);
+  }
+
+  .formats {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .formats .tags {
+    color: var(--deep-green);
+  }
+</style>

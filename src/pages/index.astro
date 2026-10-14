@@ -1,27 +1,94 @@
 ---
-import Base from '../layouts/Base.astro';
-import Header from '../components/Header.astro';
-import Hero from '../components/Hero.astro';
+// Home: the company first, with Advisory leading. Training and Careers each have a door
+// here and their own page.
+import Page from '../layouts/Page.astro';
+import Arrow from '../components/Arrow.astro';
+import PageHero from '../components/PageHero.astro';
+import PillarIndex from '../components/PillarIndex.astro';
 import Statement from '../components/Statement.astro';
+import SectionHead from '../components/SectionHead.astro';
+import BeforeAfter from '../components/BeforeAfter.astro';
+import OfferCards from '../components/OfferCards.astro';
 import Pillars from '../components/Pillars.astro';
-import HowItWorks from '../components/HowItWorks.astro';
-import MarketDay from '../components/MarketDay.astro';
-import Trainer from '../components/Trainer.astro';
-import Faq from '../components/Faq.astro';
-import Waitlist from '../components/Waitlist.astro';
-import Footer from '../components/Footer.astro';
+import Record from '../components/Record.astro';
+import CohortBanner from '../components/CohortBanner.astro';
+import ContactBand from '../components/ContactBand.astro';
+import { beforeAfter, packages } from '../data/offers';
 ---
-<Base>
-  <Header />
-  <main id="main">
-    <Hero />
-    <Statement />
-    <Pillars />
-    <HowItWorks />
-    <MarketDay />
-    <Trainer />
-    <Faq />
-    <Waitlist />
-  </main>
-  <Footer />
-</Base>
+<Page tone="night">
+  <PageHero
+    tone="night"
+    size="full"
+    eyebrow="Business analysis firm"
+    sub="We help founders and teams settle the requirements, the process and the case for a change before money goes into building it."
+  >
+    <Fragment slot="title">Get clear on what to build, <em class="accent">before</em> you build&nbsp;it.</Fragment>
+    <Fragment slot="actions">
+      <a class="btn" href="/contact?topic=advisory">Book a call<Arrow /></a>
+      <a class="link" href="/advisory#packages">See advisory packages</a>
+    </Fragment>
+    <PillarIndex />
+  </PageHero>
+
+  <Statement />
+
+  <section class="spotlight ground-wash section" aria-labelledby="spotlight-title">
+    <div class="container">
+      <SectionHead
+        id="spotlight-title"
+        label="Advisory"
+        title="Before you build, get it on paper."
+        note="Most of what goes wrong in a build was decided before it started: requirements nobody wrote down, processes nobody mapped, assumptions nobody tested."
+      >
+        <a slot="aside" class="link" href="/advisory">How advisory works</a>
+      </SectionHead>
+
+      <BeforeAfter before={beforeAfter.before} after={beforeAfter.after} />
+
+      <div class="spotlight-packages">
+        <h3 class="subheading">Three ways to start</h3>
+        <OfferCards items={packages} topic="advisory" variant="compact" href="/advisory#packages" />
+      </div>
+    </div>
+  </section>
+
+  <Pillars />
+
+  <section class="experience ground-paper section" aria-labelledby="experience-title">
+    <div class="container">
+      <SectionHead
+        id="experience-title"
+        label="Experience"
+        title="Analysis that has shipped in banking and government."
+        note="Practeva is led by Ubon Udonkang, a working business analyst. These are results from his work before Practeva."
+      >
+        <a slot="aside" class="link" href="/about">About Ubon and Practeva</a>
+      </SectionHead>
+      <Record cols={4} />
+    </div>
+  </section>
+
+  <CohortBanner />
+
+  <ContactBand
+    title="Tell us what you're working on."
+    note="An idea, a process that needs fixing or a system to choose. A short call is enough to see where we can help."
+    cta={{ label: 'Book a call', href: '/contact' }}
+  />
+</Page>
+
+<style>
+  .spotlight {
+    --wash-x: 0%;
+    --wash-y: 40%;
+    --wash2-x: 100%;
+    --wash2-y: 60%;
+  }
+
+  .spotlight-packages {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    margin-top: clamp(48px, 7vw, 88px);
+  }
+</style>
