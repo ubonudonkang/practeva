@@ -16,7 +16,7 @@ Copy that describes Advisory should name both, not business analysis alone.
 
 ## Where things are
 
-- `src/pages/`: `index` (home), `advisory`, `training`, `careers`, `resources`, `about`, `contact`, `404`. Each is assembled from components in order.
+- `src/pages/`: `index` (home), `advisory`, `training`, `training/how-to-become-a-business-analyst-in-nigeria` (a guide for career changers), `careers`, `resources`, `about`, `contact`, `404`. Each is assembled from components in order. `sitemap.xml.ts` and `llms.txt.ts` build those two files (see Search).
 - `src/layouts/Page.astro`: every page's shell (header, main, footer). Pass `tone="night"` or `tone="paper"` to match the first section, and `cta` to change the header button (the training page uses "Join the waitlist"). The header is fixed at the top: clear over the hero, then its bar fades in a solid fill in the page's tone once the page scrolls. Its height is `--header-h` (84px, 72px under 560px); anchors land below it through `scroll-padding-top`, and anything sticky must offset by it.
 - `src/components/`:
   - Page structure: `Header`, `Footer`, `PageHero` (night or wash, with breadcrumbs, facts and actions), `HeroFacts`, `PillarIndex`, `SectionHead`, `ContactBand`.
@@ -26,11 +26,13 @@ Copy that describes Advisory should name both, not business analysis alone.
   - Forms: `ContactForm`, `Waitlist`, with shared behaviour in `src/scripts/forms.ts`. Both post to the Apps Script described under Forms below.
   - `Arrow`: the one arrow, inside CTA pills only.
 - `src/data/site.ts`: every repeated fact (company details, nav, cohort dates, size, schedule, fee, form endpoints, contact topics). Change facts here, not in components.
+- `src/data/schema.ts`: the structured data (JSON-LD) helpers; see Search.
 - `src/data/offers.ts`: what Practeva sells, in the site's words: pillars, advisory packages, services, engagement steps, team training, careers services, resources, principles.
 - `src/styles/global.css`: brand tokens, the three grounds (`.ground-paper`, `.ground-wash`, `.ground-night`), type styles, buttons, tags, form fields, leaf tiles.
 - `public/brand/`: the supplied logo files. Never redraw, recolour or retype the logo.
 - `public/brand/patterns/`: the leaf pattern in its deep-green colourway (`column-3x5` and `band-12x3`). The full set, with other colourways, a repeat tile and a generator, is in Ubon's `practeva-leaf-pattern.zip`.
 - `public/images/`: textured brand backgrounds, brand renders (wall sign, notebook), as WebP.
+- `public/og/practeva.png` (the 1200 x 630 social preview), `public/brand/practeva-logo-512.png` (the logo for search engines), `public/apple-touch-icon.png`, `public/robots.txt` and the IndexNow key file (`public/<key>.txt`).
 
 Links into the contact form can preselect a topic and start the message: `/contact?topic=advisory&offer=quick-read`. Topics are in `site.ts`; offer slugs come from `packages` and `careerServices`.
 
@@ -65,7 +67,7 @@ Gradients and washes
 
 Type
 - Onest for everything. Headlines are light and tight: weight `--weight-headline` (450) with -0.035 to -0.045em tracking. Card titles, step names and subheadings use `--weight-title` (600). Body 400, labels 600. Big figures and grid numerals use 300.
-- Instrument Serif Italic for exactly one accent word per page, in `--accent`, always in that page's h1. Today: home "works", advisory "transformation", training "doing", careers "work", resources "writes", about "analyst", contact "working", 404 "page". Do not add another anywhere on a page.
+- Instrument Serif Italic for exactly one accent word per page, in `--accent`, always in that page's h1. Today: home "works", advisory "transformation", training "doing", the guide "Nigeria", careers "work", resources "writes", about "analyst", contact "working", 404 "page". Do not add another anywhere on a page.
 - Eyebrows and labels are capitals with wide tracking, four or five words at most.
 - Keep running text under about 65 characters per line.
 
@@ -101,6 +103,18 @@ Copy
 - Contact is info@practevahq.com and practevahq.com; never a personal address or site.
 - The company's location is "Lagos State, Nigeria" (`company.location`), in the legal line and on About. The registered office on the CAC record is not published on the site; use the CAC record where a document needs it.
 
+## Search (SEO and AI search)
+
+The site is built to be found by people in Nigeria searching for business analysis help, training and careers, and to be quoted correctly by AI assistants.
+
+- Every page sets a `title` (keyword first, under about 60 characters, ending "| Practeva" where it fits) and a `description` (under 160 characters). Name Nigeria where it is true and reads naturally; never stuff keywords.
+- Structured data: `Base.astro` puts the company (`ProfessionalService`), the site and the page in one JSON-LD graph on every page; pages add their own through `schema` (the Course on training, Services on advisory and careers, the Article on the guide), and `pageType` sets AboutPage or ContactPage. `PageHero` adds a BreadcrumbList from its crumbs and `Faq` adds an FAQPage from its questions, so both follow the visible content. Build every value from `site.ts` and `offers.ts`. Never add people, ratings, reviews or a price that is not on the page.
+- `sitemap.xml` lists every `.astro` page automatically (not the 404, which is `noindex`). `robots.txt` welcomes all crawlers, AI ones included, and points at the sitemap.
+- `/llms.txt` is a plain summary for AI assistants, generated from the data files; add new pages to its list.
+- On each deploy, the workflow sends the sitemap's URLs to IndexNow (Bing, whose index also feeds ChatGPT search and Copilot). It never fails the deploy.
+- Write answer-first: a page's first lines should answer its main question in plain words, so a search snippet or an AI answer can quote them.
+- Not linked from ubonudonkang.com for now, by choice (the site names no person).
+
 ## Motion (keep it rare and quick)
 
 The site animates very little, on purpose. Before adding motion, it needs a reason: feedback, showing where something came from, making a state change legible, or stopping content from jumping. "It looks nice" is not a reason.
@@ -124,12 +138,12 @@ The site animates very little, on purpose. Before adding motion, it needs a reas
 6. Set the February 2027 fee (`cohort.fee`) once it is fixed; until then the FAQ says it goes to the waitlist first and quotes the November fee (₦80,000, `cohort.previousFee`). Confirm the November schedule still applies (Wed and Sat, 8 to 10pm WAT).
 7. Confirm the FAQ answer to "Do I need a technical background?" (`src/pages/training.astro`).
 8. Only if the founder returns: confirm the government accounting system record (`founder.record`): it said 14 modules with Ubon as the sole business analyst, while ubonudonkang.com describes two portals and eight finance modules and does not say "sole".
-9. Add an `og:image` (1200 x 630) in `src/layouts/Base.astro`.
+9. Off the site, for search: verify practevahq.com in Google Search Console (a DNS TXT record at Spaceship) and submit `https://practevahq.com/sitemap.xml`; import the site into Bing Webmaster Tools from Search Console; consider a Google Business Profile as a service-area business in Lagos State with the address hidden; and give the company a LinkedIn page that links to the site. Keep the name, description and location the same everywhere.
 10. Hosting: `.github/workflows/deploy.yml` builds the site and publishes it to GitHub Pages on every push to `main`. It needs `main` as the default branch, Settings → Pages → Source set to "GitHub Actions", the custom domain `practevahq.com` saved there, and the domain's DNS pointed at GitHub Pages. Keep `site` in `astro.config.mjs` in step with the domain. Old links to `/#waitlist` now need `/training#waitlist`.
 
 ## Likely next pages
 
-- `/insights`: Ubon's BA nuggets as a content collection in `src/content/`, added to the nav.
+- `/insights`: Ubon's BA nuggets as a content collection in `src/content/`, added to the nav, with more guides like the one under `/training/` (each with an Article, an FAQ and a link from a related page).
 - A page per advisory package once their scope and prices are fixed.
 - Enrolment with Monnify checkout on `/training` when enrolment opens.
 - Case studies, once there is real client work with permission to show it.

@@ -3,6 +3,8 @@
 // night overlay; wash heroes sit on paper with soft green light.
 // Slots: "title" fills the h1 (mark one word with <em class="accent">), "actions" holds
 // the pill and a text link, and the default slot sits under the copy (facts, an index).
+import { breadcrumbs } from '../data/schema';
+
 interface Crumb {
   label: string;
   href?: string;
@@ -26,6 +28,9 @@ const {
   sub,
   image = '/images/practeva-background-deep.webp',
 } = Astro.props;
+
+// The visible breadcrumbs, also as a BreadcrumbList for search results
+const crumbsLd = crumbs && JSON.stringify({ '@context': 'https://schema.org', ...breadcrumbs(Astro.url.pathname, crumbs) });
 ---
 <section
   class:list={['page-hero', `hero-${size}`, tone === 'night' ? 'ground-night hero-night' : 'ground-wash hero-wash']}
@@ -40,6 +45,7 @@ const {
 
   <div class="container hero-inner">
     <div class="hero-copy">
+      {crumbsLd && <script is:inline type="application/ld+json" set:html={crumbsLd} />}
       {crumbs && (
         <nav class="crumbs" aria-label="Breadcrumb">
           <ol>

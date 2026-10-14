@@ -3,17 +3,36 @@ import '@fontsource-variable/onest';
 import '@fontsource/instrument-serif/400-italic.css';
 import '../styles/global.css';
 import { site } from '../data/site';
+import { organization, website, webPage, type Node } from '../data/schema';
 
 interface Props {
   title?: string;
   description?: string;
+  /** schema.org type of the page itself: WebPage, AboutPage, ContactPage, CollectionPage */
+  pageType?: string;
+  /** Extra JSON-LD nodes for this page (a Course, Services, an Article) */
+  schema?: Node[];
+  /** Keep the page out of search results (the 404) */
+  noindex?: boolean;
 }
 
 const {
-  title = 'Practeva | Business analysis, automation and digital transformation',
+  title = 'Business analysis and digital transformation in Nigeria | Practeva',
   description = site.description,
+  pageType = 'WebPage',
+  schema = [],
+  noindex = false,
 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, site.url).toString();
+const ogImage = new URL(site.ogImage, site.url).toString();
+
+// One graph per page: the company, the site, this page, and whatever the page adds.
+// Breadcrumbs and FAQs add their own blocks from PageHero and Faq.
+const graph = {
+  '@context': 'https://schema.org',
+  '@graph': [organization, website, webPage(Astro.url.pathname, title, description, pageType), ...schema],
+};
+const jsonLd = JSON.stringify(graph).replace(/</g, '\\u003c');
 ---
 <!doctype html>
 <html lang="en-GB">
@@ -22,15 +41,25 @@ const canonical = new URL(Astro.url.pathname, site.url).toString();
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="theme-color" content="#03160f" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Practeva" />
+    <meta property="og:locale" content="en_GB" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
-    <!-- TODO: add og:image (1200 x 630) made from the brand renders -->
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={site.ogImageAlt} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <script is:inline type="application/ld+json" set:html={jsonLd} />
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
