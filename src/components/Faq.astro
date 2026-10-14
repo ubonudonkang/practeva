@@ -105,7 +105,7 @@ const faqs = [
     height: 32px;
     border: 1.5px solid var(--deep-green);
     border-radius: 50%;
-    transition: transform 240ms ease;
+    transition: transform var(--duration-ui) var(--ease-out);
   }
 
   .faq-icon::before,
@@ -125,6 +125,34 @@ const faqs = [
 
   details[open] .faq-icon {
     transform: rotate(45deg);
+  }
+
+  /* Answers open and close smoothly; browsers without ::details-content keep the instant open */
+  details::details-content {
+    block-size: 0;
+    opacity: 0;
+    overflow: clip;
+    transition:
+      block-size var(--duration-panel) var(--ease-out),
+      opacity var(--duration-ui) var(--ease-out),
+      content-visibility var(--duration-panel) allow-discrete;
+  }
+
+  details[open]::details-content {
+    block-size: auto;
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    details::details-content {
+      transition:
+        opacity var(--duration-ui) var(--ease-out),
+        content-visibility var(--duration-ui) allow-discrete;
+    }
+
+    .faq-icon {
+      transition: none;
+    }
   }
 
   details p {

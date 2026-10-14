@@ -58,6 +58,19 @@ Copy
 - The trainer section names MTN Nigeria only as Ubon's employer and role. Do not add details of his MTN project work.
 - Contact is info@practevahq.com and practevahq.com; never a personal address or site.
 
+## Motion (keep it rare and quick)
+
+The site animates very little, on purpose. Before adding motion, it needs a reason: feedback, showing where something came from, making a state change legible, or stopping content from jumping. "It looks nice" is not a reason.
+
+- Tokens in `global.css`: `--ease-out` (all UI), `--ease-in-out`, `--duration-press` 160ms, `--duration-ui` 200ms, `--duration-panel` 280ms. Never use the built-in `ease` or a one-off curve; UI motion stays under 300ms.
+- Animate `transform` and `opacity` only. The one exception is accordion height, done through `details::details-content` with `interpolate-size: allow-keywords`.
+- Hover effects go inside `@media (hover: hover) and (pointer: fine)`, so taps on phones don't leave them stuck.
+- Pressable controls scale to 0.97 on `:active` (`.btn`, or add `.press`).
+- Distances are multiplied by `--motion`, which is 0 under reduced motion: fades stay, movement goes. Rotations and height changes switch themselves off in each component's reduced-motion block.
+- Entrances use `@starting-style`; browsers without it simply show the element, which is fine.
+- What moves today: the hero's load sequence (the page's one orchestrated moment, settled by about 780ms), button press and arrow nudge, the pillar and FAQ accordions, the mobile menu panel, and waitlist messages.
+- Deliberately not animated: scroll-triggered section reveals, the process flow, the trainer figures, the hero leaf planes and the italic accent word. Keep it that way.
+
 ## Open items before launch
 
 1. Waitlist form: set `waitlist.endpoint` in `src/data/site.ts`. The form POSTs `FormData` (name, email, phone, role) and expects a 2xx. Until it is set, the form tells people to email instead.

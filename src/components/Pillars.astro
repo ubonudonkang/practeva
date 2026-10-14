@@ -124,7 +124,7 @@ import { cohort, site } from '../data/site';
     border: 1.5px solid currentColor;
     border-radius: 50%;
     justify-self: end;
-    transition: transform 240ms ease;
+    transition: transform var(--duration-ui) var(--ease-out);
   }
 
   .band-icon::before,
@@ -144,6 +144,36 @@ import { cohort, site } from '../data/site';
 
   .band[open] .band-icon {
     transform: rotate(45deg);
+  }
+
+  /* Open and close smoothly, so the bands below slide instead of jumping.
+     Opening one band closes the other at the same time, so both heights ease together.
+     Browsers without ::details-content keep the instant open. */
+  .band::details-content {
+    block-size: 0;
+    opacity: 0;
+    overflow: clip;
+    transition:
+      block-size var(--duration-panel) var(--ease-out),
+      opacity var(--duration-ui) var(--ease-out),
+      content-visibility var(--duration-panel) allow-discrete;
+  }
+
+  .band[open]::details-content {
+    block-size: auto;
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .band::details-content {
+      transition:
+        opacity var(--duration-ui) var(--ease-out),
+        content-visibility var(--duration-ui) allow-discrete;
+    }
+
+    .band-icon {
+      transition: none;
+    }
   }
 
   .band-body {
