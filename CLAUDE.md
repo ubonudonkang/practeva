@@ -20,17 +20,17 @@ Copy that describes Advisory should name both, not business analysis alone.
 - `src/layouts/Page.astro`: every page's shell (header, main, footer). Pass `tone="night"` or `tone="paper"` to match the first section, and `cta` to change the header button (the training page uses "Join the waitlist").
 - `src/components/`:
   - Page structure: `Header`, `Footer`, `PageHero` (night or wash, with breadcrumbs, facts and actions), `HeroFacts`, `PillarIndex`, `SectionHead`, `ContactBand`.
-  - Content blocks: `Statement`, `Pillars`, `BeforeAfter`, `OfferCards`, `NumberedGrid`, `ProcessFlow`, `Record`, `Founder`, `CohortBanner`, `TeamTraining`.
+  - Content blocks: `Statement`, `Pillars`, `BeforeAfter`, `OfferCards`, `NumberedGrid`, `ProcessFlow`, `CohortBanner`, `TeamTraining`.
   - Cohort: `HowItWorks`, `MarketDay`, `Waitlist`.
   - `Faq`: the accordion on home (questions about the company as a whole) and on training (questions about the cohort). Each page keeps its questions at the top of its own file and builds any fact (dates, fees, format) from `site.ts`, so the answers change with the facts. Pass `joined={false}` when it follows a night or wash section.
   - Forms: `ContactForm`, `Waitlist`, with shared behaviour in `src/scripts/forms.ts`. Both post to the Apps Script described under Forms below.
   - `Arrow`: the one arrow, inside CTA pills only.
-- `src/data/site.ts`: every repeated fact (company details, nav, cohort dates, size, schedule, fee, founder bio and record, form endpoints, contact topics). Change facts here, not in components.
+- `src/data/site.ts`: every repeated fact (company details, nav, cohort dates, size, schedule, fee, form endpoints, contact topics). Change facts here, not in components.
 - `src/data/offers.ts`: what Practeva sells, in the site's words: pillars, advisory packages, services, engagement steps, team training, careers services, resources, principles.
 - `src/styles/global.css`: brand tokens, the three grounds (`.ground-paper`, `.ground-wash`, `.ground-night`), type styles, buttons, tags, form fields, leaf tiles.
 - `public/brand/`: the supplied logo files. Never redraw, recolour or retype the logo.
 - `public/brand/patterns/`: the leaf pattern in its deep-green colourway (`column-3x5` and `band-12x3`). The full set, with other colourways, a repeat tile and a generator, is in Ubon's `practeva-leaf-pattern.zip`.
-- `public/images/`: textured brand backgrounds, brand renders (wall sign, notebook) and Ubon's portrait (`ubon-udonkang.webp`, 4:5), as WebP.
+- `public/images/`: textured brand backgrounds, brand renders (wall sign, notebook), as WebP.
 
 Links into the contact form can preselect a topic and start the message: `/contact?topic=advisory&offer=quick-read`. Topics are in `site.ts`; offer slugs come from `packages` and `careerServices`.
 
@@ -72,16 +72,16 @@ Type
 Shape
 - Cards, panels, bands, photo frames, form fields and messages are flat and square: `--radius-card` is 0. Rounded and leaf-cornered cards read as generated; do not bring them back.
 - Buttons and tags are pills. Process steps keep `--radius-step` (20px), the rounded corners of a BPMN task box, and so do the tasks in the week swimlane.
-- The leaf shape survives only as small markers (pillar chips, list bullets, record markers) and in the leaf pattern.
+- The leaf shape survives only as small markers (pillar chips, list bullets) and in the leaf pattern.
 - Processes are drawn the way BAs draw them (`ProcessFlow`): start circle, task boxes, arrows, end circle, final box filled deep-green.
-- From the reference sites: a short label over a hairline above each section heading (`SectionHead`), numbered columns divided by hairlines (`NumberedGrid`), large light figures (`Record`), breadcrumbs on inner pages.
+- From the reference sites: a short label over a hairline above each section heading (`SectionHead`), numbered columns divided by hairlines (`NumberedGrid`), breadcrumbs on inner pages.
 
 Pillar colour coding (keep it consistent on every page)
 - Advisory: deep-green. Training: leaf-green (night text on it). Careers: forest-green.
 
 Logo
 - Night grounds: `practeva-lockup-horizontal-reversed.svg`. Light grounds: `practeva-lockup-horizontal-color.svg`. The header picks one from the page's `tone`.
-- The header lockup is 40px tall, below the brand guide's 64px minimum, at Ubon's request; under 560px the symbol stands alone at 32px. Elsewhere keep the guide's minimums: horizontal lockup 64px, symbol 24px.
+- The header lockup is 40px tall, below the brand guide's 64px minimum, by request; under 560px the symbol stands alone at 32px. Elsewhere keep the guide's minimums: horizontal lockup 64px, symbol 24px.
 - Clear space on every side equals the height of the capital P.
 
 Leaf pattern
@@ -95,8 +95,9 @@ Copy
 - Never use em dashes. Use a comma, semicolon or full stop.
 - Calls to action are a verb plus an object ("Book a call", "Join the waitlist"). One pill per section; a second action is a text link. One arrow, only inside a CTA pill (the `Arrow` component).
 - Never promise jobs, salaries or certifications. Say what people build and practise.
-- Practeva has no client case studies yet. Proof is Ubon's record from earlier roles, always labelled as such, and the cohort facts. Never invent clients, testimonials or results. Keep the figures in step with ubonudonkang.com (the rights issue is ₦351bn there).
-- Name no current employer for Ubon anywhere on the site, in code comments or in this file, and nothing that hints at one (a team name, a sector). Earlier roles (Access Bank) are fine. This holds until Ubon says otherwise.
+- For now the site names no person: no founder, name, photo, bio, employer, or results from anyone's earlier roles. Earlier results cannot be shown without saying whose they are, so they stay off too; never present them as Practeva's. Speak as "we" and "Practeva". This holds until Ubon says otherwise.
+- To bring the founder back, revert the commit "Take the founder off the site": it restores the `Founder` and `Record` components, the `founder` data in `site.ts`, the portrait and the sections on home, advisory, training, about and contact. Then name no current employer: earlier roles (Access Bank) only, with figures in step with ubonudonkang.com (the rights issue is ₦351bn there).
+- Practeva has no client case studies yet. Never invent clients, testimonials or results.
 - Contact is info@practevahq.com and practevahq.com; never a personal address or site.
 - The company's location is "Lagos State, Nigeria" (`company.location`), in the legal line and on About. The registered office on the CAC record is not published on the site; use the CAC record where a document needs it.
 
@@ -111,7 +112,7 @@ The site animates very little, on purpose. Before adding motion, it needs a reas
 - Distances are multiplied by `--motion`, which is 0 under reduced motion: fades stay, movement goes. Rotations and height changes switch themselves off in each component's reduced-motion block.
 - Entrances use `@starting-style`; browsers without it simply show the element, which is fine.
 - What moves today: each page's hero load sequence (its one orchestrated moment, settled by about 780ms), button press and arrow nudge, underline growth on nav and pillar links, the pillar and FAQ accordions, the mobile menu panel, and form messages.
-- Deliberately not animated: scroll-triggered section reveals, process flows, the record figures, the hero leaf planes, the washes and the italic accent word. Keep it that way.
+- Deliberately not animated: scroll-triggered section reveals, process flows, the hero leaf planes, the washes and the italic accent word. Keep it that way.
 
 ## Open items before launch
 
@@ -122,7 +123,7 @@ The site animates very little, on purpose. Before adding motion, it needs a reas
 5. About principles (`principles`): confirm they read the way you want Practeva to work.
 6. Set the February 2027 fee (`cohort.fee`) once it is fixed; until then the FAQ says it goes to the waitlist first and quotes the November fee (₦80,000, `cohort.previousFee`). Confirm the November schedule still applies (Wed and Sat, 8 to 10pm WAT).
 7. Confirm the FAQ answer to "Do I need a technical background?" (`src/pages/training.astro`).
-8. Confirm the government accounting system record (`founder.record`): the site says 14 modules with Ubon as the sole business analyst, while ubonudonkang.com describes two portals and eight finance modules and does not say "sole".
+8. Only if the founder returns: confirm the government accounting system record (`founder.record`): it said 14 modules with Ubon as the sole business analyst, while ubonudonkang.com describes two portals and eight finance modules and does not say "sole".
 9. Add an `og:image` (1200 x 630) in `src/layouts/Base.astro`.
 10. Hosting: `.github/workflows/deploy.yml` builds the site and publishes it to GitHub Pages on every push to `main`. It needs `main` as the default branch, Settings → Pages → Source set to "GitHub Actions", the custom domain `practevahq.com` saved there, and the domain's DNS pointed at GitHub Pages. Keep `site` in `astro.config.mjs` in step with the domain. Old links to `/#waitlist` now need `/training#waitlist`.
 

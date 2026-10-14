@@ -49,23 +49,6 @@ export const cohort = {
   waitlistType: 'BA Bridge February 2027 waitlist (practevahq.com)',
 };
 
-export const founder = {
-  name: 'Ubon Udonkang',
-  role: 'Founder and lead trainer',
-  photo: '/images/ubon-udonkang.webp',
-  photoAlt: 'Ubon Udonkang, seated, in a white kaftan with black embroidery and a black cap',
-  // Earlier roles only: the site names no current employer for Ubon (see CLAUDE.md, Copy).
-  bio: 'Ubon is a working business analyst who previously worked at Access Bank. He holds the PSM I certification, is working towards CBAP, and his work spans fintech, banking operations, process automation and Open Banking regulation.',
-  record: [
-    // ₦351bn, as on ubonudonkang.com and its rights issue case study.
-    { figure: '₦351bn', label: "Access Bank's rights issue, digitised with Ubon leading the analysis" },
-    // 8 hours (480 minutes) down to 45 is 91% less time.
-    { figure: '91%', label: 'Less time on general ledger reconciliation, from 8 hours to 45 minutes, using RPA' },
-    { figure: '13+', label: 'African subsidiaries reached by cross-border automation he delivered at Access Bank' },
-    { figure: '14', label: 'Modules in a government accounting system, with Ubon as the sole business analyst' },
-  ],
-};
-
 // The one Apps Script web app behind ubonudonkang.com's forms (its scripts/site_forms.gs).
 // It routes a post by form_name: 'ba-waitlist-*' to the Waitlist tab, 'contact' to the Contact
 // tab, and answers {"result":"ok"} once the row is saved. It stores only the fields it knows:
