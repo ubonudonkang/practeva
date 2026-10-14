@@ -99,7 +99,7 @@ The site animates very little, on purpose. Before adding motion, it needs a reas
 9. Replace the symbol in the founder tile (`Founder.astro`) and the contact page tile with a real photo of Ubon (4:5, WebP, under 200 KB).
 10. The footer and About page show the registered office, which the CAC report also lists as Ubon's residential address. Confirm that is intended.
 11. Add an `og:image` (1200 x 630) in `src/layouts/Base.astro`.
-12. Deploy: GitHub Pages (the `withastro/action` workflow), Netlify or Vercel all work for a static Astro build. Point practevahq.com at it and keep `site` in `astro.config.mjs` in step. Old links to `/#waitlist` now need `/training#waitlist`.
+12. Hosting: `.github/workflows/deploy.yml` builds the site and publishes it to GitHub Pages on every push to `main`. It needs `main` as the default branch, Settings → Pages → Source set to "GitHub Actions", the custom domain `practevahq.com` saved there, and the domain's DNS pointed at GitHub Pages. Keep `site` in `astro.config.mjs` in step with the domain. Old links to `/#waitlist` now need `/training#waitlist`.
 
 ## Likely next pages
 
