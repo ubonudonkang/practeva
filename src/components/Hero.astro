@@ -162,27 +162,36 @@ import { cohort } from '../data/site';
     font-weight: 600;
   }
 
-  /* The page's one orchestrated moment: the hero settles in on load */
+  /* The page's one orchestrated moment: the hero settles in on load.
+     The call to action is settled by about 780ms. */
   .hero-copy > * {
-    animation: rise 760ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    animation: rise 600ms var(--ease-out) both;
   }
 
   .hero-copy > :nth-child(2) {
-    animation-delay: 90ms;
+    animation-delay: 60ms;
   }
 
   .hero-copy > :nth-child(3) {
-    animation-delay: 180ms;
+    animation-delay: 120ms;
   }
 
   .hero-copy > :nth-child(4) {
-    animation-delay: 270ms;
+    animation-delay: 180ms;
   }
 
   @keyframes rise {
     from {
       opacity: 0;
-      transform: translateY(18px);
+      transform: translateY(calc(16px * var(--motion)));
+    }
+  }
+
+  /* Reduced motion: one short fade, all together */
+  @media (prefers-reduced-motion: reduce) {
+    .hero-copy > :nth-child(n) {
+      animation-duration: var(--duration-ui);
+      animation-delay: 0ms;
     }
   }
 

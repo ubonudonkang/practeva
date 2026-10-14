@@ -27,7 +27,7 @@ import { cohort, site, waitlist } from '../data/site';
         <label for="wl-role">What do you do now? <span class="optional">Optional</span></label>
         <input id="wl-role" name="role" type="text" autocomplete="organization-title" />
       </div>
-      <button class="btn" type="submit">Join the waitlist<Arrow /></button>
+      <button class="btn" type="submit"><span class="btn-label">Join the waitlist</span><Arrow /></button>
       <p class="form-note">We only use these details to contact you about Practeva cohorts.</p>
       <p class="form-status" role="status" aria-live="polite"></p>
     </form>
@@ -39,9 +39,22 @@ import { cohort, site, waitlist } from '../data/site';
   if (form) {
     const status = form.querySelector<HTMLElement>('.form-status')!;
     const button = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+    const label = button.querySelector<HTMLElement>('.btn-label')!;
+    const idleLabel = label.textContent ?? 'Join the waitlist';
+
+    // Clearing first means a repeated message still animates in and is announced again
     const say = (text: string, tone: 'ok' | 'error') => {
-      status.textContent = text;
+      status.textContent = '';
       status.dataset.tone = tone;
+      requestAnimationFrame(() => {
+        status.textContent = text;
+      });
+    };
+
+    const setPending = (pending: boolean) => {
+      button.disabled = pending;
+      form.setAttribute('aria-busy', String(pending));
+      label.textContent = pending ? 'Joining…' : idleLabel;
     };
 
     form.addEventListener('submit', async (e) => {
@@ -65,7 +78,7 @@ import { cohort, site, waitlist } from '../data/site';
         return;
       }
 
-      button.disabled = true;
+      setPending(true);
       try {
         const res = await fetch(endpoint, {
           method: 'POST',
@@ -78,7 +91,7 @@ import { cohort, site, waitlist } from '../data/site';
       } catch {
         say(`We couldn't add you just now. Try again, or email ${form.dataset.email}.`, 'error');
       } finally {
-        button.disabled = false;
+        setPending(false);
       }
     });
   }
@@ -180,11 +193,26 @@ import { cohort, site, waitlist } from '../data/site';
     font-size: 15px;
     line-height: 22px;
     font-weight: 600;
+    opacity: 1;
+    transform: translateY(0);
+    transition:
+      opacity 240ms var(--ease-out),
+      transform 240ms var(--ease-out);
   }
 
+  /* Messages rise into place instead of popping in */
+  @starting-style {
+    .form-status {
+      opacity: 0;
+      transform: translateY(calc(4px * var(--motion)));
+    }
+  }
+
+  /* Success is the one moment that earns a slightly longer beat; still no bounce */
   .form-status[data-tone='ok'] {
     background: var(--highlight);
     color: var(--on-highlight);
+    transition-duration: 320ms;
   }
 
   .form-status[data-tone='error'] {

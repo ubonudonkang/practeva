@@ -26,7 +26,7 @@ const links = [
 
     <a class="btn header-cta" href="#waitlist">Join the waitlist<Arrow /></a>
 
-    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu">
+    <button class="menu-toggle press" type="button" aria-expanded="false" aria-controls="mobile-menu">
       <span class="menu-icon" aria-hidden="true"></span>
       <span>Menu</span>
     </button>
@@ -110,11 +110,13 @@ const links = [
     text-decoration: none;
     padding-block: var(--space-2);
     background: linear-gradient(var(--highlight), var(--highlight)) left bottom / 0 1.5px no-repeat;
-    transition: background-size 200ms ease;
+    transition: background-size var(--duration-ui) var(--ease-out);
   }
 
-  .nav a:hover {
-    background-size: 100% 1.5px;
+  @media (hover: hover) and (pointer: fine) {
+    .nav a:hover {
+      background-size: 100% 1.5px;
+    }
   }
 
   .header-cta {
@@ -144,7 +146,7 @@ const links = [
     width: 16px;
     height: 1.5px;
     background: currentColor;
-    transition: transform 200ms ease;
+    transition: transform var(--duration-ui) var(--ease-out);
   }
 
   .menu-icon {
@@ -166,9 +168,38 @@ const links = [
     transform: translateY(-6px) rotate(-90deg);
   }
 
+  /* The panel drops from the bar that opened it and leaves the same way, a little faster.
+     Browsers without @starting-style or discrete display transitions show and hide it instantly. */
   .mobile-menu {
     background: var(--night);
     border-block: 1px solid var(--line);
+    opacity: 1;
+    transform: translateY(0);
+    transition:
+      opacity var(--duration-ui) var(--ease-out),
+      transform var(--duration-ui) var(--ease-out),
+      display var(--duration-ui) allow-discrete;
+  }
+
+  .mobile-menu[hidden] {
+    display: none;
+    opacity: 0;
+    transform: translateY(calc(-8px * var(--motion)));
+    transition-duration: 150ms;
+  }
+
+  @starting-style {
+    .mobile-menu {
+      opacity: 0;
+      transform: translateY(calc(-8px * var(--motion)));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .menu-icon,
+    .menu-icon::before {
+      transition: none;
+    }
   }
 
   .mobile-menu nav {
