@@ -1,6 +1,9 @@
 ---
 // The contact form. Links can preselect a topic and name an offer:
 // /contact?topic=advisory&offer=quick-read
+// It posts to the Apps Script's Contact tab, which keeps first_name, last_name, email, company,
+// type, message and submission_id. On submit the topic becomes type ("Practeva: …", so these
+// stand apart from ubonudonkang.com's enquiries) and a phone number joins the end of the message.
 import Arrow from './Arrow.astro';
 import { forms, site, topics } from '../data/site';
 import { careerServices, packages } from '../data/offers';
@@ -14,29 +17,34 @@ const offerNames = Object.fromEntries([...packages, ...careerServices].map((o) =
   data-email={site.email}
   data-pending="Sending…"
   data-success="Thanks, your message is with us. We'll reply by email."
-  data-mailto
   data-offers={JSON.stringify(offerNames)}
   novalidate
 >
+  <input type="hidden" name="form_name" value="contact" />
+  <input type="text" name="_gotcha" class="visually-hidden" tabindex="-1" autocomplete="off" aria-hidden="true" />
   <div class="field-row">
     <div class="field">
-      <label for="ct-name">Full name</label>
-      <input id="ct-name" name="name" type="text" autocomplete="name" required data-error="Add your full name so we know who to reply to." />
+      <label for="ct-first">First name</label>
+      <input id="ct-first" name="first_name" type="text" autocomplete="given-name" required data-error="Add your first name so we know who to reply to." />
     </div>
     <div class="field">
-      <label for="ct-email">Email</label>
-      <input id="ct-email" name="email" type="email" autocomplete="email" required data-error="Add an email address we can reply to, like name@example.com." />
+      <label for="ct-last">Last name</label>
+      <input id="ct-last" name="last_name" type="text" autocomplete="family-name" required data-error="Add your last name too." />
     </div>
   </div>
   <div class="field-row">
     <div class="field">
+      <label for="ct-email">Email</label>
+      <input id="ct-email" name="email" type="email" autocomplete="email" required data-error="Add an email address we can reply to, like name@example.com." />
+    </div>
+    <div class="field">
       <label for="ct-phone">Phone or WhatsApp <span class="optional">Optional</span></label>
       <input id="ct-phone" name="phone" type="tel" autocomplete="tel" placeholder="+234" />
     </div>
-    <div class="field">
-      <label for="ct-org">Organisation <span class="optional">Optional</span></label>
-      <input id="ct-org" name="organisation" type="text" autocomplete="organization" />
-    </div>
+  </div>
+  <div class="field">
+    <label for="ct-org">Organisation <span class="optional">Optional</span></label>
+    <input id="ct-org" name="company" type="text" autocomplete="organization" />
   </div>
   <div class="field">
     <label for="ct-topic">What can we help with?</label>
@@ -55,10 +63,23 @@ const offerNames = Object.fromEntries([...packages, ...careerServices].map((o) =
 </form>
 
 <script>
-  import { wireForm } from '../scripts/forms';
+  import { uniqueId, wireForm, type Params } from '../scripts/forms';
 
   const form = document.querySelector<HTMLFormElement>('.contact-form');
-  wireForm(form);
+
+  // Shape the post for the Contact tab: the topic's label as type, the phone in the message,
+  // and a fresh id the script uses to ignore a repeat of the same submission.
+  wireForm(form, (params, f) => {
+    const topic = f.elements.namedItem('topic') as HTMLSelectElement;
+    const { topic: _topic, phone, ...rest }: Params = params;
+    const out: Params = {
+      ...rest,
+      type: `Practeva: ${topic.selectedOptions[0]?.textContent?.trim() ?? 'Enquiry'}`,
+      submission_id: uniqueId(),
+    };
+    if (phone) out.message = `${params.message}\n\nPhone or WhatsApp: ${phone}`;
+    return out;
+  });
 
   // Preselect the topic and start the message when a link names them
   if (form) {
