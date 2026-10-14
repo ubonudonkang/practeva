@@ -1,0 +1,236 @@
+---
+import Arrow from './Arrow.astro';
+
+const links = [
+  { href: '#how', label: 'How it works' },
+  { href: '#market-day', label: 'Market Day' },
+  { href: '#trainer', label: 'Your trainer' },
+  { href: '#faq', label: 'FAQ' },
+];
+---
+<header class="site-header ground-night">
+  <div class="container bar">
+    <a href="/" class="brand">
+      <!-- Horizontal lockup at its 64px minimum; below that width the symbol stands alone, per the brand guide -->
+      <img class="brand-lockup" src="/brand/practeva-lockup-horizontal-reversed.svg" alt="Practeva home" width="254" height="64" />
+      <img class="brand-symbol" src="/brand/practeva-symbol-reversed.svg" alt="Practeva home" width="40" height="40" />
+    </a>
+
+    <nav class="nav" aria-label="Main">
+      <ul>
+        {links.map((l) => (
+          <li><a href={l.href}>{l.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+
+    <a class="btn header-cta" href="#waitlist">Join the waitlist<Arrow /></a>
+
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu">
+      <span class="menu-icon" aria-hidden="true"></span>
+      <span>Menu</span>
+    </button>
+  </div>
+
+  <div class="mobile-menu" id="mobile-menu" hidden>
+    <nav class="container" aria-label="Main, mobile">
+      <ul>
+        {links.map((l) => (
+          <li><a href={l.href}>{l.label}</a></li>
+        ))}
+      </ul>
+      <a class="btn" href="#waitlist">Join the waitlist<Arrow /></a>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('.menu-toggle');
+  const menu = document.getElementById('mobile-menu');
+  if (toggle && menu) {
+    const setOpen = (open: boolean) => {
+      toggle.setAttribute('aria-expanded', String(open));
+      menu.hidden = !open;
+    };
+    toggle.addEventListener('click', () => setOpen(menu.hidden));
+    menu.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setOpen(false)));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !menu.hidden) {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+  }
+</script>
+
+<style>
+  .site-header {
+    position: absolute;
+    inset: 0 0 auto 0;
+    z-index: 10;
+    background: transparent;
+  }
+
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+    padding-block: 28px;
+  }
+
+  .brand {
+    flex-shrink: 0;
+    border-radius: 8px;
+  }
+
+  .brand-lockup {
+    width: 254px;
+    height: 64px;
+  }
+
+  .brand-symbol {
+    display: none;
+    width: 40px;
+    height: 40px;
+  }
+
+  .nav {
+    margin-left: auto;
+  }
+
+  .nav ul {
+    display: flex;
+    gap: var(--space-8);
+  }
+
+  .nav a {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--ink);
+    text-decoration: none;
+    padding-block: var(--space-2);
+    background: linear-gradient(var(--highlight), var(--highlight)) left bottom / 0 1.5px no-repeat;
+    transition: background-size 200ms ease;
+  }
+
+  .nav a:hover {
+    background-size: 100% 1.5px;
+  }
+
+  .header-cta {
+    min-height: 46px;
+    padding: 0 20px;
+    font-size: 15px;
+  }
+
+  .menu-toggle {
+    display: none;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: 44px;
+    margin-left: auto;
+    padding: 0 var(--space-4);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--ink);
+    font: 600 15px/1 var(--font-sans);
+    cursor: pointer;
+  }
+
+  .menu-icon,
+  .menu-icon::before {
+    display: block;
+    width: 16px;
+    height: 1.5px;
+    background: currentColor;
+    transition: transform 200ms ease;
+  }
+
+  .menu-icon {
+    position: relative;
+    transform: translateY(-3px);
+  }
+
+  .menu-icon::before {
+    content: '';
+    position: absolute;
+    top: 6px;
+  }
+
+  .menu-toggle[aria-expanded='true'] .menu-icon {
+    transform: translateY(0) rotate(45deg);
+  }
+
+  .menu-toggle[aria-expanded='true'] .menu-icon::before {
+    transform: translateY(-6px) rotate(-90deg);
+  }
+
+  .mobile-menu {
+    background: var(--night);
+    border-block: 1px solid var(--line);
+  }
+
+  .mobile-menu nav {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    padding-block: var(--space-6) var(--space-8);
+  }
+
+  .mobile-menu ul {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .mobile-menu li + li {
+    border-top: 1px solid var(--line);
+  }
+
+  .mobile-menu ul a {
+    display: block;
+    padding-block: var(--space-4);
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+  }
+
+  .mobile-menu .btn {
+    align-self: flex-start;
+  }
+
+  @media (max-width: 1080px) {
+    .nav ul {
+      gap: var(--space-6);
+    }
+
+    .header-cta {
+      display: none;
+    }
+  }
+
+  @media (max-width: 880px) {
+    .nav {
+      display: none;
+    }
+
+    .menu-toggle {
+      display: inline-flex;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .bar {
+      padding-block: 20px;
+    }
+
+    .brand-lockup {
+      display: none;
+    }
+
+    .brand-symbol {
+      display: block;
+    }
+  }
+</style>
