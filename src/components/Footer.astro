@@ -108,9 +108,11 @@ const columns = [
     overflow-wrap: anywhere;
   }
 
-  .footer-cols a:hover {
-    text-decoration: underline;
-    text-underline-offset: 4px;
+  @media (hover: hover) and (pointer: fine) {
+    .footer-cols a:hover {
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
   }
 
   /* Big lockup, the way the reference sites sign off. Clear space above equals the cap height. */

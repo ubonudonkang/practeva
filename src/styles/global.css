@@ -274,6 +274,13 @@ a {
   transform: scale(calc(1 - 0.03 * var(--motion)));
 }
 
+/* Controls with their own press or open feedback don't need the browser's tap flash on phones */
+.btn,
+.press,
+summary {
+  -webkit-tap-highlight-color: transparent;
+}
+
 .link {
   color: var(--accent-text);
   font-weight: 600;
