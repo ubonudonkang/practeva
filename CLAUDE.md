@@ -1,6 +1,12 @@
 # Practeva website (practevahq.com)
 
-Marketing site for Practeva Limited, a business analysis firm registered in Nigeria (RC 9931539, 12 October 2026). It does three things, always in this order: **Advisory** (requirements, process mapping and feasibility for founders and teams), **Training** (the BA Bridge Cohort for career changers, plus team training) and **Careers** (CV, profile, interview and portfolio support). The site speaks for the company first and Advisory leads; the cohort has its own page.
+Marketing site for Practeva Limited, a business analysis and technology advisory firm registered in Nigeria (RC 9931539, 12 October 2026). It does three things, always in this order: **Advisory**, **Training** (the BA Bridge Cohort for career changers, plus team training) and **Careers** (CV, profile, interview and portfolio support). The site speaks for the company first and Advisory leads; the cohort has its own page.
+
+Advisory is broader than business analysis. It follows the objects in the company's memorandum (MEMART):
+- **Object A, business analysis and business process consulting:** requirements elicitation, analysis and documentation; stakeholder engagement; process mapping and improvement; feasibility assessment; solution evaluation; implementation and UAT support.
+- **Object B, advisory:** digital transformation, business systems, process automation, operational improvement, and aligning technology with what the business needs.
+
+Copy that describes Advisory should name both, not business analysis alone.
 
 ## Stack and commands
 
@@ -58,13 +64,14 @@ Gradients and washes
 
 Type
 - Onest for everything. Headlines are light and tight: weight `--weight-headline` (450) with -0.035 to -0.045em tracking. Card titles, step names and subheadings use `--weight-title` (600). Body 400, labels 600. Big figures and grid numerals use 300.
-- Instrument Serif Italic for exactly one accent word per page, in `--accent`, always in that page's h1. Today: home "before", advisory "teams", training "doing", careers "work", resources "writes", about "analyst", contact "working", 404 "page". Do not add another anywhere on a page.
+- Instrument Serif Italic for exactly one accent word per page, in `--accent`, always in that page's h1. Today: home "works", advisory "transformation", training "doing", careers "work", resources "writes", about "analyst", contact "working", 404 "page". Do not add another anywhere on a page.
 - Eyebrows and labels are capitals with wide tracking, four or five words at most.
 - Keep running text under about 65 characters per line.
 
 Shape
-- Buttons and tags are pills. Cards use `--radius-card` (18px), process steps `--radius-step` (20px).
-- Leaf tile (site addition, taken from the leaves in the P): two opposite corners rounded, two sharp. `.leaf` and `.leaf-lg` in global.css. Use it for bands, offer cards, the before and after pair and photo crops, not everywhere.
+- Cards, panels, bands, photo frames, form fields and messages are flat and square: `--radius-card` is 0. Rounded and leaf-cornered cards read as generated; do not bring them back.
+- Buttons and tags are pills. Process steps keep `--radius-step` (20px), the rounded corners of a BPMN task box, and so do the tasks in the week swimlane.
+- The leaf shape survives only as small markers (pillar chips, list bullets, record markers) and in the leaf pattern.
 - Processes are drawn the way BAs draw them (`ProcessFlow`): start circle, task boxes, arrows, end circle, final box filled deep-green.
 - From the reference sites: a short label over a hairline above each section heading (`SectionHead`), numbered columns divided by hairlines (`NumberedGrid`), large light figures (`Record`), breadcrumbs on inner pages.
 
