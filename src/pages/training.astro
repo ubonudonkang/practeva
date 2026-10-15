@@ -8,6 +8,8 @@ import MarketDay from '../components/MarketDay.astro';
 import TeamTraining from '../components/TeamTraining.astro';
 import Faq from '../components/Faq.astro';
 import Waitlist from '../components/Waitlist.astro';
+import SectionHead from '../components/SectionHead.astro';
+import LocalTimes from '../components/LocalTimes.astro';
 import { cohort, markets } from '../data/site';
 import { orgId, pageUrl } from '../data/schema';
 
@@ -23,7 +25,7 @@ const faqs = [
   },
   {
     q: 'Can I join from outside Nigeria?',
-    a: 'Yes, from anywhere in Nigeria or abroad. Live sessions run 8 to 10pm West Africa Time: in winter that is 7 to 9pm in London and Dublin, 8 to 10pm in Paris and Berlin, and 2 to 4pm in New York and Toronto, each an hour later in summer. Both sessions are recorded.',
+    a: 'Yes, from anywhere in Nigeria or abroad. Live sessions run 8 to 10pm West Africa Time: 7 to 9pm in London and Dublin in winter, 11pm in Dubai, 2 to 4pm in New York and Toronto, and early morning in Sydney and Auckland. The table of session times shows your city. Both sessions are recorded.',
   },
   {
     q: 'How much time does it take each week?',
@@ -92,7 +94,7 @@ const course = {
 <Page
   tone="night"
   title="Business analysis training in Nigeria | BA Bridge Cohort"
-  description={`Twelve weeks of live online, case-based business analysis training for career changers in Nigeria, the UK and beyond. Join the ${cohort.next} waitlist.`}
+  description={`Twelve weeks of live online, case-based business analysis training for career changers in Nigeria, the UK, Australia and more. Join the ${cohort.next} waitlist.`}
   schema={[course]}
   cta={{ label: 'Join the waitlist', href: '#waitlist' }}
 >
@@ -119,6 +121,19 @@ const course = {
 
   <HowItWorks />
   <MarketDay />
+
+  <section class="ground-paper section" id="times" aria-labelledby="times-title">
+    <div class="container">
+      <SectionHead
+        id="times-title"
+        label="Joining from abroad"
+        title="Live sessions, in your time."
+        note={`Classes run ${cohort.schedule.replace('Wednesdays and Saturdays, ', '')} on Wednesdays and Saturdays, and both are recorded. People joining from outside Nigeria pay in ${markets.abroadCurrency}.`}
+      />
+      <LocalTimes from={20} to={22} />
+    </div>
+  </section>
+
   <TeamTraining />
   <Faq items={faqs} />
   <Waitlist />
