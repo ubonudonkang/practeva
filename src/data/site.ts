@@ -11,6 +11,12 @@ export const site = {
   // Social preview (1200 x 630) for every page, and what it shows
   ogImage: '/og/practeva.png',
   ogImageAlt: 'Practeva: business analysis and digital transformation in Nigeria',
+  // Practeva's own profiles elsewhere. They go into the structured data as sameAs, so search
+  // engines and AI assistants treat them and the site as one company. Add the Google Business
+  // Profile's Maps link here once it is verified.
+  profiles: {
+    linkedin: 'https://www.linkedin.com/company/practeva/',
+  },
 };
 
 // From the CAC certificate and status report. The site gives the company's location,

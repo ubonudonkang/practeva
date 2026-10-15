@@ -48,6 +48,7 @@ export const organization: Node = {
   address: { '@type': 'PostalAddress', addressRegion: 'Lagos State', addressCountry: 'NG' },
   areaServed,
   knowsAbout,
+  sameAs: Object.values(site.profiles),
   contactPoint: {
     '@type': 'ContactPoint',
     contactType: 'enquiries',
