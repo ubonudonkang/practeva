@@ -8,7 +8,9 @@ import MarketDay from '../components/MarketDay.astro';
 import TeamTraining from '../components/TeamTraining.astro';
 import Faq from '../components/Faq.astro';
 import Waitlist from '../components/Waitlist.astro';
-import { cohort } from '../data/site';
+import SectionHead from '../components/SectionHead.astro';
+import LocalTimes from '../components/LocalTimes.astro';
+import { cohort, markets } from '../data/site';
 import { orgId, pageUrl } from '../data/schema';
 
 const faqs = [
@@ -22,8 +24,8 @@ const faqs = [
     a: 'No. The cohort is built for career changers and starts from the foundations of the role.',
   },
   {
-    q: 'Can I join from outside Lagos?',
-    a: 'Yes. The cohort is taught live online on West Africa Time, so you can join from anywhere in Nigeria, or from further afield if the times work for you.',
+    q: 'Can I join from outside Nigeria?',
+    a: 'Yes, from anywhere in Nigeria or abroad. Live sessions run 8 to 10pm West Africa Time: 7 to 9pm in London and Dublin in winter, 11pm in Dubai, 2 to 4pm in New York and Toronto, and early morning in Sydney and Auckland. The table of session times shows your city. Both sessions are recorded.',
   },
   {
     q: 'How much time does it take each week?',
@@ -32,8 +34,8 @@ const faqs = [
   {
     q: 'How much does it cost?',
     a: cohort.fee
-      ? `The fee is ${cohort.fee}, paid in full when you enrol. We don't offer instalments at the moment.`
-      : `The ${cohort.next} fee goes to the waitlist first, before public enrolment. The ${cohort.previous} cohort was ${cohort.previousFee}, paid in full when you enrolled. We don't offer instalments at the moment.`,
+      ? `The fee is ${cohort.fee}${cohort.feeUsd ? `, or ${cohort.feeUsd} if you join from outside Nigeria` : ''}, paid in full when you enrol. We don't offer instalments at the moment.`
+      : `The ${cohort.next} fee goes to the waitlist first, before public enrolment, with a fee in ${markets.abroadCurrency} for people joining from outside Nigeria. The ${cohort.previous} cohort was ${cohort.previousFee}, paid in full when you enrolled. We don't offer instalments at the moment.`,
   },
   {
     q: 'Can I defer to a later cohort?',
@@ -55,7 +57,7 @@ const course = {
   '@type': 'Course',
   '@id': `${pageUrl('/training/')}#course`,
   name: cohort.programme,
-  description: `Twelve weeks of live, case-based business analysis training for career changers in Nigeria. You work one case for a fictional microfinance bank and leave with a requirements document, BPMN process maps, a user story backlog and a UAT plan, plus a CV rewrite and a mock interview.`,
+  description: `Twelve weeks of live online, case-based business analysis training for career changers in Nigeria and abroad. You work one case for a fictional microfinance bank and leave with a requirements document, BPMN process maps, a user story backlog and a UAT plan, plus a CV rewrite and a mock interview.`,
   provider: { '@id': orgId },
   url: pageUrl('/training/'),
   inLanguage: 'en',
@@ -92,7 +94,7 @@ const course = {
 <Page
   tone="night"
   title="Business analysis training in Nigeria | BA Bridge Cohort"
-  description={`Twelve weeks of live online, case-based business analysis training for career changers in Nigeria. Join the waitlist for the ${cohort.next} ${cohort.programme}.`}
+  description={`Twelve weeks of live online, case-based business analysis training for career changers in Nigeria, the UK, Australia and more. Join the ${cohort.next} waitlist.`}
   schema={[course]}
   cta={{ label: 'Join the waitlist', href: '#waitlist' }}
 >
@@ -100,7 +102,7 @@ const course = {
     tone="night"
     crumbs={[{ label: 'Home', href: '/' }, { label: 'Training' }]}
     eyebrow={`${cohort.programme}, ${cohort.next}`}
-    sub="Live online cohorts, real case work and career support for people in Nigeria moving into IT business analysis."
+    sub="Live online cohorts, real case work and career support for people in Nigeria and abroad moving into IT business analysis."
   >
     <Fragment slot="title">Learn business analysis by <em class="accent">doing</em> the&nbsp;work.</Fragment>
     <Fragment slot="actions">
@@ -119,6 +121,19 @@ const course = {
 
   <HowItWorks />
   <MarketDay />
+
+  <section class="ground-paper section" id="times" aria-labelledby="times-title">
+    <div class="container">
+      <SectionHead
+        id="times-title"
+        label="Joining from abroad"
+        title="Live sessions, in your time."
+        note={`Classes run ${cohort.schedule.replace('Wednesdays and Saturdays, ', '')} on Wednesdays and Saturdays, and both are recorded. People joining from outside Nigeria pay in ${markets.abroadCurrency}.`}
+      />
+      <LocalTimes from={20} to={22} />
+    </div>
+  </section>
+
   <TeamTraining />
   <Faq items={faqs} />
   <Waitlist />

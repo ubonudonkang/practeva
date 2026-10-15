@@ -2,11 +2,17 @@
 // from site.ts and offers.ts, so the markup says exactly what the pages say. No people, no
 // ratings or reviews, and nothing the site does not state (see CLAUDE.md, Search).
 
-import { company, site } from './site';
+import { company, markets, site } from './site';
 
 export type Node = Record<string, unknown>;
 
 export const orgId = `${site.url}/#organization`;
+
+// Nigeria first, then the markets Practeva serves remotely
+export const areaServed = [
+  { '@type': 'Country', name: markets.home },
+  ...markets.abroad.map((name) => ({ '@type': name === 'Europe' ? 'Place' : 'Country', name })),
+];
 export const websiteId = `${site.url}/#website`;
 export const pageUrl = (path: string) => new URL(path, site.url).toString();
 
@@ -40,14 +46,14 @@ export const organization: Node = {
   foundingDate: company.registeredIso,
   identifier: { '@type': 'PropertyValue', propertyID: 'CAC RC number', value: company.rc },
   address: { '@type': 'PostalAddress', addressRegion: 'Lagos State', addressCountry: 'NG' },
-  areaServed: { '@type': 'Country', name: 'Nigeria' },
+  areaServed,
   knowsAbout,
   contactPoint: {
     '@type': 'ContactPoint',
     contactType: 'enquiries',
     email: site.email,
     url: `${site.url}/contact/`,
-    areaServed: 'NG',
+    areaServed: ['NG', 'GB', 'IE', 'US', 'CA', 'EU', 'AE', 'AU', 'NZ'],
     availableLanguage: 'English',
   },
 };
@@ -107,7 +113,7 @@ export function services(path: string, items: { name: string; detail?: string; s
     description: s.detail ?? s.summary,
     serviceType,
     provider: { '@id': orgId },
-    areaServed: { '@type': 'Country', name: 'Nigeria' },
+    areaServed,
     url: pageUrl(path),
   }));
 }

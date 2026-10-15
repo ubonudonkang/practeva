@@ -6,7 +6,7 @@ export const site = {
   email: 'info@practevahq.com',
   tagline: 'Your business analysis advisory, training and career partner.',
   description:
-    'Practeva is a business analysis and technology advisory firm in Lagos State, Nigeria. We help organisations improve their processes, automate repetitive work and choose systems that fit, train the analysts who do that work, and help them show it to employers.',
+    'Practeva is a business analysis and technology advisory firm in Lagos State, Nigeria, working with organisations in Nigeria and abroad. We help organisations improve their processes, automate repetitive work and choose systems that fit, train the analysts who do that work, and help them show it to employers.',
   legal: 'Practeva Limited · Registered in Nigeria, RC 9931539 · Lagos State, Nigeria',
   // Social preview (1200 x 630) for every page, and what it shows
   ogImage: '/og/practeva.png',
@@ -23,6 +23,27 @@ export const company = {
   type: 'Private company limited by shares, under the Companies and Allied Matters Act 2020',
   location: 'Lagos State, Nigeria',
 };
+
+// Where Practeva works: Nigeria first, then the markets it serves remotely. Clients and students
+// outside Nigeria pay in US dollars. Lagos is on West Africa Time (UTC+1) all year.
+export const markets = {
+  home: 'Nigeria',
+  abroad: ['United Kingdom', 'Ireland', 'Europe', 'United States', 'Canada', 'United Arab Emirates', 'Australia', 'New Zealand'],
+  abroadCurrency: 'US dollars',
+  timezone: 'West Africa Time (UTC+1)',
+};
+
+// Cities whose local times the site shows, as UTC offsets in standard time and in local summer
+// time (null where clocks don't change). LocalTimes works out every time from these, so add a
+// city here rather than writing times by hand. `share` is how our 9am to 5pm meets their day.
+export const cities = [
+  { name: 'London, Dublin', utc: 0, summer: 1, share: 'Most of your working day' },
+  { name: 'Paris, Berlin, Amsterdam', utc: 1, summer: 2, share: 'Most of your working day' },
+  { name: 'Dubai', utc: 4, summer: null, share: 'Your afternoon' },
+  { name: 'New York, Toronto', utc: -5, summer: -4, share: 'Your morning, our afternoon' },
+  { name: 'Sydney, Melbourne', utc: 10, summer: 11, share: 'Your late afternoon, our early morning' },
+  { name: 'Auckland', utc: 12, summer: 13, share: 'Your evening, our early morning' },
+];
 
 export const nav = [
   { href: '/advisory', label: 'Advisory' },
@@ -44,6 +65,8 @@ export const cohort = {
   // TODO(ubon): set the February 2027 fee once it is fixed. While it is empty, the FAQ says
   // the fee goes to the waitlist first and quotes the November fee.
   fee: '',
+  // TODO(ubon): the fee in US dollars for people joining from outside Nigeria, once set.
+  feeUsd: '',
   // The November 2026 BA Bridge product sold at ₦80,000 (ubonudonkang.com README, and
   // EXPECTED_AMOUNT in the Apps Script).
   previousFee: '₦80,000',
