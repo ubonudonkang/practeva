@@ -13,7 +13,7 @@ export const GET: APIRoute = () => {
 
 > ${site.description}
 
-${company.legalName} is registered in Nigeria (CAC RC ${company.rc}, ${company.registered}) and based in ${company.location}. It serves organisations across Nigeria and works remotely with teams and students in ${markets.abroad.join(', ')}; clients outside Nigeria are quoted in ${markets.abroadCurrency}. Lagos is on ${markets.timezone} all year. It does three things, in this order: advisory for organisations, training for business analysts, and careers support for analysts. Contact: ${site.email}.
+${company.legalName} is registered in Nigeria (CAC RC ${company.rc}, ${company.registered}) and based in ${company.location}. It serves organisations across Nigeria and works remotely with teams and students in ${markets.abroad.join(', ')}; clients outside Nigeria are quoted in ${markets.abroadCurrency}. Lagos is on ${markets.timezone} all year. It does three things, in this order: advisory for organisations, training for business analysts, and careers support for analysts. Contact: ${site.email}. LinkedIn: ${site.profiles.linkedin}
 
 ## Advisory
 
