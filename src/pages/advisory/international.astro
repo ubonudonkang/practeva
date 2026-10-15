@@ -1,0 +1,237 @@
+---
+// Advisory for teams outside Nigeria: the same services, delivered remotely from Lagos and
+// quoted in US dollars. The hours table is our 9am to 5pm in West Africa Time (UTC+1, no
+// daylight saving) shown in each city's winter and summer time.
+import Page from '../../layouts/Page.astro';
+import Arrow from '../../components/Arrow.astro';
+import PageHero from '../../components/PageHero.astro';
+import HeroFacts from '../../components/HeroFacts.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import NumberedGrid from '../../components/NumberedGrid.astro';
+import ProcessFlow from '../../components/ProcessFlow.astro';
+import Faq from '../../components/Faq.astro';
+import ContactBand from '../../components/ContactBand.astro';
+import { engagement, services } from '../../data/offers';
+import { markets } from '../../data/site';
+import { areaServed, orgId, pageUrl } from '../../data/schema';
+
+const path = '/advisory/international/';
+
+const hours = [
+  { city: 'London, Dublin', winter: '8am to 4pm', summer: '9am to 5pm', overlap: 'Most of your working day' },
+  { city: 'Paris, Berlin, Amsterdam', winter: '9am to 5pm', summer: '10am to 6pm', overlap: 'Most of your working day' },
+  { city: 'New York, Toronto', winter: '3am to 11am', summer: '4am to noon', overlap: 'Your morning, our afternoon' },
+];
+
+const faqs = [
+  {
+    q: 'Do you work with clients outside Nigeria?',
+    a: 'Yes. We work remotely with teams in the UK, Ireland, Europe, the United States and Canada, as well as with organisations across Nigeria.',
+  },
+  {
+    q: 'How do you price international work?',
+    a: `Each engagement is quoted in ${markets.abroadCurrency} after an intro call, once we understand the scope. Packages run from a quick read of what you have to a full feasibility study.`,
+  },
+  {
+    q: 'What time zone do you work in?',
+    a: 'West Africa Time, UTC+1, all year. That is the same as UK time in summer and an hour ahead in winter, and the same as Central Europe in winter. For North America, our afternoon is your morning.',
+  },
+  {
+    q: 'Is the BA Bridge Cohort open to people outside Nigeria?',
+    a: `Yes. It is taught live online at 8 to 10pm West Africa Time, which is 7 to 9pm in London in winter, and both sessions are recorded. People joining from outside Nigeria pay in ${markets.abroadCurrency}.`,
+  },
+];
+
+const service = {
+  '@type': 'Service',
+  '@id': `${pageUrl(path)}#service`,
+  name: 'Remote business analysis for international teams',
+  serviceType: 'Business analysis and technology advisory',
+  description:
+    'Requirements, process mapping and improvement, process automation, business systems and digital transformation support, delivered remotely from Lagos, Nigeria, and quoted in US dollars.',
+  provider: { '@id': orgId },
+  areaServed: areaServed.slice(1),
+  availableChannel: { '@type': 'ServiceChannel', serviceUrl: pageUrl('/contact/') },
+  url: pageUrl(path),
+};
+---
+<Page
+  tone="paper"
+  title="Remote business analysis for international teams | Practeva"
+  description="Remote business analysis, automation and digital transformation from Lagos for teams in the UK, Ireland, Europe, the US and Canada, quoted in US dollars."
+  schema={[service]}
+>
+  <PageHero
+    crumbs={[{ label: 'Home', href: '/' }, { label: 'Advisory', href: '/advisory' }, { label: 'International clients' }]}
+    eyebrow="For teams outside Nigeria"
+    sub={`Requirements, process mapping, automation and digital transformation support for teams in the UK, Ireland, Europe, the United States and Canada, delivered remotely and quoted in ${markets.abroadCurrency}.`}
+  >
+    <Fragment slot="title">Business analysis from Lagos, on your working <em class="accent">day</em>.</Fragment>
+    <Fragment slot="actions">
+      <a class="btn" href="/contact?topic=advisory">Book a call<Arrow /></a>
+      <a class="link" href="#hours">See our hours in your time</a>
+    </Fragment>
+    <HeroFacts
+      items={[
+        { term: 'Time zone', detail: `${markets.timezone}, all year` },
+        { term: 'Pricing', detail: `Quoted in ${markets.abroadCurrency}` },
+        { term: 'Working language', detail: 'English' },
+      ]}
+    />
+  </PageHero>
+
+  <section class="ground-paper section" id="hours" aria-labelledby="hours-title">
+    <div class="container">
+      <SectionHead
+        id="hours-title"
+        label="Working hours"
+        title="Our day, in your time."
+        note="Lagos doesn't change its clocks. This is our 9am to 5pm, in your local time."
+      />
+      <div class="hours-wrap">
+        <table class="hours">
+          <thead>
+            <tr>
+              <th scope="col">Your city</th>
+              <th scope="col">Winter</th>
+              <th scope="col">Summer</th>
+              <th scope="col">What we share</th>
+            </tr>
+          </thead>
+          <tbody>
+            {hours.map((h) => (
+              <tr>
+                <th scope="row">{h.city}</th>
+                <td>{h.winter}</td>
+                <td>{h.summer}</td>
+                <td>{h.overlap}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="services ground-wash section" aria-labelledby="services-title">
+    <div class="container">
+      <SectionHead
+        id="services-title"
+        label="What we take on"
+        title="The same work, delivered remotely."
+        note="Bring us one piece of this, or the whole of it."
+      >
+        <a slot="aside" class="link" href="/advisory#packages">See the packages</a>
+      </SectionHead>
+      <NumberedGrid items={services} cols={3} />
+    </div>
+  </section>
+
+  <section class="ground-paper section" aria-labelledby="remote-title">
+    <div class="container">
+      <SectionHead
+        id="remote-title"
+        label="How it works"
+        title="How a remote engagement runs."
+        note="The same path as every engagement, run over video calls and shared documents."
+      />
+      <ProcessFlow steps={engagement} label="A remote engagement, step by step" />
+
+      <div class="notes">
+        <div>
+          <h3 class="subheading">Calls and workshops</h3>
+          <p>Video calls and online workshops on Teams, Zoom or Google Meet, whichever you use, planned inside the hours we share.</p>
+        </div>
+        <div>
+          <h3 class="subheading">Your tools, your documents</h3>
+          <p>We work in your tools where we can, such as Jira, Confluence, Miro or Microsoft 365, and everything we write is yours to keep.</p>
+        </div>
+        <div>
+          <h3 class="subheading">Contracts and payment</h3>
+          <p>Quoted and invoiced in {markets.abroadCurrency}. We can work under your NDA and data-handling terms; our <a class="link" href="/privacy">privacy notice</a> says how we treat personal data.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Faq items={faqs} title="Questions from teams abroad" />
+
+  <ContactBand
+    title="Tell us what you're working on."
+    note="Send a few lines about the change you're planning. We'll reply by email and set up a call at a time that suits your time zone."
+    cta={{ label: 'Book a call', href: '/contact?topic=advisory' }}
+  />
+</Page>
+
+<style>
+  .hours-wrap {
+    overflow-x: auto;
+  }
+
+  .hours {
+    width: 100%;
+    min-width: 560px;
+    border-collapse: collapse;
+    font-size: 17px;
+    line-height: 24px;
+  }
+
+  .hours th,
+  .hours td {
+    padding: var(--space-4) var(--space-4) var(--space-4) 0;
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .hours thead th {
+    font-size: 13px;
+    line-height: 18px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    border-top: 1px solid var(--line);
+  }
+
+  .hours tbody th {
+    font-weight: var(--weight-title);
+    color: var(--heading);
+  }
+
+  .hours td:last-child {
+    color: var(--ink-muted);
+  }
+
+  .services {
+    --wash-x: 0%;
+    --wash-y: 30%;
+    --wash2-x: 100%;
+    --wash2-y: 80%;
+  }
+
+  .notes {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-8) clamp(32px, 4vw, 56px);
+    margin-top: clamp(56px, 7vw, 88px);
+    padding-top: var(--space-8);
+    border-top: 1px solid var(--line);
+  }
+
+  .notes > div {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .notes p {
+    color: var(--ink-muted);
+  }
+
+  @media (max-width: 960px) {
+    .notes {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

@@ -14,7 +14,7 @@ import CohortBanner from '../components/CohortBanner.astro';
 import Faq from '../components/Faq.astro';
 import ContactBand from '../components/ContactBand.astro';
 import { beforeAfter, packages } from '../data/offers';
-import { cohort } from '../data/site';
+import { cohort, markets } from '../data/site';
 
 // Questions about the company as a whole; the training page keeps the cohort's own FAQ.
 const faqs = [
@@ -32,7 +32,7 @@ const faqs = [
   },
   {
     q: 'Where is Practeva based?',
-    a: 'In Lagos State, Nigeria. We serve organisations across Nigeria: most advisory work runs online, with workshops in person where they help, and the BA Bridge Cohort is taught live online.',
+    a: 'In Lagos State, Nigeria. We serve organisations across Nigeria and work remotely with teams in the UK, Ireland, Europe, the United States and Canada. Lagos is on UTC+1 all year, so our working day lines up with the UK and Europe and overlaps the North American morning. The BA Bridge Cohort is taught live online.',
   },
   {
     q: 'How does an advisory engagement start?',
@@ -40,9 +40,9 @@ const faqs = [
   },
   {
     q: 'How much does it cost?',
-    a: `Advisory and careers support are quoted after a short call, once we know what you need. ${
+    a: `Advisory and careers support are quoted after a short call, once we know what you need; clients outside Nigeria are quoted and invoiced in ${markets.abroadCurrency}. ${
       cohort.fee
-        ? `The ${cohort.next} BA Bridge Cohort is ${cohort.fee}.`
+        ? `The ${cohort.next} BA Bridge Cohort is ${cohort.fee}${cohort.feeUsd ? `, or ${cohort.feeUsd} from outside Nigeria` : ''}.`
         : `The ${cohort.next} BA Bridge Cohort fee goes to the waitlist first; the ${cohort.previous} cohort was ${cohort.previousFee}.`
     }`,
   },
@@ -58,13 +58,13 @@ const faqs = [
 ---
 <Page
   tone="night"
-  description="Practeva is a business analysis and technology advisory firm in Lagos State, Nigeria. We improve processes, automate work and train business analysts."
+  description="Business analysis and technology advisory from Lagos State, Nigeria, for teams at home and abroad. We improve processes, automate work and train analysts."
 >
   <PageHero
     tone="night"
     size="full"
     eyebrow="Business and technology advisory"
-    sub="We help organisations in Nigeria map and improve their processes, automate the repetitive work and choose systems that fit, starting with clear requirements."
+    sub="We help organisations in Nigeria and abroad map and improve their processes, automate the repetitive work and choose systems that fit, starting with clear requirements."
   >
     <Fragment slot="title">Technology that fits the way your business&nbsp;<em class="accent">works</em>.</Fragment>
     <Fragment slot="actions">

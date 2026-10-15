@@ -9,6 +9,7 @@ const columns = [
       { href: '/advisory#packages', label: 'Packages' },
       { href: '/advisory#services', label: 'What we take on' },
       { href: '/advisory#process', label: 'How it works' },
+      { href: '/advisory/international', label: 'International clients' },
     ],
   },
   {
@@ -57,7 +58,7 @@ const columns = [
 
     <img class="footer-lockup" src="/brand/practeva-lockup-horizontal-reversed.svg" alt="Practeva" width="1050" height="265" loading="lazy" />
 
-    <p class="legal">© {year} {site.legal}</p>
+    <p class="legal">© {year} {site.legal} · <a href="/privacy">Privacy notice</a></p>
   </div>
 </footer>
 
@@ -130,6 +131,11 @@ const columns = [
     font-size: 13px;
     line-height: 20px;
     color: var(--ink-muted);
+  }
+
+  .legal a {
+    color: inherit;
+    text-underline-offset: 3px;
   }
 
   @media (max-width: 1080px) {
