@@ -1,0 +1,122 @@
+---
+// The privacy notice. Written for the Nigeria Data Protection Act 2023, and for UK and EU GDPR
+// for people abroad. It describes exactly what the two forms send (see CLAUDE.md, Forms): keep
+// it in step when a form gains a field or the data moves somewhere new.
+import Page from '../layouts/Page.astro';
+import PageHero from '../components/PageHero.astro';
+import { company, site } from '../data/site';
+
+const updated = '15 October 2026';
+---
+<Page
+  tone="paper"
+  title="Privacy notice | Practeva"
+  description="How Practeva Limited collects, uses and protects the personal data you share through practevahq.com, and the rights you have over it."
+>
+  <PageHero
+    crumbs={[{ label: 'Home', href: '/' }, { label: 'Privacy notice' }]}
+    sub={`What we collect through this website, why, how long we keep it, and what you can ask us to do with it. Last updated ${updated}.`}
+  >
+    <Fragment slot="title">How we look after your <em class="accent">data</em>.</Fragment>
+  </PageHero>
+
+  <section class="ground-paper section">
+    <div class="container">
+      <article class="notice">
+        <h2>Who we are</h2>
+        <p>{company.legalName} is registered in Nigeria (RC {company.rc}) and based in {company.location}. We are the data controller for personal data collected through {site.url.replace('https://', '')}. To ask anything about your data, email <a class="link" href={`mailto:${site.email}`}>{site.email}</a>.</p>
+
+        <h2>What we collect</h2>
+        <ul>
+          <li><b>When you contact us:</b> your first and last name, email address, organisation and phone or WhatsApp number if you give them, the topic you choose and your message.</li>
+          <li><b>When you join the waitlist:</b> your name, email address, the cohort you joined for, and your agreement to be contacted about it.</li>
+          <li><b>When you email us:</b> your email address and whatever you include.</li>
+        </ul>
+        <p>This website sets no cookies and uses no analytics or advertising trackers. Our host, GitHub Pages, may keep technical logs, such as IP addresses, to run and secure the service.</p>
+
+        <h2>Why we use it</h2>
+        <ul>
+          <li>To reply to your enquiry and arrange a call, because you asked us to, and because answering is in our legitimate interest.</li>
+          <li>To tell you about the cohort you joined the waitlist for, because you agreed to it. You can withdraw that agreement at any time.</li>
+          <li>To keep the records the law requires if you become a client or a student.</li>
+        </ul>
+        <p>We don't sell your data, share it for advertising, or use it to make automated decisions about you.</p>
+
+        <h2>Where it is kept</h2>
+        <p>Form submissions go through a Google Apps Script into Google Sheets, and we are notified by email through Gmail. Google may process this data outside Nigeria, including in the United States, under its own data protection terms. Only Practeva can open the sheet and the inbox.</p>
+
+        <h2>How long we keep it</h2>
+        <ul>
+          <li>Enquiries: up to two years after we last spoke, unless you become a client.</li>
+          <li>The waitlist: until you ask to be removed, and we review it at least once a year.</li>
+          <li>Client and student records: for as long as tax and company law require.</li>
+        </ul>
+
+        <h2>Your rights</h2>
+        <p>Under the Nigeria Data Protection Act 2023, and the UK GDPR or EU GDPR if you live there, you can ask us to:</p>
+        <ul>
+          <li>give you a copy of the data we hold about you;</li>
+          <li>correct it, or delete it;</li>
+          <li>stop or limit how we use it, or object to it;</li>
+          <li>send it to you or to someone else in a common format.</li>
+        </ul>
+        <p>Email <a class="link" href={`mailto:${site.email}`}>{site.email}</a> and we will reply within one month. If you are unhappy with our answer, you can complain to the Nigeria Data Protection Commission, the Information Commissioner's Office in the UK, or the data protection authority where you live in the EU.</p>
+
+        <h2>Changes to this notice</h2>
+        <p>If we change how we use personal data, we will update this page and the date at the top.</p>
+      </article>
+    </div>
+  </section>
+</Page>
+
+<style>
+  .notice {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    max-width: 40em;
+    font-size: 17px;
+    line-height: 27px;
+  }
+
+  .notice h2 {
+    margin-top: var(--space-8);
+    font-size: 24px;
+    line-height: 30px;
+    font-weight: var(--weight-title);
+    letter-spacing: -0.015em;
+    color: var(--heading);
+  }
+
+  .notice h2:first-child {
+    margin-top: 0;
+  }
+
+  .notice ul {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .notice li {
+    position: relative;
+    padding-left: 26px;
+  }
+
+  /* The leaf, as a list bullet */
+  .notice li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 9px;
+    width: 10px;
+    height: 10px;
+    border-radius: 5px 0 5px 0;
+    background: var(--leaf-green);
+  }
+
+  .notice b {
+    font-weight: 600;
+    color: var(--heading);
+  }
+</style>
