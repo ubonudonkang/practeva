@@ -1,7 +1,7 @@
 ---
 // Advisory for teams outside Nigeria: the same services, delivered remotely from Lagos and
-// quoted in US dollars. The hours table is our 9am to 5pm in West Africa Time (UTC+1, no
-// daylight saving) shown in each city's winter and summer time.
+// quoted in US dollars. LocalTimes shows our 9am to 5pm (West Africa Time, UTC+1, no
+// daylight saving) in each city in site.ts, in standard and summer time.
 import Page from '../../layouts/Page.astro';
 import Arrow from '../../components/Arrow.astro';
 import PageHero from '../../components/PageHero.astro';
@@ -10,6 +10,7 @@ import SectionHead from '../../components/SectionHead.astro';
 import NumberedGrid from '../../components/NumberedGrid.astro';
 import ProcessFlow from '../../components/ProcessFlow.astro';
 import Faq from '../../components/Faq.astro';
+import LocalTimes from '../../components/LocalTimes.astro';
 import ContactBand from '../../components/ContactBand.astro';
 import { engagement, services } from '../../data/offers';
 import { markets } from '../../data/site';
@@ -17,16 +18,11 @@ import { areaServed, orgId, pageUrl } from '../../data/schema';
 
 const path = '/advisory/international/';
 
-const hours = [
-  { city: 'London, Dublin', winter: '8am to 4pm', summer: '9am to 5pm', overlap: 'Most of your working day' },
-  { city: 'Paris, Berlin, Amsterdam', winter: '9am to 5pm', summer: '10am to 6pm', overlap: 'Most of your working day' },
-  { city: 'New York, Toronto', winter: '3am to 11am', summer: '4am to noon', overlap: 'Your morning, our afternoon' },
-];
 
 const faqs = [
   {
     q: 'Do you work with clients outside Nigeria?',
-    a: 'Yes. We work remotely with teams in the UK, Ireland, Europe, the United States and Canada, as well as with organisations across Nigeria.',
+    a: 'Yes. We work remotely with teams in the UK, Ireland, Europe, the United States, Canada, the UAE, Australia and New Zealand, as well as with organisations across Nigeria.',
   },
   {
     q: 'How do you price international work?',
@@ -34,11 +30,11 @@ const faqs = [
   },
   {
     q: 'What time zone do you work in?',
-    a: 'West Africa Time, UTC+1, all year. That is the same as UK time in summer and an hour ahead in winter, and the same as Central Europe in winter. For North America, our afternoon is your morning.',
+    a: 'West Africa Time, UTC+1, all year. That is the same as UK time in summer and an hour ahead in winter, and the same as Central Europe in winter. Our working day covers the Dubai afternoon and the North American morning. For Australia and New Zealand, we meet in your late afternoon or evening, which is our early morning.',
   },
   {
     q: 'Is the BA Bridge Cohort open to people outside Nigeria?',
-    a: `Yes. It is taught live online at 8 to 10pm West Africa Time, which is 7 to 9pm in London in winter, and both sessions are recorded. People joining from outside Nigeria pay in ${markets.abroadCurrency}.`,
+    a: `Yes. It is taught live online at 8 to 10pm West Africa Time: 7 to 9pm in London in winter, 11pm in Dubai, and early morning in Sydney and Auckland. Both sessions are recorded. People joining from outside Nigeria pay in ${markets.abroadCurrency}.`,
   },
 ];
 
@@ -58,13 +54,13 @@ const service = {
 <Page
   tone="paper"
   title="Remote business analysis for international teams | Practeva"
-  description="Remote business analysis, automation and digital transformation from Lagos for teams in the UK, Ireland, Europe, the US and Canada, quoted in US dollars."
+  description="Remote business analysis and digital transformation from Lagos for teams in the UK, Europe, North America, the UAE, Australia and New Zealand, in US dollars."
   schema={[service]}
 >
   <PageHero
     crumbs={[{ label: 'Home', href: '/' }, { label: 'Advisory', href: '/advisory' }, { label: 'International clients' }]}
     eyebrow="For teams outside Nigeria"
-    sub={`Requirements, process mapping, automation and digital transformation support for teams in the UK, Ireland, Europe, the United States and Canada, delivered remotely and quoted in ${markets.abroadCurrency}.`}
+    sub={`Requirements, process mapping, automation and digital transformation support for teams in the UK, Ireland, Europe, North America, the UAE, Australia and New Zealand, delivered remotely and quoted in ${markets.abroadCurrency}.`}
   >
     <Fragment slot="title">Business analysis from Lagos, on your working <em class="accent">day</em>.</Fragment>
     <Fragment slot="actions">
@@ -86,30 +82,9 @@ const service = {
         id="hours-title"
         label="Working hours"
         title="Our day, in your time."
-        note="Lagos doesn't change its clocks. This is our 9am to 5pm, in your local time."
+        note="Lagos doesn't change its clocks. This is our 9am to 5pm in your local time, in standard time and when your clocks go forward."
       />
-      <div class="hours-wrap">
-        <table class="hours">
-          <thead>
-            <tr>
-              <th scope="col">Your city</th>
-              <th scope="col">Winter</th>
-              <th scope="col">Summer</th>
-              <th scope="col">What we share</th>
-            </tr>
-          </thead>
-          <tbody>
-            {hours.map((h) => (
-              <tr>
-                <th scope="row">{h.city}</th>
-                <td>{h.winter}</td>
-                <td>{h.summer}</td>
-                <td>{h.overlap}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <LocalTimes from={9} to={17} share />
     </div>
   </section>
 
@@ -164,45 +139,6 @@ const service = {
 </Page>
 
 <style>
-  .hours-wrap {
-    overflow-x: auto;
-  }
-
-  .hours {
-    width: 100%;
-    min-width: 560px;
-    border-collapse: collapse;
-    font-size: 17px;
-    line-height: 24px;
-  }
-
-  .hours th,
-  .hours td {
-    padding: var(--space-4) var(--space-4) var(--space-4) 0;
-    border-bottom: 1px solid var(--line);
-    text-align: left;
-    vertical-align: top;
-  }
-
-  .hours thead th {
-    font-size: 13px;
-    line-height: 18px;
-    font-weight: 600;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--ink-muted);
-    border-top: 1px solid var(--line);
-  }
-
-  .hours tbody th {
-    font-weight: var(--weight-title);
-    color: var(--heading);
-  }
-
-  .hours td:last-child {
-    color: var(--ink-muted);
-  }
-
   .services {
     --wash-x: 0%;
     --wash-y: 30%;

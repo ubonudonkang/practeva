@@ -28,10 +28,22 @@ export const company = {
 // outside Nigeria pay in US dollars. Lagos is on West Africa Time (UTC+1) all year.
 export const markets = {
   home: 'Nigeria',
-  abroad: ['United Kingdom', 'Ireland', 'Europe', 'United States', 'Canada'],
+  abroad: ['United Kingdom', 'Ireland', 'Europe', 'United States', 'Canada', 'United Arab Emirates', 'Australia', 'New Zealand'],
   abroadCurrency: 'US dollars',
   timezone: 'West Africa Time (UTC+1)',
 };
+
+// Cities whose local times the site shows, as UTC offsets in standard time and in local summer
+// time (null where clocks don't change). LocalTimes works out every time from these, so add a
+// city here rather than writing times by hand. `share` is how our 9am to 5pm meets their day.
+export const cities = [
+  { name: 'London, Dublin', utc: 0, summer: 1, share: 'Most of your working day' },
+  { name: 'Paris, Berlin, Amsterdam', utc: 1, summer: 2, share: 'Most of your working day' },
+  { name: 'Dubai', utc: 4, summer: null, share: 'Your afternoon' },
+  { name: 'New York, Toronto', utc: -5, summer: -4, share: 'Your morning, our afternoon' },
+  { name: 'Sydney, Melbourne', utc: 10, summer: 11, share: 'Your late afternoon, our early morning' },
+  { name: 'Auckland', utc: 12, summer: 13, share: 'Your evening, our early morning' },
+];
 
 export const nav = [
   { href: '/advisory', label: 'Advisory' },

@@ -53,7 +53,7 @@ export const organization: Node = {
     contactType: 'enquiries',
     email: site.email,
     url: `${site.url}/contact/`,
-    areaServed: ['NG', 'GB', 'IE', 'US', 'CA', 'EU'],
+    areaServed: ['NG', 'GB', 'IE', 'US', 'CA', 'EU', 'AE', 'AU', 'NZ'],
     availableLanguage: 'English',
   },
 };
