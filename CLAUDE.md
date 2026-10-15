@@ -1,6 +1,6 @@
 # Practeva website (practevahq.com)
 
-Marketing site for Practeva Limited, a business analysis and technology advisory firm registered in Nigeria (RC 9931539, 12 October 2026). It does three things, always in this order: **Advisory**, **Training** (the BA Bridge Cohort for career changers, plus team training) and **Careers** (CV, profile, interview and portfolio support). The site speaks for the company first and Advisory leads; the cohort has its own page.
+Marketing site for Practeva Limited, a business analysis and technology advisory firm registered in Nigeria (RC 9931539, 12 October 2026). It is Nigeria first and open to the world: it serves organisations across Nigeria and works remotely with clients and students in the UK, Ireland, Europe, the United States and Canada (`markets` in `site.ts`). It does three things, always in this order: **Advisory**, **Training** (the BA Bridge Cohort for career changers, plus team training) and **Careers** (CV, profile, interview and portfolio support). The site speaks for the company first and Advisory leads; the cohort has its own page.
 
 Advisory is broader than business analysis. It follows the objects in the company's memorandum (MEMART):
 - **Object A, business analysis and business process consulting:** requirements elicitation, analysis and documentation; stakeholder engagement; process mapping and improvement; feasibility assessment; solution evaluation; implementation and UAT support.
@@ -16,7 +16,7 @@ Copy that describes Advisory should name both, not business analysis alone.
 
 ## Where things are
 
-- `src/pages/`: `index` (home), `advisory`, `training`, `training/how-to-become-a-business-analyst-in-nigeria` (a guide for career changers), `careers`, `resources`, `about`, `contact`, `404`. Each is assembled from components in order. `sitemap.xml.ts` and `llms.txt.ts` build those two files (see Search).
+- `src/pages/`: `index` (home), `advisory`, `advisory/international` (remote advisory for teams abroad, with our hours in their time), `training`, `training/how-to-become-a-business-analyst-in-nigeria` (a guide for career changers), `careers`, `resources`, `about`, `contact`, `privacy` (the privacy notice), `404`. Each is assembled from components in order. `sitemap.xml.ts` and `llms.txt.ts` build those two files (see Search).
 - `src/layouts/Page.astro`: every page's shell (header, main, footer). Pass `tone="night"` or `tone="paper"` to match the first section, and `cta` to change the header button (the training page uses "Join the waitlist"). The header is fixed at the top: clear over the hero, then its bar fades in a solid fill in the page's tone once the page scrolls. Its height is `--header-h` (84px, 72px under 560px); anchors land below it through `scroll-padding-top`, and anything sticky must offset by it.
 - `src/components/`:
   - Page structure: `Header`, `Footer`, `PageHero` (night or wash, with breadcrumbs, facts and actions), `HeroFacts`, `PillarIndex`, `SectionHead`, `ContactBand`.
@@ -25,7 +25,7 @@ Copy that describes Advisory should name both, not business analysis alone.
   - `Faq`: the accordion on home (questions about the company as a whole) and on training (questions about the cohort). Each page keeps its questions at the top of its own file and builds any fact (dates, fees, format) from `site.ts`, so the answers change with the facts. Pass `joined={false}` when it follows a night or wash section.
   - Forms: `ContactForm`, `Waitlist`, with shared behaviour in `src/scripts/forms.ts`. Both post to the Apps Script described under Forms below.
   - `Arrow`: the one arrow, inside CTA pills only.
-- `src/data/site.ts`: every repeated fact (company details, nav, cohort dates, size, schedule, fee, form endpoints, contact topics). Change facts here, not in components.
+- `src/data/site.ts`: every repeated fact (company details, markets, nav, cohort dates, size, schedule, fee, form endpoints, contact topics). Change facts here, not in components.
 - `src/data/schema.ts`: the structured data (JSON-LD) helpers; see Search.
 - `src/data/offers.ts`: what Practeva sells, in the site's words: pillars, advisory packages, services, engagement steps, team training, careers services, resources, principles.
 - `src/styles/global.css`: brand tokens, the three grounds (`.ground-paper`, `.ground-wash`, `.ground-night`), type styles, buttons, tags, form fields, leaf tiles.
@@ -67,7 +67,7 @@ Gradients and washes
 
 Type
 - Onest for everything. Headlines are light and tight: weight `--weight-headline` (450) with -0.035 to -0.045em tracking. Card titles, step names and subheadings use `--weight-title` (600). Body 400, labels 600. Big figures and grid numerals use 300.
-- Instrument Serif Italic for exactly one accent word per page, in `--accent`, always in that page's h1. Today: home "works", advisory "transformation", training "doing", the guide "Nigeria", careers "work", resources "writes", about "analyst", contact "working", 404 "page". Do not add another anywhere on a page.
+- Instrument Serif Italic for exactly one accent word per page, in `--accent`, always in that page's h1. Today: home "works", advisory "transformation", training "doing", the guide "Nigeria", international "day", careers "work", resources "writes", about "analyst", contact "working", privacy "data", 404 "page". Do not add another anywhere on a page.
 - Eyebrows and labels are capitals with wide tracking, four or five words at most.
 - Keep running text under about 65 characters per line.
 
@@ -101,11 +101,13 @@ Copy
 - To bring the founder back, revert the commit "Take the founder off the site": it restores the `Founder` and `Record` components, the `founder` data in `site.ts`, the portrait and the sections on home, advisory, training, about and contact. Then name no current employer: earlier roles (Access Bank) only, with figures in step with ubonudonkang.com (the rights issue is ₦351bn there).
 - Practeva has no client case studies yet. Never invent clients, testimonials or results.
 - Contact is info@practevahq.com and practevahq.com; never a personal address or site.
+- Markets: Nigeria first, then abroad. Say "in Nigeria and abroad" where both are true; keep Nigeria-specific copy (the guide, local FAQs) as it is. Prices outside Nigeria are in US dollars (`markets.abroadCurrency`; the cohort's dollar fee is `cohort.feeUsd`). Times abroad are worked out from West Africa Time (UTC+1, no daylight saving): 8 to 10pm WAT is 7 to 9pm in London in winter, an hour later in summer.
+- The privacy notice (`/privacy`) names Practeva Limited as data controller and describes exactly what the forms collect and where it goes. Update it when a form gains a field or the data moves (it also lists retention periods to confirm).
 - The company's location is "Lagos State, Nigeria" (`company.location`), in the legal line and on About. The registered office on the CAC record is not published on the site; use the CAC record where a document needs it.
 
 ## Search (SEO and AI search)
 
-The site is built to be found by people in Nigeria searching for business analysis help, training and careers, and to be quoted correctly by AI assistants.
+The site is built to be found by people in Nigeria, and by teams and career changers abroad, searching for business analysis help, training and careers, and to be quoted correctly by AI assistants.
 
 - Every page sets a `title` (keyword first, under about 60 characters, ending "| Practeva" where it fits) and a `description` (under 160 characters). Name Nigeria where it is true and reads naturally; never stuff keywords.
 - Structured data: `Base.astro` puts the company (`ProfessionalService`), the site and the page in one JSON-LD graph on every page; pages add their own through `schema` (the Course on training, Services on advisory and careers, the Article on the guide), and `pageType` sets AboutPage or ContactPage. `PageHero` adds a BreadcrumbList from its crumbs and `Faq` adds an FAQPage from its questions, so both follow the visible content. Build every value from `site.ts` and `offers.ts`. Never add people, ratings, reviews or a price that is not on the page.
