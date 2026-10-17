@@ -87,10 +87,14 @@ async function serveBuilt(dist) {
   return { server, base: `http://127.0.0.1:${server.address().port}` };
 }
 const dir = copySite(openWith(FEE));
+// The same open site with the exact start date and deadline set, as on the day enrolment opens
+const datedDir = copySite((src) => openWith(FEE)(src).replace("startDate: ''", "startDate: '2 February 2027'").replace("applyBy: ''", "applyBy: '25 January 2027'"));
+assert.equal(build(datedDir).status, 0, 'the dated open site builds');
 const built = build(dir);
 assert.equal(built.status, 0, built.stdout + built.stderr);
 const open_ = await serveBuilt(path.join(dir, 'dist'));
 const closed_ = await serveBuilt(path.join(closedDir, 'dist'));
+const dated_ = await serveBuilt(path.join(datedDir, 'dist'));
 const server = open_.server;
 const base = open_.base;
 
@@ -152,7 +156,7 @@ try {
 
   /* ── A join button in several sections, so nobody has to scroll back; it says what the cohort's state says ── */
   {
-    const sections = ['#how', '#market-day', '#times'];
+    const sections = ['#who', '#how', '#market-day', '#weeks', '#times'];
     const closedSite = await visit(browser, { from: closed_.base });
     const { page: cp, errors: closedErrors } = closedSite;
     for (const id of ['main .hero', ...sections]) {
@@ -186,6 +190,17 @@ try {
     assert.deepEqual(errors, []);
     await context.close();
 
+    // the cohort card has its own join button, and it follows the state as well
+    const cardClosed = await visit(browser, { from: closed_.base });
+    assert.equal(await cardClosed.page.locator('#cohort a.btn').count(), 1);
+    assert.equal((await cardClosed.page.locator('#cohort a.btn').textContent()).trim(), 'Join the waitlist');
+    assert.equal(await cardClosed.page.locator('#cohort a.btn').getAttribute('href'), '#waitlist');
+    await cardClosed.context.close();
+    const cardOpen = await visit(browser);
+    assert.equal((await cardOpen.page.locator('#cohort a.btn').textContent()).trim(), 'Enrol now');
+    assert.equal(await cardOpen.page.locator('#cohort a.btn').getAttribute('href'), '#enrol');
+    await cardOpen.context.close();
+
     if (axeSource) {
       for (const scheme of ['light', 'dark']) {
         for (const width of [390, 1280]) {
@@ -197,6 +212,78 @@ try {
         }
       }
     }
+  }
+
+  /* ── What the training page says about the cohort, in each state: who it is for, the twelve weeks, the cohort card, the questions ── */
+  {
+    const read = async (page) => page.evaluate(() => ({
+      order: [...document.querySelectorAll('main section[id]')].map((el) => el.id),
+      who: [...document.querySelectorAll('#who ol.numbered li h3')].map((el) => el.textContent.trim()),
+      phases: [...document.querySelectorAll('#weeks .phase')].map((el) => ({
+        weeks: el.querySelector('.phase-when').textContent.trim(), name: el.querySelector('h3').textContent.trim(),
+        deliverable: el.querySelector('.phase-deliverable').textContent.trim(), final: el.classList.contains('final'),
+      })),
+      cardTitle: document.querySelector('#cohort-title').textContent.trim(),
+      cardNote: document.querySelector('#cohort .section-head .note').textContent.trim(),
+      cardStatus: document.querySelector('#cohort .status li').textContent.trim(),
+      cardRows: Object.fromEntries([...document.querySelectorAll('#cohort .rows > div')].map((row) => [row.querySelector('dt').textContent.trim(), row.querySelector('dd').textContent.trim()])),
+      price: document.querySelector('#cohort .price-amount')?.textContent.trim() ?? null,
+      includes: [...document.querySelectorAll('#cohort .includes li')].map((el) => el.textContent.trim()),
+      faq: Object.fromEntries([...document.querySelectorAll('#faq details')].map((el) => [el.querySelector('summary span').textContent.trim(), el.querySelector('p').textContent.trim()])),
+      text: document.querySelector('main').textContent,
+    }));
+    const common = (info, label) => {
+      assert.deepEqual(info.who, ['Researchers and analysts', 'Banking and finance staff', 'Operations and support', 'Graduates and early career'], label);
+      assert.deepEqual(info.phases.map((p) => p.name), ['Foundations', 'Stakeholders and elicitation', 'Requirements and modelling', 'Delivery', 'Career launch'], label);
+      assert.deepEqual(info.phases.map((p) => p.weeks), ['Weeks 1 to 2', 'Weeks 3 to 5', 'Weeks 6 to 8', 'Weeks 9 to 10', 'Weeks 11 to 12'], label);
+      assert.deepEqual(info.phases.map((p) => p.final), [false, false, false, false, true], `${label}: the last phase closes the cohort`);
+      assert.equal(info.phases[1].deliverable, 'Stakeholder map and elicitation notes');
+      assert.equal(info.includes.length, 9, `${label}: nine things a place includes`);
+      assert.ok(info.includes.includes('Every session recorded'));
+      const order = info.order.filter((id) => ['who', 'how', 'market-day', 'weeks', 'cohort', 'times', 'team', 'faq'].includes(id));
+      assert.deepEqual(order, ['who', 'how', 'market-day', 'weeks', 'cohort', 'times', 'team', 'faq'], `${label}: sections in order`);
+      for (const q of ['When is my place confirmed?', 'What if I miss a live session?', 'Will this get me certified?', 'Can I defer to a later cohort?', 'What is the refund policy?']) {
+        assert.ok(q in info.faq, `${label}: FAQ has "${q}"`);
+      }
+      assert.match(info.faq['What is the refund policy?'], /10% administrative fee.*info@practevahq\.com.*14 working days/);
+      assert.match(info.faq['Will this get me certified?'], /taken separately through IIBA/);
+      assert.doesNotMatch(info.text, /—/, `${label}: no em dashes`);
+      assert.doesNotMatch(info.text, /ubonanalyst|Ubon|\bprogram\b|modeling/, `${label}: no personal address or name, British spelling`);
+    };
+
+    const c = await visit(browser, { from: closed_.base });
+    const closedInfo = await read(c.page);
+    common(closedInfo, 'closed');
+    assert.equal(closedInfo.cardTitle, 'November is full. Get first notice for February.');
+    assert.match(closedInfo.cardNote, /planned for February 2027/);
+    assert.equal(closedInfo.cardStatus, 'November cohort: fully booked');
+    assert.deepEqual(closedInfo.cardRows, { 'Next cohort': 'February 2027', Registration: 'Waitlist open', 'Cohort size': '10 to 15 people' });
+    assert.equal(closedInfo.price, null, 'closed: no fee on the card');
+    assert.match(closedInfo.faq['When is my place confirmed?'], /Joining the waitlist does not reserve a place/);
+    assert.match(closedInfo.faq['When does the next cohort start?'], /starts at the end of February\. It opens to the waitlist first\./);
+    assert.doesNotMatch(closedInfo.text, /Enrol now|Apply by/);
+    await c.context.close();
+
+    const o = await visit(browser);
+    const openInfo = await read(o.page);
+    common(openInfo, 'open');
+    assert.equal(openInfo.cardTitle, 'Join the February 2027 cohort.');
+    assert.equal(openInfo.cardStatus, 'Enrolment open');
+    assert.equal(openInfo.price, '\u20A680,000');
+    assert.deepEqual(openInfo.cardRows, { Starts: 'End of February', 'Cohort size': '10 to 15 people' }, 'open without dates: rough start, no deadline row');
+    assert.match(openInfo.cardNote, /Each cohort takes 10 to 15 people/);
+    assert.match(openInfo.faq['When is my place confirmed?'], /Squad's secure checkout then opens/);
+    assert.doesNotMatch(openInfo.text, /Joining the waitlist does not reserve|Get first notice/);
+    await o.context.close();
+
+    // the day enrolment opens: the exact start date and the deadline appear in the card and the FAQ
+    const d = await visit(browser, { from: dated_.base });
+    const datedInfo = await read(d.page);
+    common(datedInfo, 'open with dates');
+    assert.deepEqual(datedInfo.cardRows, { Starts: '2 February 2027', 'Apply by': '25 January 2027', 'Cohort size': '10 to 15 people' });
+    assert.equal(datedInfo.cardNote, 'Applications close on 25 January 2027, or earlier if places fill.');
+    assert.equal(datedInfo.faq['When does the next cohort start?'], 'The February 2027 cohort starts on 2 February 2027. Enrolment is open, and applications close on 25 January 2027 or earlier if places fill.');
+    await d.context.close();
   }
 
   /* ── The form: checks, "Other" boxes, three wishes at most ── */
@@ -392,6 +479,7 @@ try {
   await browser.close();
   open_.server.close();
   closed_.server.close();
+  dated_.server.close();
 }
 if (failed) throw failed;
 console.log('Enrolment tests passed (build guards, open and closed pages, the form, the Squad journey, returns, failures, layout).');
