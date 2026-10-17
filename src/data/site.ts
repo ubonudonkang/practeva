@@ -59,6 +59,27 @@ export const nav = [
   { href: '/about', label: 'About' },
 ];
 
+// Enrolment and payment for the cohort, through Squad. The page shows the waitlist while `open` is
+// false and the enrolment form (with Squad checkout) once it is true. Opening it is a decision for
+// the day, so it stays false until the checklist in CLAUDE.md ("Opening enrolment") is done.
+const naira = (n: number) => '\u20A6' + n.toLocaleString('en-NG');
+
+export const enrolment = {
+  open: false,
+  // Naira, whole. It must equal EXPECTED_AMOUNT in the Apps Script (scripts/site_forms.gs in the
+  // ubonudonkang.github.io repo): the script checks every payment with Squad against that number,
+  // and shows a payment of any other amount as "Check the amount" in the dashboard.
+  amount: 0,
+  // Squad's public key. It is meant to sit in page code: sandbox_pk_... while testing, pk_... live.
+  // The secret key lives only in the Apps Script's script properties, never here.
+  squadPublicKey: 'pk_87829ad6c810e30065ebfee10ac6a16884446b5c',
+};
+
+// What every "join" button says and where it goes, so the page changes in one place.
+export const join = enrolment.open
+  ? { label: 'Enrol now', href: '/training#enrol', verb: 'Enrol' }
+  : { label: 'Join the waitlist', href: '/training#waitlist', verb: 'Join the waitlist' };
+
 export const cohort = {
   programme: 'BA Bridge Cohort',
   next: 'February 2027',
@@ -68,11 +89,12 @@ export const cohort = {
   size: '10 to 15 people',
   format: 'Twelve weeks, live online',
   schedule: 'Wednesdays and Saturdays, 8 to 10pm WAT',
-  // TODO(ubon): set the February 2027 fee once it is fixed. While it is empty, the FAQ says
-  // the fee goes to the waitlist first and quotes the November fee.
-  fee: '',
-  // TODO(ubon): the fee in US dollars for people joining from outside Nigeria, once set.
-  feeUsd: '',
+  // The fee follows enrolment.amount, so the page and the payment cannot disagree. While it is
+  // empty (amount 0), the FAQ says the fee goes to the waitlist first and quotes the November fee.
+  fee: enrolment.amount ? naira(enrolment.amount) : '',
+  // The cohort is charged in naira. There is no dollar fee for now: people joining from outside
+  // Nigeria are quoted in US dollars on request, through the contact form.
+  abroadFee: 'If you are joining from outside Nigeria, ask us for a quote in US dollars through the contact form.',
   // The November 2026 BA Bridge product sold at ₦80,000 (ubonudonkang.com README, and
   // EXPECTED_AMOUNT in the Apps Script).
   previousFee: '₦80,000',
@@ -87,6 +109,12 @@ export const cohort = {
 // tab, and answers {"result":"ok"} once the row is saved. It stores only the fields it knows:
 //   waitlist: name, email, cohort, consent ('Yes'), type
 //   contact:  first_name, last_name, email, company, type, message, submission_id
+//   enrol:    action 'signup' with reference, name, email, whatsapp, location, background,
+//             experience, stage, wants, availability, source, consent ('Yes') and site; the script
+//             sets everything about payment itself, and Squad's webhook and the page's `payment`
+//             post tell it when to check a payment with Squad
+// Every post says which website it came from with `site` ('practevahq.com'), so the dashboard and
+// the emails the script sends know whether to speak as Practeva.
 // Both forms post here; an empty endpoint makes a form tell people to email instead.
 const appsScript =
   'https://script.google.com/macros/s/AKfycby94krvGfIS7mXVT-szoGHHM_pCLIU11Bh_AemMxE_nsK-X_Hm1y8yaK69zNKfU20LT/exec';
@@ -94,7 +122,11 @@ const appsScript =
 export const forms = {
   waitlist: appsScript,
   contact: appsScript,
+  enrol: appsScript,
 };
+
+// How this site names itself to the script
+export const formSite = 'practevahq.com';
 
 // The topics the contact form offers. Links pass one as ?topic= to preselect it.
 export const topics = [

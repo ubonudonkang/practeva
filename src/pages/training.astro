@@ -8,15 +8,16 @@ import MarketDay from '../components/MarketDay.astro';
 import TeamTraining from '../components/TeamTraining.astro';
 import Faq from '../components/Faq.astro';
 import Waitlist from '../components/Waitlist.astro';
+import Enrol from '../components/Enrol.astro';
 import SectionHead from '../components/SectionHead.astro';
 import LocalTimes from '../components/LocalTimes.astro';
-import { cohort, markets } from '../data/site';
+import { cohort, enrolment, join } from '../data/site';
 import { orgId, pageUrl } from '../data/schema';
 
 const faqs = [
   {
     q: 'When does the next cohort start?',
-    a: `The ${cohort.next} cohort starts at ${cohort.nextStart}. It opens to the waitlist first.`,
+    a: `The ${cohort.next} cohort starts at ${cohort.nextStart}. ${enrolment.open ? 'Enrolment is open.' : 'It opens to the waitlist first.'}`,
   },
   {
     // TODO(ubon): confirm this answer reflects your entry requirements.
@@ -34,8 +35,8 @@ const faqs = [
   {
     q: 'How much does it cost?',
     a: cohort.fee
-      ? `The fee is ${cohort.fee}${cohort.feeUsd ? `, or ${cohort.feeUsd} if you join from outside Nigeria` : ''}, paid in full when you enrol. We don't offer instalments at the moment.`
-      : `The ${cohort.next} fee goes to the waitlist first, before public enrolment, with a fee in ${markets.abroadCurrency} for people joining from outside Nigeria. The ${cohort.previous} cohort was ${cohort.previousFee}, paid in full when you enrolled. We don't offer instalments at the moment.`,
+      ? `The fee is ${cohort.fee}, paid in full when you enrol, by card, bank transfer or USSD through Squad. We don't offer instalments at the moment. ${cohort.abroadFee}`
+      : `The ${cohort.next} fee goes to the waitlist first, before public enrolment. The ${cohort.previous} cohort was ${cohort.previousFee}, paid in full when you enrolled. We don't offer instalments at the moment. ${cohort.abroadFee}`,
   },
   {
     q: 'Can I defer to a later cohort?',
@@ -94,9 +95,9 @@ const course = {
 <Page
   tone="night"
   title="Business analysis training in Nigeria | BA Bridge Cohort"
-  description={`Twelve weeks of live online, case-based business analysis training for career changers in Nigeria, the UK, Australia and more. Join the ${cohort.next} waitlist.`}
+  description={`Twelve weeks of live online, case-based business analysis training for career changers in Nigeria, the UK, Australia and more. ${enrolment.open ? `Enrol in the ${cohort.next} cohort.` : `Join the ${cohort.next} waitlist.`}`}
   schema={[course]}
-  cta={{ label: 'Join the waitlist', href: '#waitlist' }}
+  cta={{ label: join.label, href: join.href.replace('/training', '') }}
 >
   <PageHero
     tone="night"
@@ -106,14 +107,14 @@ const course = {
   >
     <Fragment slot="title">Learn business analysis by <em class="accent">doing</em> the&nbsp;work.</Fragment>
     <Fragment slot="actions">
-      <a class="btn" href="#waitlist">Join the waitlist<Arrow /></a>
+      <a class="btn" href={join.href.replace('/training', '')}>{join.label}<Arrow /></a>
       <a class="link" href="#how">See how a cohort works</a>
     </Fragment>
     <HeroFacts
       items={[
         { term: 'Format', detail: cohort.format },
         { term: 'Cohort size', detail: cohort.size },
-        { term: 'Next cohort', detail: `${cohort.next}, waitlist open` },
+        { term: 'Next cohort', detail: `${cohort.next}, ${enrolment.open ? 'enrolment open' : 'waitlist open'}` },
         { term: `${cohort.previous} cohort`, detail: cohort.previousStatus },
       ]}
     />
@@ -128,7 +129,7 @@ const course = {
         id="times-title"
         label="Joining from abroad"
         title="Live sessions, in your time."
-        note={`Classes run ${cohort.schedule.replace('Wednesdays and Saturdays, ', '')} on Wednesdays and Saturdays, and both are recorded. People joining from outside Nigeria pay in ${markets.abroadCurrency}.`}
+        note={`Classes run ${cohort.schedule.replace('Wednesdays and Saturdays, ', '')} on Wednesdays and Saturdays, and both are recorded. ${cohort.abroadFee}`}
       />
       <LocalTimes from={20} to={22} />
     </div>
@@ -136,5 +137,5 @@ const course = {
 
   <TeamTraining />
   <Faq items={faqs} />
-  <Waitlist />
+  {enrolment.open ? <Enrol /> : <Waitlist />}
 </Page>
