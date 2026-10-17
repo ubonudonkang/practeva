@@ -5,6 +5,9 @@ import PageHero from '../components/PageHero.astro';
 import HeroFacts from '../components/HeroFacts.astro';
 import HowItWorks from '../components/HowItWorks.astro';
 import MarketDay from '../components/MarketDay.astro';
+import Curriculum from '../components/Curriculum.astro';
+import CohortCard from '../components/CohortCard.astro';
+import NumberedGrid from '../components/NumberedGrid.astro';
 import TeamTraining from '../components/TeamTraining.astro';
 import Faq from '../components/Faq.astro';
 import Waitlist from '../components/Waitlist.astro';
@@ -12,18 +15,26 @@ import Enrol from '../components/Enrol.astro';
 import JoinCta from '../components/JoinCta.astro';
 import SectionHead from '../components/SectionHead.astro';
 import LocalTimes from '../components/LocalTimes.astro';
-import { cohort, enrolment, join } from '../data/site';
+import { cohort, enrolment, join, site } from '../data/site';
+import { cohortAudiences } from '../data/offers';
 import { orgId, pageUrl } from '../data/schema';
+
+// When the cohort starts, as a phrase: the exact date once it is fixed (site.ts), else the rough one
+const starts = cohort.startDate ? `on ${cohort.startDate}` : `at ${cohort.nextStart}`;
 
 const faqs = [
   {
     q: 'When does the next cohort start?',
-    a: `The ${cohort.next} cohort starts at ${cohort.nextStart}. ${enrolment.open ? 'Enrolment is open.' : 'It opens to the waitlist first.'}`,
+    a: `The ${cohort.next} cohort starts ${starts}. ${
+      enrolment.open
+        ? `Enrolment is open${cohort.applyBy ? `, and applications close on ${cohort.applyBy} or earlier if places fill` : ''}.`
+        : 'It opens to the waitlist first.'
+    }`,
   },
   {
     // TODO(ubon): confirm this answer reflects your entry requirements.
     q: 'Do I need a technical background?',
-    a: 'No. The cohort is built for career changers and starts from the foundations of the role.',
+    a: 'No. Most people come from research, banking, operations or customer-facing roles, and week 1 starts from the foundations of the role.',
   },
   {
     q: 'Can I join from outside Nigeria?',
@@ -40,12 +51,33 @@ const faqs = [
       : `The ${cohort.next} fee goes to the waitlist first, before public enrolment. The ${cohort.previous} cohort was ${cohort.previousFee}, paid in full when you enrolled. We don't offer instalments at the moment. ${cohort.abroadFee}`,
   },
   {
-    q: 'Can I defer to a later cohort?',
-    a: "No. We don't offer deferrals, so join the cohort you can commit to.",
+    q: 'When is my place confirmed?',
+    a: enrolment.open
+      ? "Submit the enrolment form first; Squad's secure checkout then opens. Squad confirms your payment to us directly, and we check it against your enrolment and email your joining details."
+      : 'Joining the waitlist does not reserve a place. When enrolment opens, we will explain how to enrol and confirm a place.',
+  },
+  {
+    q: 'What if I miss a live session?',
+    a: "Every session is recorded, so you can catch up and still submit that week's assignment.",
+  },
+  {
+    // TODO(ubon): confirm Practeva issues a certificate of completion (the personal site's page says so).
+    q: 'Will this get me certified?',
+    a: 'The cohort covers the BABOK foundations and ends with an ECBA roadmap. When you finish, you receive a BA Bridge Cohort certificate of completion. Professional certification exams, such as the ECBA, are taken separately through IIBA.',
   },
   {
     q: 'Will I get a job at the end?',
     a: "We don't promise jobs. You finish with real case work to show, a rewritten CV and a mock interview behind you.",
+  },
+  {
+    // TODO(ubon): the personal site's refund policy says a place can move once to the next cohort at
+    // no cost before the cohort begins; this answer and the refund policy below follow it. Confirm.
+    q: 'Can I defer to a later cohort?',
+    a: 'Not once training has begun. Before the cohort starts, you can move your place once to the next cohort at no cost.',
+  },
+  {
+    q: 'What is the refund policy?',
+    a: `If you withdraw before the cohort begins, you can request a refund less a 10% administrative fee, or move your place once to the next cohort at no cost. Once training has begun, fees are non-refundable and non-transferable. If Practeva postpones or cancels the cohort, you can choose a full refund with no deduction or a place in the next cohort. Send refund requests in writing to ${site.email}; we process them within 14 working days.`,
   },
   {
     q: 'Can you train my team instead?',
@@ -59,17 +91,18 @@ const course = {
   '@type': 'Course',
   '@id': `${pageUrl('/training/')}#course`,
   name: cohort.programme,
-  description: `Twelve weeks of live online, case-based business analysis training for career changers in Nigeria and abroad. You work one case for a fictional microfinance bank and leave with a requirements document, BPMN process maps, a user story backlog and a UAT plan, plus a CV rewrite and a mock interview.`,
+  description: `Twelve weeks of live online, case-based business analysis training for career changers in Nigeria and abroad. You work one case for a fictional microfinance bank and leave with a stakeholder map, a requirements document, BPMN process maps, a user story backlog and a UAT plan, plus a CV and LinkedIn rewrite and a mock interview.`,
   provider: { '@id': orgId },
   url: pageUrl('/training/'),
   inLanguage: 'en',
   educationalLevel: 'Beginner',
   teaches: [
+    'Agile and Scrum ways of working',
     'Requirements elicitation and business requirements documents',
-    'BPMN process mapping',
+    'BPMN process mapping and data modelling',
     'User stories and acceptance criteria',
     'User acceptance testing and traceability',
-    'Stakeholder engagement',
+    'Stakeholder mapping and engagement',
     'Presenting a recommendation',
   ],
   hasCourseInstance: {
@@ -121,8 +154,23 @@ const course = {
     />
   </PageHero>
 
-  <HowItWorks />
+  <section class="ground-paper section" id="who" aria-labelledby="who-title">
+    <div class="container">
+      <SectionHead
+        id="who-title"
+        label="Who it's for"
+        title="You already have more BA skills than you think."
+        note="Most strong business analysts didn't start as business analysts. The cohort is built for people bringing experience from somewhere else."
+      />
+      <NumberedGrid items={cohortAudiences} cols={4} />
+      <JoinCta spaced />
+    </div>
+  </section>
+
+  <HowItWorks joined />
   <MarketDay />
+  <Curriculum />
+  <CohortCard />
 
   <section class="ground-paper section" id="times" aria-labelledby="times-title">
     <div class="container">
