@@ -11,7 +11,7 @@ import NumberedGrid from '../../components/NumberedGrid.astro';
 import ProcessFlow from '../../components/ProcessFlow.astro';
 import Faq from '../../components/Faq.astro';
 import CohortBanner from '../../components/CohortBanner.astro';
-import { cohort, site } from '../../data/site';
+import { cohort, join, site } from '../../data/site';
 import { orgId, pageUrl } from '../../data/schema';
 
 const path = '/training/how-to-become-a-business-analyst-in-nigeria/';
@@ -90,7 +90,7 @@ const article = {
   >
     <Fragment slot="title">How to become a business analyst in <em class="accent">Nigeria</em>.</Fragment>
     <Fragment slot="actions">
-      <a class="btn" href="/training#waitlist">Join the waitlist<Arrow /></a>
+      <a class="btn" href={join.href}>{join.label}<Arrow /></a>
       <a class="link" href="#path">Skip to the path</a>
     </Fragment>
   </PageHero>

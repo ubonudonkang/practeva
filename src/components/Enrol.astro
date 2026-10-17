@@ -1,0 +1,278 @@
+---
+// Enrolment for the cohort: the application, then Squad checkout, on /training. It replaces the
+// waitlist while enrolment.open is true (site.ts). The behaviour is in src/scripts/enrol.ts.
+//
+// The form sends what the Apps Script's "signup" action keeps: reference, name, email, whatsapp,
+// location, background, experience, stage, wants, availability, source and consent, plus `site`.
+// The script sets the payment fields itself. These are the questions the personal site's
+// enrolment form asks, so one sheet holds every student; availability is one tick here because
+// the schedule is fixed.
+import Arrow from './Arrow.astro';
+import SectionHead from './SectionHead.astro';
+import { cohort, enrolment, forms, site } from '../data/site';
+
+// An enrolment page that cannot take a payment the script will recognise must not be published.
+if (!(enrolment.amount > 0)) {
+  throw new Error('Enrol.astro: enrolment.open is true but enrolment.amount is 0. Set the fee in src/data/site.ts (it must equal EXPECTED_AMOUNT in the Apps Script).');
+}
+if (!enrolment.squadPublicKey) {
+  throw new Error('Enrol.astro: enrolment.open is true but there is no Squad public key in src/data/site.ts.');
+}
+if (/^sandbox_/.test(enrolment.squadPublicKey) && import.meta.env.PROD && !process.env.ALLOW_SANDBOX_KEY) {
+  throw new Error('Enrol.astro: a production build has a sandbox Squad key, so real payments would fail. Use the live pk_ key (or set ALLOW_SANDBOX_KEY=1 for a test build).');
+}
+
+const backgrounds = [
+  'Student or recent graduate',
+  'Academic or market research',
+  'Banking, finance, or insurance',
+  'Operations, admin, or customer service',
+  'Tech, but not in a BA role',
+  'Working BA looking to level up',
+  'Other',
+];
+const experience = ['0 to 1', '2 to 4', '5 to 9', '10+'];
+const stages = [
+  'Just exploring whether BA is right for me',
+  'Decided on BA, need structured training',
+  'Already doing some BA-type work informally',
+  'Currently a BA, want to get stronger',
+];
+const wants = [
+  'Practical, job-ready skills',
+  'A portfolio project to show employers',
+  'Certification prep (ECBA / CCBA)',
+  'CV, LinkedIn, and interview prep',
+  'Mentorship from a practising BA',
+  'Networking and job leads',
+  'Other',
+];
+const sources = ['LinkedIn', 'X (Twitter)', 'WhatsApp', 'Referral from a friend or colleague', 'Other'];
+---
+<section class="enrol ground-wash section" id="enrol" aria-labelledby="enrol-title">
+  <div class="container">
+    <SectionHead
+      id="enrol-title"
+      label={`${cohort.next} cohort`}
+      title="Enrol in the BA Bridge Cohort."
+      note={`${cohort.format}, ${cohort.schedule}. The fee is ${cohort.fee}, paid in full when you enrol. ${cohort.abroadFee}`}
+    />
+
+    <div class="enrol-grid">
+      <ol class="steps">
+        <li><b>Tell us about you.</b> A few questions so we know who is joining and what you want from the cohort.</li>
+        <li><b>Pay securely with Squad.</b> Card, bank transfer or USSD, in a window on this page. We never see your card details.</li>
+        <li><b>We confirm and welcome you.</b> We check the payment with Squad, then email you the link to the cohort WhatsApp group.</li>
+      </ol>
+
+      <div class="enrol-card">
+        <form
+          class="form-card enrol-form"
+          data-endpoint={forms.enrol}
+          data-email={site.email}
+          data-amount={enrolment.amount}
+          data-cohort={cohort.next}
+          data-key={enrolment.squadPublicKey}
+          novalidate
+        >
+          <input type="text" name="_gotcha" class="visually-hidden" tabindex="-1" autocomplete="off" aria-hidden="true" />
+          <div class="field-row">
+            <div class="field">
+              <label for="en-name">Full name</label>
+              <input id="en-name" name="name" type="text" autocomplete="name" required data-error="Add your full name." />
+            </div>
+            <div class="field">
+              <label for="en-email">Email</label>
+              <input id="en-email" name="email" type="email" autocomplete="email" required data-error="Add an email address we can reach you on, like name@example.com." />
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="en-whatsapp">WhatsApp number</label>
+              <input id="en-whatsapp" name="whatsapp" type="tel" autocomplete="tel" placeholder="+234" required data-error="Add your WhatsApp number, with the country code." />
+            </div>
+            <div class="field">
+              <label for="en-location">City and country</label>
+              <input id="en-location" name="location" type="text" autocomplete="address-level2" placeholder="Lagos, Nigeria" required data-error="Tell us which city and country you are in." />
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="en-background">Current background</label>
+              <select id="en-background" name="background" data-other="en-background-other" required data-error="Choose the background closest to yours.">
+                <option value="">Choose one</option>
+                {backgrounds.map((b) => <option>{b}</option>)}
+              </select>
+            </div>
+            <div class="field">
+              <label for="en-experience">Years of work experience</label>
+              <select id="en-experience" name="experience" required data-error="Choose your years of work experience.">
+                <option value="">Choose one</option>
+                {experience.map((e) => <option>{e}</option>)}
+              </select>
+            </div>
+          </div>
+          <div class="field" id="en-background-other-wrap" hidden>
+            <label for="en-background-other">Your background</label>
+            <input id="en-background-other" name="background_other" type="text" data-error="Tell us your background." />
+          </div>
+          <div class="field">
+            <label for="en-stage">Where are you in moving into business analysis?</label>
+            <select id="en-stage" name="stage" required data-error="Choose where you are in the move.">
+              <option value="">Choose one</option>
+              {stages.map((s) => <option>{s}</option>)}
+            </select>
+          </div>
+
+          <fieldset class="checks" data-max="3">
+            <legend>What do you most want from the cohort?</legend>
+            <p class="hint">Choose up to three.</p>
+            {wants.map((w) => (
+              <label class="check">
+                <input type="checkbox" name="wants" value={w} data-other={w === 'Other' ? 'en-wants-other' : undefined} />
+                <span>{w}</span>
+              </label>
+            ))}
+            <div class="field" id="en-wants-other-wrap" hidden>
+              <label for="en-wants-other">What else?</label>
+              <input id="en-wants-other" name="wants_other" type="text" data-error="Tell us what else you want from the cohort." />
+            </div>
+          </fieldset>
+
+          <div class="field">
+            <label for="en-source">How did you hear about us?</label>
+            <select id="en-source" name="source" data-other="en-source-other" required data-error="Tell us how you heard about the cohort.">
+              <option value="">Choose one</option>
+              {sources.map((s) => <option>{s}</option>)}
+            </select>
+          </div>
+          <div class="field" id="en-source-other-wrap" hidden>
+            <label for="en-source-other">Where did you hear about us?</label>
+            <input id="en-source-other" name="source_other" type="text" data-error="Tell us where you heard about us." />
+          </div>
+
+          <label class="check">
+            <input name="availability" type="checkbox" value={cohort.schedule} required data-error="Tick the box to confirm you can attend the live sessions." />
+            <span>I can join most live sessions: {cohort.schedule}. Every session is recorded.</span>
+          </label>
+          <label class="check">
+            <input name="consent" type="checkbox" value="Yes" required data-error="Tick the box so we can enrol you." />
+            <span>I agree that Practeva uses these details to enrol me, take payment and run the cohort, and to contact me about it (<a class="link" href="/privacy">privacy notice</a>).</span>
+          </label>
+
+          <button class="btn" type="submit"><span class="btn-label">Continue to payment</span><Arrow /></button>
+          <button class="btn" type="button" id="pay-retry" hidden><span class="btn-label">Pay now</span><Arrow /></button>
+          <p class="form-note">Your details are saved before checkout opens, so you can come back and pay if anything interrupts you. The fee is {cohort.fee}.</p>
+          <p class="form-status" role="status" aria-live="polite"></p>
+        </form>
+
+        <div class="form-card enrol-done" id="enrol-done" hidden tabindex="-1">
+          <h3>Thank you, your enrolment is in.</h3>
+          <p>Your reference is <b id="done-ref"></b>. Keep it: you will need it if you contact us.</p>
+          <p>We confirm every payment directly with Squad, then email you a welcome message with the link to the cohort WhatsApp group. If you haven't heard from us within a day, email <a class="link" href={`mailto:${site.email}`}>{site.email}</a> and quote your reference.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { wireEnrol } from '../scripts/enrol';
+  wireEnrol(document.querySelector<HTMLFormElement>('.enrol-form'));
+</script>
+
+<style>
+  /* The browser's hidden attribute loses to display rules on buttons and fields; this keeps it */
+  .enrol [hidden] {
+    display: none !important;
+  }
+
+  .enrol-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+    gap: var(--space-14) clamp(32px, 5vw, 80px);
+    align-items: start;
+  }
+
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    padding: 0;
+    list-style: none;
+    counter-reset: step;
+  }
+
+  .steps li {
+    position: relative;
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--line);
+    font-size: 17px;
+    line-height: 26px;
+    counter-increment: step;
+  }
+
+  .steps li::before {
+    content: '0' counter(step);
+    display: block;
+    margin-bottom: var(--space-2);
+    font-size: 14px;
+    font-weight: 300;
+    letter-spacing: 0.08em;
+    color: var(--accent-text);
+  }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-4);
+  }
+
+  .checks {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-width: 0;
+  }
+
+  .checks legend {
+    padding: 0;
+    font-size: 15px;
+    line-height: 20px;
+    font-weight: 600;
+  }
+
+  .hint {
+    margin: var(--space-1) 0 var(--space-2);
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--ink-muted);
+  }
+
+  .enrol-done h3 {
+    font-size: 24px;
+    line-height: 30px;
+    font-weight: var(--weight-title);
+    letter-spacing: -0.015em;
+  }
+
+  .enrol-done:focus-visible {
+    outline: 3px solid var(--accent-text);
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 960px) {
+    .enrol-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  @media (max-width: 560px) {
+    .field-row {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

@@ -21,7 +21,7 @@ export type Params = Record<string, string>;
 // unreadable, so the request is sent again blind (no-cors). Every post carries a unique
 // submission id, or an email and cohort, which the script dedupes on, so the resend cannot add
 // a second row. A blind send is not proof of a save.
-async function send(endpoint: string, params: Params) {
+export async function send(endpoint: string, params: Params) {
   const body = new URLSearchParams(params);
   let answer: { result?: string } | null;
   try {
