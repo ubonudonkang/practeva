@@ -9,6 +9,7 @@ import TeamTraining from '../components/TeamTraining.astro';
 import Faq from '../components/Faq.astro';
 import Waitlist from '../components/Waitlist.astro';
 import Enrol from '../components/Enrol.astro';
+import JoinCta from '../components/JoinCta.astro';
 import SectionHead from '../components/SectionHead.astro';
 import LocalTimes from '../components/LocalTimes.astro';
 import { cohort, enrolment, join } from '../data/site';
@@ -132,6 +133,7 @@ const course = {
         note={`Classes run ${cohort.schedule.replace('Wednesdays and Saturdays, ', '')} on Wednesdays and Saturdays, and both are recorded. ${cohort.abroadFee}`}
       />
       <LocalTimes from={20} to={22} />
+      <JoinCta spaced />
     </div>
   </section>
 

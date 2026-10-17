@@ -1,0 +1,41 @@
+---
+// A join button for the middle of the training page: the same pill as the hero, with a short line
+// under it, so a visitor who decides partway down never has to scroll back. It follows `join` in
+// site.ts, so it says "Join the waitlist" while the cohort is on its waitlist and "Enrol now" once
+// enrolment opens. The link is local (#waitlist or #enrol), so use it only on /training, where
+// that form is the last section. One pill per section, as the brand rules say.
+import Arrow from './Arrow.astro';
+import { cohort, enrolment, join } from '../data/site';
+
+interface Props {
+  spaced?: boolean;
+}
+
+const { spaced = false } = Astro.props;
+const note = enrolment.open
+  ? `${cohort.fee}, paid in full when you enrol.`
+  : 'Free to join. It does not reserve a place.';
+---
+<div class:list={['join-cta', { spaced }]}>
+  <a class="btn" href={join.href.replace('/training', '')}>{join.label}<Arrow /></a>
+  <p class="join-note">{note}</p>
+</div>
+
+<style>
+  .join-cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3) var(--space-6);
+  }
+
+  .join-cta.spaced {
+    margin-top: clamp(32px, 5vw, 56px);
+  }
+
+  .join-note {
+    font-size: 15px;
+    line-height: 22px;
+    color: var(--ink-muted);
+  }
+</style>
