@@ -217,9 +217,8 @@ export const cohortPhases = [
   },
 ];
 
-// What a place includes. TODO(ubon): confirm Practeva issues a certificate of completion (the
-// personal site's BA Bridge page lists one); the brand rules say never to promise certifications,
-// so it is worded as completion only, and the FAQ says exams are taken separately.
+// What a place includes. Practeva issues a certificate of completion; the FAQ says professional
+// certification exams are taken separately, and the brand rules still forbid promising certifications.
 export const cohortIncludes = [
   'Two live sessions a week for 12 weeks',
   'Every session recorded',
