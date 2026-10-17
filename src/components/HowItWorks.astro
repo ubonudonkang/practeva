@@ -12,8 +12,15 @@ const steps = [
 ];
 
 const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+interface Props {
+  /** True when a paper section comes before it, so the two share one gap and the heading's hairline. */
+  joined?: boolean;
+}
+
+const { joined = false } = Astro.props;
 ---
-<section class="how ground-paper section" id="how" aria-labelledby="how-title">
+<section class:list={['how', 'ground-paper', 'section', { joined }]} id="how" aria-labelledby="how-title">
   <div class="container">
     <SectionHead
       id="how-title"
@@ -29,7 +36,7 @@ const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     <div class="week-panel">
       <div class="week-intro">
         <h3 class="subheading">A typical week</h3>
-        <p class="caption">Both live sessions are for the whole cohort, taught by your trainer and recorded. Saturday's session reviews the week's deliverable. Your pod meets at a time you agree together.</p>
+        <p class="caption">Both live sessions are for the whole cohort, taught by a practising business analyst and recorded. Saturday's session reviews the week's deliverable, and every submission gets written feedback. Your pod, a small review group inside the cohort, meets at a time you agree together, so you see how others approach the same problem.</p>
       </div>
 
       <!-- Wide screens: a swimlane, one lane per role -->
@@ -62,6 +69,11 @@ const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 </section>
 
 <style>
+  /* Paper sections that follow one another share a hairline instead of a gap */
+  .joined {
+    padding-top: 0;
+  }
+
   /* Week swimlane */
   .week-panel {
     margin-top: clamp(48px, 7vw, 88px);

@@ -1,0 +1,205 @@
+---
+// The next cohort at a glance, and what a place includes. It follows the cohort's state in site.ts:
+//   waitlist (enrolment.open false): the cohort that filled, the next one, "Join the waitlist"
+//   open (enrolment.open true): the fee, start date and deadline, "Enrol now"
+// Nothing here is typed per state except the sentences; the facts come from `cohort` and `join`.
+import Arrow from './Arrow.astro';
+import SectionHead from './SectionHead.astro';
+import { cohortIncludes } from '../data/offers';
+import { cohort, enrolment, join } from '../data/site';
+
+const monthOf = (cohortName: string) => cohortName.split(' ')[0];
+const capital = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
+
+const open = enrolment.open;
+const label = open ? 'Enrolment open' : 'Next cohort';
+const title = open
+  ? `Join the ${cohort.next} cohort.`
+  : `${monthOf(cohort.previous)} is full. Get first notice for ${monthOf(cohort.next)}.`;
+const note = open
+  ? cohort.applyBy
+    ? `Applications close on ${cohort.applyBy}, or earlier if places fill.`
+    : `Each cohort takes ${cohort.size}, so places can fill before the deadline.`
+  : `The next twelve-week cohort is planned for ${cohort.next}. We share the timetable and fee with the waitlist before enrolment opens.`;
+
+const status = open ? 'Enrolment open' : `${monthOf(cohort.previous)} cohort: ${cohort.previousStatus.toLowerCase()}`;
+const rows = open
+  ? [
+      { term: 'Starts', detail: cohort.startDate || capital(cohort.nextStart.replace(/^the /, '')) },
+      ...(cohort.applyBy ? [{ term: 'Apply by', detail: cohort.applyBy }] : []),
+      { term: 'Cohort size', detail: cohort.size },
+    ]
+  : [
+      { term: 'Next cohort', detail: cohort.next },
+      { term: 'Registration', detail: 'Waitlist open' },
+      { term: 'Cohort size', detail: cohort.size },
+    ];
+const blurb = open
+  ? 'Submit the form first, then pay securely by card, bank transfer or USSD through Squad. We confirm your place after checking the payment against your enrolment.'
+  : 'Joining the waitlist is free and does not reserve a place. We will email you when enrolment opens.';
+---
+<section class="cohort ground-wash section" id="cohort" aria-labelledby="cohort-title">
+  <div class="container">
+    <SectionHead id="cohort-title" label={label} title={title} note={note} />
+
+    <div class="cohort-card">
+      <div class="cohort-main">
+        <ul class="tags status">
+          <li>{status}</li>
+        </ul>
+        {open && (
+          <p class="price">
+            <span class="price-amount">{cohort.fee}</span>
+            <span class="price-note">Paid in full when you enrol</span>
+          </p>
+        )}
+        <dl class="rows">
+          {rows.map((r) => (
+            <div>
+              <dt class="label">{r.term}</dt>
+              <dd>{r.detail}</dd>
+            </div>
+          ))}
+        </dl>
+        <a class="btn" href={join.href.replace('/training', '')}>{join.label}<Arrow /></a>
+        <p class="blurb">{blurb}</p>
+      </div>
+
+      <div class="cohort-includes">
+        <h3 class="subheading">What a place includes</h3>
+        <ul class="includes">
+          {cohortIncludes.map((item) => <li>{item}</li>)}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cohort {
+    --wash-x: 6%;
+    --wash-y: 20%;
+    --wash2-x: 96%;
+    --wash2-y: 90%;
+  }
+
+  .cohort-card {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-card);
+    background: var(--surface-raised);
+  }
+
+  .cohort-main,
+  .cohort-includes {
+    padding: clamp(24px, 4vw, 48px);
+  }
+
+  .cohort-main {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-6);
+    border-right: 1px solid var(--line);
+  }
+
+  .status {
+    color: var(--deep-green);
+  }
+
+  .price {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .price-amount {
+    font-size: clamp(44px, 5vw, 64px);
+    line-height: 1;
+    font-weight: 300;
+    letter-spacing: -0.03em;
+    color: var(--heading);
+  }
+
+  .price-note {
+    font-size: 15px;
+    line-height: 22px;
+    color: var(--ink-muted);
+  }
+
+  .rows {
+    align-self: stretch;
+    border-top: 1px solid var(--line);
+  }
+
+  .rows div {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding-block: var(--space-3);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .rows dd {
+    font-size: 16px;
+    line-height: 22px;
+    font-weight: var(--weight-title);
+    text-align: right;
+    color: var(--heading);
+  }
+
+  .blurb {
+    max-width: 30em;
+    font-size: 15px;
+    line-height: 22px;
+    color: var(--ink-muted);
+  }
+
+  .cohort-includes {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .includes {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* A small leaf before each line, the same marker the offer cards use */
+  .includes li {
+    position: relative;
+    padding: var(--space-3) 0 var(--space-3) 28px;
+    border-bottom: 1px solid var(--line);
+    font-size: 16px;
+    line-height: 24px;
+  }
+
+  .includes li:last-child {
+    border-bottom: 0;
+  }
+
+  .includes li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 19px;
+    width: 10px;
+    height: 10px;
+    border-radius: 5px 0 5px 0;
+    background: var(--leaf-green);
+  }
+
+  @media (max-width: 960px) {
+    .cohort-card {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .cohort-main {
+      border-right: 0;
+      border-bottom: 1px solid var(--line);
+    }
+  }
+</style>
