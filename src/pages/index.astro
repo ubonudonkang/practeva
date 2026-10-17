@@ -14,7 +14,7 @@ import CohortBanner from '../components/CohortBanner.astro';
 import Faq from '../components/Faq.astro';
 import ContactBand from '../components/ContactBand.astro';
 import { beforeAfter, packages } from '../data/offers';
-import { cohort, markets } from '../data/site';
+import { cohort, enrolment, markets } from '../data/site';
 
 // Questions about the company as a whole; the training page keeps the cohort's own FAQ.
 const faqs = [
@@ -42,7 +42,7 @@ const faqs = [
     q: 'How much does it cost?',
     a: `Advisory and careers support are quoted after a short call, once we know what you need; clients outside Nigeria are quoted and invoiced in ${markets.abroadCurrency}. ${
       cohort.fee
-        ? `The ${cohort.next} BA Bridge Cohort is ${cohort.fee}${cohort.feeUsd ? `, or ${cohort.feeUsd} from outside Nigeria` : ''}.`
+        ? `The ${cohort.next} BA Bridge Cohort is ${cohort.fee}. ${cohort.abroadFee}`
         : `The ${cohort.next} BA Bridge Cohort fee goes to the waitlist first; the ${cohort.previous} cohort was ${cohort.previousFee}.`
     }`,
   },
@@ -52,7 +52,7 @@ const faqs = [
   },
   {
     q: 'I want to move into business analysis. Where do I start?',
-    a: `With the ${cohort.programme}: ${cohort.format.toLowerCase()}, built for career changers. The ${cohort.next} cohort opens to the waitlist first. If you are already applying for roles, careers support can help with your CV, profile and interviews.`,
+    a: `With the ${cohort.programme}: ${cohort.format.toLowerCase()}, built for career changers. ${enrolment.open ? `Enrolment for the ${cohort.next} cohort is open.` : `The ${cohort.next} cohort opens to the waitlist first.`} If you are already applying for roles, careers support can help with your CV, profile and interviews.`,
   },
 ];
 ---

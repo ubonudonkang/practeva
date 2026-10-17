@@ -24,7 +24,7 @@ Copy that describes Advisory should name both, not business analysis alone.
   - Cohort: `HowItWorks`, `MarketDay`, `Waitlist`.
   - `LocalTimes`: a Lagos time shown in each city in `cities` (site.ts), standard and summer time; the working day on the international page and the cohort sessions on training.
   - `Faq`: the accordion on home (questions about the company as a whole) and on training (questions about the cohort). Each page keeps its questions at the top of its own file and builds any fact (dates, fees, format) from `site.ts`, so the answers change with the facts. Pass `joined={false}` when it follows a night or wash section.
-  - Forms: `ContactForm`, `Waitlist`, with shared behaviour in `src/scripts/forms.ts`. Both post to the Apps Script described under Forms below.
+  - Forms: `ContactForm`, `Waitlist`, with shared behaviour in `src/scripts/forms.ts`, and `Enrol` (the enrolment form with Squad checkout, behaviour in `src/scripts/enrol.ts`), which replaces `Waitlist` on `/training` once `enrolment.open` is true. All three post to the Apps Script described under Forms below.
   - `Arrow`: the one arrow, inside CTA pills only.
 - `src/data/site.ts`: every repeated fact (company details, markets, nav, cohort dates, size, schedule, fee, form endpoints, contact topics). Change facts here, not in components.
 - `src/data/schema.ts`: the structured data (JSON-LD) helpers; see Search.
@@ -44,6 +44,8 @@ Both forms post to the one Apps Script web app behind ubonudonkang.com's forms. 
 - The script routes a post by `form_name` and keeps only the fields it knows, so the forms send exactly those:
   - Waitlist (`form_name` `ba-waitlist-feb-2027`, the same as ubonudonkang.com): `name`, `email`, `cohort`, `consent` (must be `Yes`) and `type` ("BA Bridge February 2027 waitlist (practevahq.com)"). It lands in the `Waitlist` tab, and a repeat email and cohort is skipped, so someone who joins on both sites appears once.
   - Contact (`form_name` `contact`): `first_name`, `last_name`, `email`, `company`, `type` and `message`, plus a `submission_id`. On submit the topic becomes `type` as "Practeva: <topic label>", and an optional phone number is added to the end of the message, because the Contact tab has no phone column.
+- Enrolment (`Enrol`, shown instead of the waitlist while `enrolment.open` is true): the form posts `action=signup` with `reference` (`BAB-...`), `name`, `email`, `whatsapp`, `location`, `background`, `experience`, `stage`, `wants`, `availability`, `source`, `consent` and `site`, then opens Squad's inline checkout with the reference plus an attempt number (`BAB-...-1`, `-2` for a retry, because Squad needs a fresh reference each time). It lands in the `BA Training` tab, the same tab as the personal site's enrolments, with `Registered via` = `practevahq.com`. The script takes only those answers from a request and sets every payment field itself; a payment counts only when the script has checked it with Squad (Squad's webhook, the page's `payment` post, or its 30-minute sweep). Nothing in the browser proves a payment, so the thank-you says "we confirm every payment directly with Squad". The fee is `enrolment.amount` (whole naira, which must equal `EXPECTED_AMOUNT` in the script); `cohort.fee` follows it. Dollar fees do not exist for now: people abroad ask for a quote (`cohort.abroadFee`), and are added with the dashboard's *Add enrolment* page.
+- Every post says `site` = `practevahq.com` (`formSite`). The script uses it to tag the row, show it in the dashboard, and to answer in Practeva's voice: notifications go out as practevahq.com, and a student who enrolled here gets the welcome email from Practeva, signed by the team, with replies to `info@practevahq.com`. The personal site (ubonudonkang.com) can enrol the same cohort into the same sheet; one dashboard shows both.
 - `_gotcha` is the honeypot. Notifications for both go to the script's `SITE_NOTIFY_EMAIL`.
 - `src/scripts/forms.ts` sends URL-encoded data, reads the script's `{"result":"ok"}` answer, and if the browser cannot read it, resends once with `no-cors`. The dedupe keys make that resend safe; a blind send is not proof of a save, so check the sheet after any change to the script or its deployment.
 - To keep a new field (a WhatsApp number on the waitlist, say), add it to `FORM_TABS` in the script and redeploy it first: the script adds the column on the right. A field the script does not know is dropped silently.
@@ -131,9 +133,21 @@ The site animates very little, on purpose. Before adding motion, it needs a reas
 - What moves today: each page's hero load sequence (its one orchestrated moment, settled by about 780ms), button press and arrow nudge, underline growth on nav and pillar links, the pillar and FAQ accordions, the mobile menu (revealed down from the bar with clip-path, links staggered 20ms, quicker close), the header bar's fill fading in on scroll (opacity, 200ms), and form messages.
 - Deliberately not animated: scroll-triggered section reveals, process flows, the hero leaf planes, the washes and the italic accent word. Keep it that way.
 
+## Opening enrolment
+
+Enrolment is closed as shipped (`enrolment.open: false` in `site.ts`): the page shows the waitlist and says the cohort opens to the waitlist first. Opening is one switch, but do the list in order. `node scripts/test-enrol.mjs` builds a copy of the site with enrolment open and drives the form against a stubbed script and Squad widget; run it after any change to the form, `enrol.ts` or `site.ts`. A build with `open: true` fails if `enrolment.amount` is 0 or the Squad key is a sandbox key (a production build only).
+
+1. **Fee.** Set `enrolment.amount` (whole naira) and set the same number as `EXPECTED_AMOUNT` in the Apps Script (`scripts/site_forms.gs` in `ubonudonkang/ubonudonkang.github.io`), then redeploy both of its deployments (its README says how). If the personal site enrols the same cohort, its open command sets its price: the three must agree. A payment of any other amount shows in the dashboard as "Check the amount".
+2. **Cohort facts.** `cohort.next`, `nextStart`, `schedule`, `size`, `waitlistFormName` and `waitlistType`; read the FAQ answers on `/training` and the home page.
+3. **Squad, in the sandbox first.** Put the `sandbox_pk_...` key in `squadPublicKey` and the matching `sandbox_sk_...` in the script's `SQUAD_SECRET_KEY` property, run `npm run dev`, and make one payment. Check, in the dashboard: the enrolment appears with *Registered via practevahq.com*; the payment is recognised and the review email arrives; *Confirm payment* sends a welcome email that comes from Practeva, in the plural, signed "The Practeva team". Then put the live `pk_...` and `sk_...` back. The sandbox and live keys must match each other.
+4. **Squad dashboard.** The webhook URL is the script's `/exec` address (the one in `site.ts`), unchanged. The account has one redirect URL; set it to `https://practevahq.com/training/`. Checkout runs in a window on the page, so the redirect is only a fallback, and the page reads `?reference=` to show the buyer their reference.
+5. **Privacy notice.** It already describes what enrolment collects and that Squad takes the payment (updated 17 October 2026); read it again and confirm the retention lines.
+6. **Switch.** `enrolment.open: true`, `npm run build`, `node scripts/test-enrol.mjs`, merge to `main`. The header button, home banner, footer, guide and `llms.txt` all change from "Join the waitlist" to "Enrol now" by themselves.
+7. **Closing again.** Set `open: false` (the waitlist returns) and update `cohort` for the next one.
+
 ## Open items before launch
 
-1. Forms: both post to the Apps Script (see Forms above). After the first deploy, submit one test of each and confirm a row and a notification arrive. The contact notification's sender name comes from the script (`name: 'ubonudonkang.com'`); change it there if Practeva enquiries should say practevahq.com.
+1. Forms: all three post to the Apps Script (see Forms above). After the first deploy, submit one test of each and confirm a row and a notification arrive. Once the script that tags submissions by site is deployed (see Forms), the Waitlist and Contact tabs gain a `Site` column and the notifications for this site's forms are sent as practevahq.com; check that the first Practeva submission shows `practevahq.com` there.
 2. Advisory packages (`packages` in `offers.ts`): confirm what each includes, turnaround and price. Empty prices show "Quoted after an intro call".
 3. Careers services and team training (`careerServices`, `teamTraining`): confirm contents and prices.
 4. Resources (`resources`): the list is a placeholder marked "Coming soon". Replace with the real templates, formats, prices and links.
@@ -148,7 +162,6 @@ The site animates very little, on purpose. Before adding motion, it needs a reas
 
 - `/insights`: Ubon's BA nuggets as a content collection in `src/content/`, added to the nav, with more guides like the one under `/training/` (each with an Article, an FAQ and a link from a related page).
 - A page per advisory package once their scope and prices are fixed.
-- Enrolment with Monnify checkout on `/training` when enrolment opens.
 - Case studies, once there is real client work with permission to show it.
 
 ## Checks before shipping a change

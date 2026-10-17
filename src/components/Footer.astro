@@ -1,5 +1,5 @@
 ---
-import { site } from '../data/site';
+import { join, site } from '../data/site';
 
 const year = new Date().getFullYear();
 const columns = [
@@ -17,7 +17,7 @@ const columns = [
     links: [
       { href: '/training', label: 'BA Bridge Cohort' },
       { href: '/training#team', label: 'Team training' },
-      { href: '/training#waitlist', label: 'Join the waitlist' },
+      { href: join.href, label: join.label },
       { href: '/training/how-to-become-a-business-analyst-in-nigeria', label: 'Becoming a business analyst' },
     ],
   },

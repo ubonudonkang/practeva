@@ -1,7 +1,7 @@
 ---
 // The cohort's place on the home page: a slim textured band with dates and one pill.
 import Arrow from './Arrow.astro';
-import { cohort } from '../data/site';
+import { cohort, enrolment, join } from '../data/site';
 ---
 <section class="cohort-banner ground-night section" aria-labelledby="cohort-title">
   <div class="container cb-grid">
@@ -15,9 +15,9 @@ import { cohort } from '../data/site';
         <li>{cohort.size}</li>
         <li>{cohort.previous}: {cohort.previousStatus.toLowerCase()}</li>
       </ul>
-      <p class="cb-note">The {cohort.next} cohort opens to the waitlist first.</p>
+      <p class="cb-note">{enrolment.open ? `Enrolment for the ${cohort.next} cohort is open.` : `The ${cohort.next} cohort opens to the waitlist first.`}</p>
       <div class="cb-actions">
-        <a class="btn" href="/training#waitlist">Join the waitlist<Arrow /></a>
+        <a class="btn" href={join.href}>{join.label}<Arrow /></a>
         <a class="link" href="/training">See how a cohort works</a>
       </div>
     </div>
