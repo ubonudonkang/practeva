@@ -84,6 +84,10 @@ export const cohort = {
   programme: 'BA Bridge Cohort',
   next: 'February 2027',
   nextStart: 'the end of February',
+  // Once they are fixed (before enrolment opens): the exact start date, for example '2 February
+  // 2027', and the last day to apply. Empty, the page says "the end of February" and shows no deadline.
+  startDate: '',
+  applyBy: '',
   previous: 'November 2026',
   previousStatus: 'Fully booked',
   size: '10 to 15 people',

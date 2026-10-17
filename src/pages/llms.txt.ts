@@ -2,7 +2,7 @@
 // Built from site.ts and offers.ts, so dates, sizes and services stay in step with the pages.
 import type { APIRoute } from 'astro';
 import { cohort, company, enrolment, markets, site } from '../data/site';
-import { careerServices, packages, services, teamTraining } from '../data/offers';
+import { careerServices, cohortAudiences, cohortIncludes, cohortPhases, packages, services, teamTraining } from '../data/offers';
 
 export const GET: APIRoute = () => {
   const u = (path: string) => new URL(path, site.url).toString();
@@ -32,6 +32,9 @@ The ${cohort.programme} is business analysis training for career changers in Nig
 - Next cohort: ${cohort.next}, ${enrolment.open ? `enrolment open${cohort.fee ? ` (${cohort.fee}, paid in full through Squad)` : ''}` : 'opening to the waitlist first'}
 - ${cohort.previous} cohort: ${cohort.previousStatus.toLowerCase()}
 - Students work one case for Lantern MFB, a fictional microfinance bank, and produce a business requirements document, BPMN process maps, a user story backlog and a UAT plan, then present to the bank's board in week 12. Each student also gets a CV rewrite and a mock interview.
+- Who it is for: ${cohortAudiences.map((a) => a.name.toLowerCase()).join(', ')}. No technical background is needed.
+- The twelve weeks: ${cohortPhases.map((p) => `${p.name.toLowerCase()} (${p.weeks.toLowerCase()})`).join('; ')}.
+- A place includes: ${cohortIncludes.map((i) => i.charAt(0).toLowerCase() + i.slice(1)).join('; ')}.
 - Practeva does not promise jobs, salaries or certifications.
 
 Team training for organisations: ${teamTraining.topics.map((t) => t.name.toLowerCase()).join(', ')}; ${teamTraining.formats.join(', ').toLowerCase()}.
