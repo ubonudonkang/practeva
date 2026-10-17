@@ -48,6 +48,8 @@ const openWith = (amount, key) => (src) => {
   return out;
 };
 
+let closedDir = '';
+
 /* ── The build refuses an open page that could not take a payment the script will recognise ── */
 {
   const noFee = copySite(openWith(0));
@@ -62,7 +64,8 @@ const openWith = (amount, key) => (src) => {
   assert.equal(build(sandbox, { ALLOW_SANDBOX_KEY: '1' }).status, 0, 'a test build with a sandbox key is allowed');
 
   // closed (as shipped) builds and shows the waitlist
-  const closed = copySite((src) => src);
+  closedDir = copySite((src) => src);
+  const closed = closedDir;
   assert.equal(build(closed).status, 0);
   const closedTraining = fs.readFileSync(path.join(closed, 'dist/training/index.html'), 'utf8');
   assert.ok(closedTraining.includes('id="waitlist"') && !closedTraining.includes('id="enrol"'), 'closed: waitlist, no enrolment');
@@ -71,23 +74,28 @@ const openWith = (amount, key) => (src) => {
 }
 
 /* ── The open site ── */
+const types = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.webp': 'image/webp', '.png': 'image/png', '.woff2': 'font/woff2', '.txt': 'text/plain', '.xml': 'application/xml' };
+async function serveBuilt(dist) {
+  const server = http.createServer((req, res) => {
+    let file = path.join(dist, decodeURIComponent(new URL(req.url, 'http://x').pathname));
+    if (fs.existsSync(file) && fs.statSync(file).isDirectory()) file = path.join(file, 'index.html');
+    if (!fs.existsSync(file)) { res.writeHead(404); res.end('not found'); return; }
+    res.writeHead(200, { 'content-type': types[path.extname(file)] || 'application/octet-stream' });
+    res.end(fs.readFileSync(file));
+  });
+  await new Promise((r) => server.listen(0, '127.0.0.1', r));
+  return { server, base: `http://127.0.0.1:${server.address().port}` };
+}
 const dir = copySite(openWith(FEE));
 const built = build(dir);
 assert.equal(built.status, 0, built.stdout + built.stderr);
-const dist = path.join(dir, 'dist');
-const types = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.webp': 'image/webp', '.png': 'image/png', '.woff2': 'font/woff2', '.txt': 'text/plain', '.xml': 'application/xml' };
-const server = http.createServer((req, res) => {
-  let file = path.join(dist, decodeURIComponent(new URL(req.url, 'http://x').pathname));
-  if (fs.existsSync(file) && fs.statSync(file).isDirectory()) file = path.join(file, 'index.html');
-  if (!fs.existsSync(file)) { res.writeHead(404); res.end('not found'); return; }
-  res.writeHead(200, { 'content-type': types[path.extname(file)] || 'application/octet-stream' });
-  res.end(fs.readFileSync(file));
-});
-await new Promise((r) => server.listen(0, '127.0.0.1', r));
-const base = `http://127.0.0.1:${server.address().port}`;
+const open_ = await serveBuilt(path.join(dir, 'dist'));
+const closed_ = await serveBuilt(path.join(closedDir, 'dist'));
+const server = open_.server;
+const base = open_.base;
 
 const SQUAD_STUB = `window.__squad = []; window.squad = function (options) { this.options = options; this.setup = function () {}; this.open = function () { window.__squad.push(options); }; };`;
-async function visit(browser, { width = 1280, endpointAnswer = { result: 'ok' }, widget = 'ok', query = '', scheme = 'light', context: existing } = {}) {
+async function visit(browser, { width = 1280, endpointAnswer = { result: 'ok' }, widget = 'ok', query = '', scheme = 'light', context: existing, from = base } = {}) {
   const context = existing || await browser.newContext({ viewport: { width, height: 900 }, colorScheme: scheme, reducedMotion: 'reduce' });
   const posts = [];
   await context.route('https://script.google.com/**', async (route) => {
@@ -97,11 +105,11 @@ async function visit(browser, { width = 1280, endpointAnswer = { result: 'ok' },
   await context.route('https://checkout.squadco.com/**', (route) => (widget === 'ok'
     ? route.fulfill({ status: 200, contentType: 'text/javascript', body: SQUAD_STUB })
     : route.abort()));
-  await context.route((url) => !url.href.startsWith(base) && !/script\.google\.com|checkout\.squadco\.com/.test(url.href), (route) => route.abort());
+  await context.route((url) => !url.href.startsWith(from) && !/script\.google\.com|checkout\.squadco\.com/.test(url.href), (route) => route.abort());
   const page = await context.newPage();
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
-  await page.goto(`${base}/training/${query}`);
+  await page.goto(`${from}/training/${query}`);
   return { page, context, posts, errors };
 }
 const fillForm = async (page, extra = {}) => {
@@ -140,6 +148,55 @@ try {
     assert.match(llms, /Next cohort: February 2027, enrolment open \(₦80,000, paid in full through Squad\)/);
     assert.deepEqual(errors, []);
     await context.close();
+  }
+
+  /* ── A join button in several sections, so nobody has to scroll back; it says what the cohort's state says ── */
+  {
+    const sections = ['#how', '#market-day', '#times'];
+    const closedSite = await visit(browser, { from: closed_.base });
+    const { page: cp, errors: closedErrors } = closedSite;
+    for (const id of ['main .hero', ...sections]) {
+      const cta = id === 'main .hero' ? cp.locator('main a.btn').first() : cp.locator(`${id} a.btn`);
+      assert.equal(await cta.count(), 1, `${id}: one join button (one pill per section)`);
+      assert.equal((await cta.textContent()).trim(), 'Join the waitlist', id);
+      assert.equal(await cta.getAttribute('href'), '#waitlist', id);
+    }
+    assert.equal(await cp.locator('#how .join-note').textContent(), 'Free to join. It does not reserve a place.');
+    assert.equal(await cp.locator('#market-day .join-cta a.btn').count(), 1);
+    assert.equal(await cp.locator('main').getByText('Enrol now').count(), 0);
+    // pressing one takes the visitor to the waitlist form
+    await cp.locator('#times a.btn').click();
+    await cp.waitForFunction(() => location.hash === '#waitlist');
+    const top = await cp.evaluate(() => document.getElementById('waitlist').getBoundingClientRect().top);
+    assert.ok(top < 400 && top > -50, 'the waitlist is on screen after the click');
+    for (const width of [360, 390, 768, 1280]) {
+      await cp.setViewportSize({ width, height: 900 });
+      assert.equal(await cp.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth), 0, `the closed page scrolls sideways at ${width}px`);
+    }
+    assert.deepEqual(closedErrors, []);
+    await closedSite.context.close();
+
+    // open: the same buttons, now "Enrol now", with the fee underneath
+    const { page: op, errors, context } = await visit(browser);
+    for (const id of sections) {
+      assert.equal((await op.locator(`${id} a.btn`).textContent()).trim(), 'Enrol now', id);
+      assert.equal(await op.locator(`${id} a.btn`).getAttribute('href'), '#enrol', id);
+      assert.equal(await op.locator(`${id} .join-note`).textContent(), '\u20A680,000, paid in full when you enrol.', id);
+    }
+    assert.deepEqual(errors, []);
+    await context.close();
+
+    if (axeSource) {
+      for (const scheme of ['light', 'dark']) {
+        for (const width of [390, 1280]) {
+          const { page, context: ctx } = await visit(browser, { from: closed_.base, width, scheme });
+          await page.evaluate(axeSource);
+          const found = await page.evaluate(async () => (await axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa', 'best-practice'] } })).violations.map((v) => `${v.id}: ${v.nodes.slice(0, 2).map((n) => n.html.slice(0, 100)).join(' | ')}`));
+          assert.deepEqual(found, [], `the closed training page ${scheme}/${width}`);
+          await ctx.close();
+        }
+      }
+    }
   }
 
   /* ── The form: checks, "Other" boxes, three wishes at most ── */
@@ -333,7 +390,8 @@ try {
   failed = error;
 } finally {
   await browser.close();
-  server.close();
+  open_.server.close();
+  closed_.server.close();
 }
 if (failed) throw failed;
 console.log('Enrolment tests passed (build guards, open and closed pages, the form, the Squad journey, returns, failures, layout).');
