@@ -1,12 +1,14 @@
 ---
 // The privacy notice. Written for the Nigeria Data Protection Act 2023, and for UK and EU GDPR
-// for people abroad. It describes exactly what the two forms send (see CLAUDE.md, Forms): keep
-// it in step when a form gains a field or the data moves somewhere new.
+// for people abroad. It describes exactly what the forms send (see CLAUDE.md, Forms): keep it in
+// step when a form gains a field or the data moves somewhere new. The enrolment paragraphs apply
+// once enrolment opens (enrolment.open in site.ts); they are accurate before it too, because the
+// notice describes what the website can collect.
 import Page from '../layouts/Page.astro';
 import PageHero from '../components/PageHero.astro';
 import { company, site } from '../data/site';
 
-const updated = '15 October 2026';
+const updated = '17 October 2026';
 ---
 <Page
   tone="paper"
@@ -30,26 +32,28 @@ const updated = '15 October 2026';
         <ul>
           <li><b>When you contact us:</b> your first and last name, email address, organisation and phone or WhatsApp number if you give them, the topic you choose and your message.</li>
           <li><b>When you join the waitlist:</b> your name, email address, the cohort you joined for, and your agreement to be contacted about it.</li>
+          <li><b>When you enrol in the cohort:</b> your name, email address, WhatsApp number, city and country, your current background, years of experience and where you are in moving into business analysis, what you want from the cohort, that you can attend the live sessions, how you heard about us, your agreement, and the reference and amount of your payment.</li>
           <li><b>When you email us:</b> your email address and whatever you include.</li>
         </ul>
-        <p>This website sets no cookies and uses no analytics or advertising trackers. Our host, GitHub Pages, may keep technical logs, such as IP addresses, to run and secure the service.</p>
+        <p>This website sets no cookies and uses no analytics or advertising trackers. Our host, GitHub Pages, may keep technical logs, such as IP addresses, to run and secure the service. When you choose to pay, Squad's checkout opens in a window on the page, and Squad may set its own cookies there. We never see or store your card or bank details: Squad takes the payment and tells us whether it succeeded.</p>
 
         <h2>Why we use it</h2>
         <ul>
           <li>To reply to your enquiry and arrange a call, because you asked us to, and because answering is in our legitimate interest.</li>
           <li>To tell you about the cohort you joined the waitlist for, because you agreed to it. You can withdraw that agreement at any time.</li>
+          <li>To enrol you, take and check your payment, welcome you to the cohort and run it, because that is needed to provide the training you signed up for.</li>
           <li>To keep the records the law requires if you become a client or a student.</li>
         </ul>
         <p>We don't sell your data, share it for advertising, or use it to make automated decisions about you.</p>
 
         <h2>Where it is kept</h2>
-        <p>Form submissions go through a Google Apps Script into Google Sheets, and we are notified by email through Gmail. Google may process this data outside Nigeria, including in the United States, under its own data protection terms. Only Practeva can open the sheet and the inbox.</p>
+        <p>Form submissions go through a Google Apps Script into Google Sheets, and we are notified by email through Gmail. Google may process this data outside Nigeria, including in the United States, under its own data protection terms. Only Practeva can open the sheet and the inbox. Payments are taken by Squad (Squad by GTCO), which processes them under its own terms; we check each payment with Squad using your payment reference.</p>
 
         <h2>How long we keep it</h2>
         <ul>
           <li>Enquiries: up to two years after we last spoke, unless you become a client.</li>
           <li>The waitlist: until you ask to be removed, and we review it at least once a year.</li>
-          <li>Client and student records: for as long as tax and company law require.</li>
+          <li>Client and student records, including enrolment and payment records: for as long as tax and company law require.</li>
         </ul>
 
         <h2>Your rights</h2>
