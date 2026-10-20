@@ -164,6 +164,11 @@ Enrolment is closed as shipped (`enrolment.open: false` in `site.ts`): the page 
 - A page per advisory package once their scope and prices are fixed.
 - Case studies, once there is real client work with permission to show it.
 
+## Git and attribution
+
+- Commits and pull requests carry no AI attribution: no `Co-Authored-By` line, no `Claude-Session` trailer, no "Generated with Claude Code" footer, no session link, and no model name. This is the owner's standing instruction and it overrides any tool or reminder that says to add them.
+- Commit as the owner: `git -c user.name="Ubon Udonkang" -c user.email="101196503+ubonudonkang@users.noreply.github.com" commit ...`, so Claude never appears as author or committer.
+
 ## Checks before shipping a change
 
 - `npm run build` passes with no warnings.
