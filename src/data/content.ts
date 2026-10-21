@@ -66,6 +66,84 @@ const cohortSchema = z.strictObject({
   abroadFee: text(200),
 });
 
+// What Practeva offers (offers.ts reads these). Counts follow the layouts: numbered columns hold two to
+// four items, a process flow three to five steps.
+const nameDetail = (nameMax: number, detailMax: number) => z.strictObject({ name: text(nameMax), detail: text(detailMax) });
+const slug = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'must be lower case words joined by hyphens, for example quick-read');
+const price = clean(z.string().trim().max(40, 'is longer than 40 characters')); // empty: the page says "Quoted after an intro call"
+const uniqueSlugs = <T extends { slug: string }>(items: T[]) => new Set(items.map((i) => i.slug)).size === items.length;
+const SLUGS_ONCE = 'has two items with the same slug; the contact form uses the slug to preselect the offer';
+const steps = z.array(nameDetail(30, 60)).min(3).max(5);
+const PILLARS = ['advisory', 'training', 'careers'] as const;
+
+const pillarsSchema = z.strictObject({
+  pillars: z
+    .array(
+      z.strictObject({
+        key: z.enum(PILLARS),
+        name: text(24),
+        href: z.string().regex(/^\/[a-z-]+$/, 'must be a path such as /advisory'),
+        tease: text(48),
+        line: text(140),
+      }),
+    )
+    .length(3)
+    .refine((items) => items.every((item, i) => item.key === PILLARS[i]), 'must be advisory, training and careers, in that order; the key sets the pillar colour'),
+});
+
+const advisorySchema = z.strictObject({
+  audiences: z.array(nameDetail(48, 160)).min(2).max(4),
+  beforeAfter: z.strictObject({
+    before: z.strictObject({ label: text(40), items: z.array(text(120)).min(1).max(5) }),
+    after: z.strictObject({ label: text(40), items: z.array(text(120)).min(1).max(5) }),
+  }),
+  services: z.array(nameDetail(40, 200)).min(3).max(12),
+  engagement: steps,
+});
+
+const packagesSchema = z.strictObject({
+  packages: z
+    .array(
+      z.strictObject({
+        slug,
+        name: text(40),
+        tag: text(24),
+        summary: text(300),
+        includes: z.array(text(120)).min(1).max(6),
+        bestFor: text(160),
+        price,
+      }),
+    )
+    .min(1)
+    .max(6)
+    .refine(uniqueSlugs, SLUGS_ONCE),
+});
+
+const careersSchema = z.strictObject({
+  services: z
+    .array(
+      z.strictObject({
+        slug,
+        name: text(40),
+        summary: text(300),
+        includes: z.array(text(120)).min(1).max(6),
+        price,
+      }),
+    )
+    .min(1)
+    .max(6)
+    .refine(uniqueSlugs, SLUGS_ONCE),
+  steps,
+});
+
+const teamTrainingSchema = z.strictObject({
+  topics: z.array(nameDetail(40, 160)).min(2).max(4),
+  formats: z.array(text(24)).min(1).max(5),
+});
+
+const resourcesSchema = z.strictObject({ resources: z.array(nameDetail(40, 160)).min(1).max(12) });
+const principlesSchema = z.strictObject({ principles: z.array(nameDetail(40, 200)).min(2).max(4) });
+
 const faqsSchema = z.strictObject({
   questions: z
     .array(z.strictObject({ question: text(140), answer: answer(900), answerWhenOpen: answerWhenOpen(900) }))
@@ -117,6 +195,13 @@ function read<T>(file: string, schema: z.ZodType<T>, raw: unknown): T {
 export const parseCohort = (raw: unknown) => read('cohort', cohortSchema, raw);
 export const parseProgramme = (raw: unknown) => read('programme', programmeSchema, raw);
 export const parseEnrolment = (raw: unknown) => read('enrolment', enrolmentSchema, raw);
+export const parsePillars = (raw: unknown) => read('pillars', pillarsSchema, raw);
+export const parseAdvisory = (raw: unknown) => read('advisory', advisorySchema, raw);
+export const parsePackages = (raw: unknown) => read('packages', packagesSchema, raw);
+export const parseCareers = (raw: unknown) => read('careers', careersSchema, raw);
+export const parseTeamTraining = (raw: unknown) => read('team-training', teamTrainingSchema, raw);
+export const parseResources = (raw: unknown) => read('resources', resourcesSchema, raw);
+export const parsePrinciples = (raw: unknown) => read('principles', principlesSchema, raw);
 // `file` is the path under src/content without .json, for example faqs/home
 export const parseFaqs = (file: string, raw: unknown) => read(file, faqsSchema, raw);
 

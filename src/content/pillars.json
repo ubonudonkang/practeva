@@ -1,0 +1,25 @@
+{
+  "pillars": [
+    {
+      "key": "advisory",
+      "name": "Advisory",
+      "href": "/advisory",
+      "tease": "For organisations and founders",
+      "line": "Business analysis, process automation and digital transformation."
+    },
+    {
+      "key": "training",
+      "name": "Training",
+      "href": "/training",
+      "tease": "For new analysts and teams",
+      "line": "The BA Bridge Cohort, and workshops for your team."
+    },
+    {
+      "key": "careers",
+      "name": "Careers",
+      "href": "/careers",
+      "tease": "For new and aspiring analysts",
+      "line": "CV, profile and interview support for analyst roles."
+    }
+  ]
+}

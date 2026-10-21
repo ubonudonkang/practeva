@@ -1,0 +1,42 @@
+{
+  "packages": [
+    {
+      "slug": "quick-read",
+      "name": "Quick read",
+      "tag": "Start here",
+      "summary": "A first look at what you have: an idea, a pitch deck, a brief or a working product. We tell you what is missing before you spend more.",
+      "includes": [
+        "A short written note on gaps and risks",
+        "A call to talk it through"
+      ],
+      "bestFor": "Early ideas and briefs that need a second pair of eyes.",
+      "price": ""
+    },
+    {
+      "slug": "viability-review",
+      "name": "Viability review",
+      "tag": "Decide",
+      "summary": "We test the idea against the problem, the people it serves, the process it changes and what it would take to build.",
+      "includes": [
+        "A stakeholder and process view",
+        "Key requirements and risks",
+        "A go, change or stop recommendation"
+      ],
+      "bestFor": "Founders and teams deciding whether to commit a budget.",
+      "price": ""
+    },
+    {
+      "slug": "full-feasibility",
+      "name": "Full feasibility",
+      "tag": "Commit",
+      "summary": "A feasibility study you can put in front of a board, investors or a vendor.",
+      "includes": [
+        "A requirements document",
+        "Current and future process maps",
+        "Options compared, with risks and a recommended route"
+      ],
+      "bestFor": "Larger changes, system choices and funding decisions.",
+      "price": ""
+    }
+  ]
+}

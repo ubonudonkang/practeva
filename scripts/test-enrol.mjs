@@ -89,6 +89,11 @@ let closedDir = '';
   assert.notEqual(badPhase.status, 0, 'an em dash in the content must not build');
   assert.match(badPhase.stdout + badPhase.stderr, /programme\.json is not valid[\s\S]*phases\[0\]\.name: contains an em dash/);
 
+  // two packages that share a link name would break the contact form's preselect
+  const sameSlug = build(copySite({ 'src/content/packages.json': json((d) => { d.packages[1].slug = d.packages[0].slug; return d; }) }));
+  assert.notEqual(sameSlug.status, 0, 'two packages with one slug must not build');
+  assert.match(sameSlug.stdout + sameSlug.stderr, /packages\.json is not valid[\s\S]*same slug/);
+
   // an FAQ answer with a name that does not exist, or with a fact that is empty while closed, stops the build
   const badToken = build(copySite({ 'src/content/faqs/home.json': json((f) => { f.questions[0].answer += ' {{cohort.nope}}'; return f; }) }));
   assert.notEqual(badToken.status, 0, 'an unknown {{name}} in an FAQ must not build');

@@ -1,0 +1,20 @@
+{
+  "principles": [
+    {
+      "name": "Show the work",
+      "detail": "We judge analysis by the documents it produces and the decisions it makes possible."
+    },
+    {
+      "name": "Say it plainly",
+      "detail": "Short sentences, plain English, and every term explained the first time."
+    },
+    {
+      "name": "Promise what we control",
+      "detail": "We don't promise jobs, salaries or certifications. We promise the work and honest feedback on it."
+    },
+    {
+      "name": "Teach from practice",
+      "detail": "What we teach comes from work done in real organisations, not from slides."
+    }
+  ]
+}
