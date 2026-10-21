@@ -45,12 +45,15 @@ const tokensKnown = (s: string) =>
 const tokenHint = `uses a {{name}} that does not exist; the names are ${FAQ_TOKENS.join(', ')}`;
 const answer = (max: number) => text(max).refine(tokensKnown, tokenHint);
 // The answer for when enrolment is open; empty means the same answer applies whether or not it is
-const answerWhenOpen = (max: number) => clean(z.string().trim().max(max)).refine(tokensKnown, tokenHint);
+const answerWhenOpen = (max: number) => clean(z.string().trim().max(max)).refine(tokensKnown, tokenHint).default('');
 
 const monthYear = z.string().regex(MONTH_YEAR, 'must be a month and year, for example February 2027');
+// Pages CMS leaves a field out of the file when it is empty, so every field that may be empty is
+// optional here and reads as '' when it is missing.
 const optionalDate = z
   .string()
-  .regex(DAY_MONTH_YEAR, 'must be empty or a date written in full, for example 2 February 2027');
+  .regex(DAY_MONTH_YEAR, 'must be empty or a date written in full, for example 2 February 2027')
+  .default('');
 
 const cohortSchema = z.strictObject({
   next: monthYear,
@@ -70,7 +73,7 @@ const cohortSchema = z.strictObject({
 // four items, a process flow three to five steps.
 const nameDetail = (nameMax: number, detailMax: number) => z.strictObject({ name: text(nameMax), detail: text(detailMax) });
 const slug = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'must be lower case words joined by hyphens, for example quick-read');
-const price = clean(z.string().trim().max(40, 'is longer than 40 characters')); // empty: the page says "Quoted after an intro call"
+const price = clean(z.string().trim().max(40, 'is longer than 40 characters')).default(''); // empty: the page says "Quoted after an intro call"
 const uniqueSlugs = <T extends { slug: string }>(items: T[]) => new Set(items.map((i) => i.slug)).size === items.length;
 const SLUGS_ONCE = 'has two items with the same slug; the contact form uses the slug to preselect the offer';
 const steps = z.array(nameDetail(30, 60)).min(3).max(5);

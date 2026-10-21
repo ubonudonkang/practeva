@@ -56,7 +56,7 @@ function copySite(patches = {}) {
   return dir;
 }
 const build = (dir, env = {}) => spawnSync('npx', ['astro', 'build'], { cwd: dir, env: { ...process.env, ...env }, encoding: 'utf8' });
-const json = (change) => (src) => JSON.stringify(change(JSON.parse(src)), null, 2) + '\n';
+const json = (change) => (src) => JSON.stringify(change(JSON.parse(src)), null, 2);
 // Enrolment open at a fee. `confirmed` is the retyped fee, `dates` whether start and deadline are set.
 const openWith = ({ amount = FEE, confirmed = amount, dates = true, key } = {}) => ({
   'src/content/enrolment.json': json(() => ({ open: true, amount, scriptAmountConfirmed: confirmed })),
@@ -298,7 +298,8 @@ try {
     assert.equal(await c.page.locator('.waitlist-form input[name="cohort"]').getAttribute('value'), cohortFacts.next);
     assert.equal(closedInfo.price, null, 'closed: no fee on the card');
     assert.match(closedInfo.faq['When is my place confirmed?'], /Joining the waitlist does not reserve a place/);
-    assert.equal(closedInfo.faq['When does the next cohort start?'], `The ${cohortFacts.next} cohort starts at ${cohortFacts.nextStart}. It opens to the waitlist first.`);
+    const closedStarts = cohortFacts.startDate ? `on ${cohortFacts.startDate}` : `at ${cohortFacts.nextStart}`; // the dates may already be set while enrolment is closed
+    assert.equal(closedInfo.faq['When does the next cohort start?'], `The ${cohortFacts.next} cohort starts ${closedStarts}. It opens to the waitlist first.`);
     assert.doesNotMatch(closedInfo.text, /Enrol now|Apply by/);
     await c.context.close();
 

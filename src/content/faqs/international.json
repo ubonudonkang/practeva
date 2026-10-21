@@ -2,23 +2,19 @@
   "questions": [
     {
       "question": "Do you work with clients outside Nigeria?",
-      "answer": "Yes. We work remotely with teams in the UK, Ireland, Europe, the United States, Canada, the UAE, Australia and New Zealand, as well as with organisations across Nigeria.",
-      "answerWhenOpen": ""
+      "answer": "Yes. We work remotely with teams in the UK, Ireland, Europe, the United States, Canada, the UAE, Australia and New Zealand, as well as with organisations across Nigeria."
     },
     {
       "question": "How do you price international work?",
-      "answer": "Each engagement is quoted in {{markets.abroadCurrency}} after an intro call, once we understand the scope. Packages run from a quick read of what you have to a full feasibility study.",
-      "answerWhenOpen": ""
+      "answer": "Each engagement is quoted in {{markets.abroadCurrency}} after an intro call, once we understand the scope. Packages run from a quick read of what you have to a full feasibility study."
     },
     {
       "question": "What time zone do you work in?",
-      "answer": "West Africa Time, UTC+1, all year. That is the same as UK time in summer and an hour ahead in winter, and the same as Central Europe in winter. Our working day covers the Dubai afternoon and the North American morning. For Australia and New Zealand, we meet in your late afternoon or evening, which is our early morning.",
-      "answerWhenOpen": ""
+      "answer": "West Africa Time, UTC+1, all year. That is the same as UK time in summer and an hour ahead in winter, and the same as Central Europe in winter. Our working day covers the Dubai afternoon and the North American morning. For Australia and New Zealand, we meet in your late afternoon or evening, which is our early morning."
     },
     {
       "question": "Is the BA Bridge Cohort open to people outside Nigeria?",
-      "answer": "Yes. It is taught live online at 8 to 10pm West Africa Time: 7 to 9pm in London in winter, 11pm in Dubai, and early morning in Sydney and Auckland. Both sessions are recorded. People joining from outside Nigeria pay in {{markets.abroadCurrency}}.",
-      "answerWhenOpen": ""
+      "answer": "Yes. It is taught live online at 8 to 10pm West Africa Time: 7 to 9pm in London in winter, 11pm in Dubai, and early morning in Sydney and Auckland. Both sessions are recorded. People joining from outside Nigeria pay in {{markets.abroadCurrency}}."
     }
   ]
 }

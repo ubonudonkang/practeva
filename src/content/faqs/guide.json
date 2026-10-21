@@ -2,28 +2,23 @@
   "questions": [
     {
       "question": "Can I become a business analyst without a technical background?",
-      "answer": "Yes. The role is about understanding how work happens and writing it down clearly. People move into it from operations, customer service, finance, sales and teaching, among other jobs. Technical knowledge helps later, and you can build it as you go.",
-      "answerWhenOpen": ""
+      "answer": "Yes. The role is about understanding how work happens and writing it down clearly. People move into it from operations, customer service, finance, sales and teaching, among other jobs. Technical knowledge helps later, and you can build it as you go."
     },
     {
       "question": "Do I need to learn to code?",
-      "answer": "No. You need to understand systems well enough to describe what they should do. Some SQL is useful for checking data yourself, but writing code is the developers' job.",
-      "answerWhenOpen": ""
+      "answer": "No. You need to understand systems well enough to describe what they should do. Some SQL is useful for checking data yourself, but writing code is the developers' job."
     },
     {
       "question": "How long does it take to become a business analyst?",
-      "answer": "It depends on where you start. A structured programme such as the {{cohort.programme}} takes twelve weeks; after that, how long it takes to land a role depends on your experience, your portfolio and the jobs you apply for. We don't promise jobs or timelines.",
-      "answerWhenOpen": ""
+      "answer": "It depends on where you start. A structured programme such as the {{cohort.programme}} takes twelve weeks; after that, how long it takes to land a role depends on your experience, your portfolio and the jobs you apply for. We don't promise jobs or timelines."
     },
     {
       "question": "Is business analysis the same as data analysis?",
-      "answer": "No, though they overlap. A data analyst works mainly with data to answer questions. A business analyst works mainly with people and processes to define what a change should do, and uses data as one source of evidence.",
-      "answerWhenOpen": ""
+      "answer": "No, though they overlap. A data analyst works mainly with data to answer questions. A business analyst works mainly with people and processes to define what a change should do, and uses data as one source of evidence."
     },
     {
       "question": "Where can I learn business analysis in Nigeria?",
-      "answer": "From books such as the IIBA's BABOK Guide, self-paced online courses, or a live programme with feedback on your work. The {{cohort.programme}} is Practeva's live online programme, built around one case and the documents analysts write.",
-      "answerWhenOpen": ""
+      "answer": "From books such as the IIBA's BABOK Guide, self-paced online courses, or a live programme with feedback on your work. The {{cohort.programme}} is Practeva's live online programme, built around one case and the documents analysts write."
     }
   ]
 }
