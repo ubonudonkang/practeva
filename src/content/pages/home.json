@@ -1,0 +1,21 @@
+{
+  "description": "Business analysis and technology advisory from Lagos State, Nigeria, for teams at home and abroad. We improve processes, automate work and train analysts.",
+  "hero": {
+    "eyebrow": "Business and technology advisory",
+    "title": "Technology that fits the way your business *works*.",
+    "sub": "We help organisations in Nigeria and abroad map and improve their processes, automate the repetitive work and choose systems that fit, starting with clear requirements."
+  },
+  "sections": [
+    {
+      "id": "spotlight",
+      "label": "Advisory",
+      "title": "Fix the process before you buy the system.",
+      "note": "Most of what goes wrong in a change was decided before it started: processes nobody mapped, requirements nobody wrote down, systems chosen before the need was clear."
+    }
+  ],
+  "band": {
+    "title": "Tell us what you're working on.",
+    "note": "An idea to test, a process to fix, work to automate or a system to choose. A short call is enough to see where we can help.",
+    "cta": "Book a call"
+  }
+}

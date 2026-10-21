@@ -1,0 +1,20 @@
+{
+  "seoTitle": "Business analysis templates and resources | Practeva",
+  "description": "Templates for the documents business analysts write: requirements, user stories, BPMN process maps, stakeholder maps and UAT test plans.",
+  "hero": {
+    "title": "Templates for the documents every analyst *writes*.",
+    "sub": "Requirements, user stories, process maps and test plans, set out the way we teach them. The first templates are on their way."
+  },
+  "sections": [
+    {
+      "id": "library",
+      "label": "The library",
+      "title": "What's coming first."
+    }
+  ],
+  "band": {
+    "title": "Need a template we haven't listed?",
+    "note": "Tell us the document you're stuck on. It helps us decide what to make next.",
+    "cta": "Suggest a template"
+  }
+}

@@ -1,6 +1,10 @@
 ---
 // Home: the company first, with Advisory leading. Training and Careers each have a door
 // here and their own page.
+// First, so the page's stylesheets keep the order they had before its words moved into src/content.
+import copyContent from '../content/pages/home.json';
+import { pageCopy } from '../data/pages';
+
 import Page from '../layouts/Page.astro';
 import Arrow from '../components/Arrow.astro';
 import PageHero from '../components/PageHero.astro';
@@ -16,20 +20,23 @@ import ContactBand from '../components/ContactBand.astro';
 import { beforeAfter, packages } from '../data/offers';
 import { homeFaqs } from '../data/faqs';
 
+// The page's words are in src/content/pages/home.json (edited in Pages CMS)
+const copy = pageCopy('home', copyContent, ['spotlight']);
+
 // Questions about the company as a whole (src/content/faqs/home.json); the training page keeps the cohort's own FAQ.
 const faqs = homeFaqs;
 ---
 <Page
   tone="night"
-  description="Business analysis and technology advisory from Lagos State, Nigeria, for teams at home and abroad. We improve processes, automate work and train analysts."
+  description={copy.description}
 >
   <PageHero
     tone="night"
     size="full"
-    eyebrow="Business and technology advisory"
-    sub="We help organisations in Nigeria and abroad map and improve their processes, automate the repetitive work and choose systems that fit, starting with clear requirements."
+    eyebrow={copy.hero.eyebrow}
+    sub={copy.hero.sub}
   >
-    <Fragment slot="title">Technology that fits the way your business&nbsp;<em class="accent">works</em>.</Fragment>
+    <Fragment slot="title">{copy.hero.title.before}<em class="accent">{copy.hero.title.accent}</em>{copy.hero.title.after}</Fragment>
     <Fragment slot="actions">
       <a class="btn" href="/contact?topic=advisory">Book a call<Arrow /></a>
       <a class="link" href="/advisory#services">See what we take on</a>
@@ -41,12 +48,7 @@ const faqs = homeFaqs;
 
   <section class="spotlight ground-wash section" aria-labelledby="spotlight-title">
     <div class="container">
-      <SectionHead
-        id="spotlight-title"
-        label="Advisory"
-        title="Fix the process before you buy the system."
-        note="Most of what goes wrong in a change was decided before it started: processes nobody mapped, requirements nobody wrote down, systems chosen before the need was clear."
-      >
+      <SectionHead id="spotlight-title" {...copy.section('spotlight')}>
         <a slot="aside" class="link" href="/advisory">How advisory works</a>
       </SectionHead>
 
@@ -66,9 +68,9 @@ const faqs = homeFaqs;
   <Faq items={faqs} joined={false} />
 
   <ContactBand
-    title="Tell us what you're working on."
-    note="An idea to test, a process to fix, work to automate or a system to choose. A short call is enough to see where we can help."
-    cta={{ label: 'Book a call', href: '/contact' }}
+    title={copy.band.title}
+    note={copy.band.note}
+    cta={{ label: copy.band.label, href: '/contact' }}
   />
 </Page>
 

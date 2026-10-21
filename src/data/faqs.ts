@@ -7,30 +7,13 @@ import homeContent from '../content/faqs/home.json';
 import internationalContent from '../content/faqs/international.json';
 import trainingContent from '../content/faqs/training.json';
 import { fillTokens, parseFaqs } from './content';
-import { cohort, enrolment, markets, site } from './site';
-
-// When the cohort starts, as a phrase: the exact date once it is fixed, else the rough one
-const starts = cohort.startDate ? `on ${cohort.startDate}` : `at ${cohort.nextStart}`;
-
-const values: Record<string, string> = {
-  'cohort.programme': cohort.programme,
-  'cohort.next': cohort.next,
-  'cohort.previous': cohort.previous,
-  'cohort.previousFee': cohort.previousFee,
-  'cohort.fee': cohort.fee,
-  'cohort.starts': starts,
-  'cohort.applyBy': cohort.applyBy,
-  'cohort.schedule': cohort.schedule,
-  'cohort.formatLower': cohort.format.toLowerCase(),
-  'cohort.abroadFee': cohort.abroadFee,
-  'markets.abroadCurrency': markets.abroadCurrency,
-  email: site.email,
-};
+import { enrolment } from './site';
+import { tokenValues } from './tokens';
 
 function faqs(file: string, raw: unknown) {
   return parseFaqs(file, raw).questions.map((item) => ({
     q: item.question,
-    a: fillTokens(enrolment.open && item.answerWhenOpen ? item.answerWhenOpen : item.answer, values, `src/content/${file}.json, "${item.question}"`),
+    a: fillTokens(enrolment.open && item.answerWhenOpen ? item.answerWhenOpen : item.answer, tokenValues, `src/content/${file}.json, "${item.question}"`),
   }));
 }
 

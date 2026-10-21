@@ -515,3 +515,497 @@ content:
             label: "Description"
             type: text
             required: true
+
+  - name: page-home
+    label: "Page: home"
+    type: file
+    path: src/content/pages/home.json
+    format: json
+    fields:
+      - name: description
+        label: "Search description"
+        type: text
+        required: true
+        description: "Shown under the title in search results: under about 160 characters. Facts can be written {{cohort.next}}, {{cohort.programme}}, {{cohort.schedule}} and the other names listed in the FAQ forms; they are filled in when the site builds."
+      - name: hero
+        label: "The first section"
+        type: object
+        fields:
+          - name: eyebrow
+            label: "Small label above the heading"
+            type: string
+            description: "Four or five words at most."
+          - name: title
+            label: "Heading"
+            type: string
+            required: true
+            description: "Put asterisks around exactly one word: that word is the italic accent, and the brand allows one per page, in this heading. A no-break space between two words is kept as typed. Sentence case, no em dashes. Facts can be written {{cohort.next}}, {{cohort.programme}}, {{cohort.schedule}} and the other names listed in the FAQ forms; they are filled in when the site builds."
+          - name: sub
+            label: "Introduction"
+            type: text
+      - name: sections
+        label: "Section headings"
+        type: object
+        list: true
+        description: "The label, heading and note over each section. The ids are fixed: do not add, remove or rename sections here."
+        fields:
+          - name: id
+            label: "Section (fixed)"
+            type: string
+            required: true
+            readonly: true
+          - name: label
+            label: "Label"
+            type: string
+            required: true
+            description: "A short label over a hairline."
+          - name: title
+            label: "Heading"
+            type: string
+            required: true
+          - name: note
+            label: "Note"
+            type: text
+            description: "Optional line beside the heading."
+      - name: band
+        label: "Closing band"
+        type: object
+        fields:
+          - name: title
+            label: "Heading"
+            type: string
+            required: true
+          - name: note
+            label: "Note"
+            type: text
+            required: true
+          - name: cta
+            label: "Button"
+            type: string
+            required: true
+            description: "A verb and an object, for example Book a call. Where it goes is set in the page."
+
+  - name: page-advisory
+    label: "Page: advisory"
+    type: file
+    path: src/content/pages/advisory.json
+    format: json
+    fields:
+      - name: seoTitle
+        label: "Search title"
+        type: string
+        description: "The title in browser tabs and search results, keyword first, under about 60 characters, usually ending | Practeva."
+      - name: description
+        label: "Search description"
+        type: text
+        required: true
+        description: "Shown under the title in search results: under about 160 characters. Facts can be written {{cohort.next}}, {{cohort.programme}}, {{cohort.schedule}} and the other names listed in the FAQ forms; they are filled in when the site builds."
+      - name: hero
+        label: "The first section"
+        type: object
+        fields:
+          - name: eyebrow
+            label: "Small label above the heading"
+            type: string
+            description: "Four or five words at most."
+          - name: title
+            label: "Heading"
+            type: string
+            required: true
+            description: "Put asterisks around exactly one word: that word is the italic accent, and the brand allows one per page, in this heading. A no-break space between two words is kept as typed. Sentence case, no em dashes. Facts can be written {{cohort.next}}, {{cohort.programme}}, {{cohort.schedule}} and the other names listed in the FAQ forms; they are filled in when the site builds."
+          - name: sub
+            label: "Introduction"
+            type: text
+      - name: sections
+        label: "Section headings"
+        type: object
+        list: true
+        description: "The label, heading and note over each section. The ids are fixed: do not add, remove or rename sections here."
+        fields:
+          - name: id
+            label: "Section (fixed)"
+            type: string
+            required: true
+            readonly: true
+          - name: label
+            label: "Label"
+            type: string
+            required: true
+            description: "A short label over a hairline."
+          - name: title
+            label: "Heading"
+            type: string
+            required: true
+          - name: note
+            label: "Note"
+            type: text
+            description: "Optional line beside the heading."
+      - name: band
+        label: "Closing band"
+        type: object
+        fields:
+          - name: title
+            label: "Heading"
+            type: string
+            required: true
+          - name: note
+            label: "Note"
+            type: text
+            required: true
+          - name: cta
+            label: "Button"
+            type: string
+            required: true
+            description: "A verb and an object, for example Book a call. Where it goes is set in the page."
+
+  - name: page-training
+    label: "Page: training"
+    type: file
+    path: src/content/pages/training.json
+    format: json
+    fields:
+      - name: seoTitle
+        label: "Search title"
+        type: string
+        description: "The title in browser tabs and search results, keyword first, under about 60 characters, usually ending | Practeva."
+      - name: description
+        label: "Search description"
+        type: text
+        required: true
+        description: "Shown under the title in search results: under about 160 characters. Facts can be written {{cohort.next}}, {{cohort.programme}}, {{cohort.schedule}} and the other names listed in the FAQ forms; they are filled in when the site builds."
+      - name: descriptionWhenOpen
+        label: "Search description when enrolment is open"
+        type: text
+        description: "Used instead of the description above while enrolment is open. Leave empty to use the same one."
+      - name: hero
+        label: "The first section"
+        type: object
+        fields:
+          - name: eyebrow
+            label: "Small label above the heading"
+            type: string
+            description: "Four or five words at most."
+          - name: title
+            label: "Heading"
+            type: string
+            required: true
+            description: "Put asterisks around exactly one word: that word is the italic accent, and the brand allows one per page, in this heading. A no-break space between two words is kept as typed. Sentence case, no em dashes. Facts can be written {{cohort.next}}, {{cohort.programme}}, {{cohort.schedule}} and the other names listed in the FAQ forms; they are filled in when the site builds."
+          - name: sub
+            label: "Introduction"
+            type: text
+      - name: sections
+        label: "Section headings"
+        type: object
+        list: true
+        description: "The label, heading and note over each section. The ids are fixed: do not add, remove or rename sections here."
+        fields:
+          - name: id
+            label: "Section (fixed)"
+            type: string
+            required: true
+            readonly: true
+          - name: label
+            label: "Label"
+            type: string
+            required: true
+            description: "A short label over a hairline."
+          - name: title
+            label: "Heading"
+            type: string
+            required: true
+          - name: note
+            label: "Note"
+            type: text
+            description: "Optional line beside the heading."
+
+  - name: page-careers
+    label: "Page: careers"
+    type: file
+    path: src/content/pages/careers.json
+    format: json
+    fields:
+      - name: seoTitle
+        label: "Search title"
+        type: string
+        description: "The title in browser tabs and search results, keyword first, under about 60 characters, usually ending | Practeva."
+      - name: description
+        label: "Search description"
+        type: text
+        required: true
+        description: "Shown under the title in search results: under about 160 characters. Facts can be written {{cohort.next}}, {{cohort.programme}}, {{cohort.schedule}} and the other names listed in the FAQ forms; they are filled in when the site builds."
+      - name: hero
+        label: "The first section"
+        type: object
+        fields:
+          - name: eyebrow
+            label: "Small label above the heading"
+            type: string
+            description: "Four or five words at most."
+          - name: title
+            label: "Heading"
+            type: string
+            required: true
+            description: "Put asterisks around exactly one word: that word is the italic accent, and the brand allows one per page, in this heading. A no-break space between two words is kept as typed. Sentence case, no em dashes. Facts can be written {{cohort.next}}, {{cohort.programme}}, {{cohort.schedule}} and the other names listed in the FAQ forms; they are filled in when the site builds."
+          - name: sub
+            label: "Introduction"
+            type: text
+      - name: sections
+        label: "Section headings"
+        type: object
+        list: true
+        description: "The label, heading and note over each section. The ids are fixed: do not add, remove or rename sections here."
+        fields:
+          - name: id
+            label: "Section (fixed)"
+            type: string
+            required: true
+            readonly: true
+          - name: label
+            label: "Label"
+            type: string
+            required: true
+            description: "A short label over a hairline."
+          - name: title
+            label: "Heading"
+            type: string
+            required: true
+          - name: note
+            label: "Note"
+            type: text
+            description: "Optional line beside the heading."
+      - name: band
+        label: "Closing band"
+        type: object
+        fields:
+          - name: title
+            label: "Heading"
+            type: string
+            required: true
+          - name: note
+            label: "Note"
+            type: text
+            required: true
+          - name: cta
+            label: "Button"
+            type: string
+            required: true
+            description: "A verb and an object, for example Book a call. Where it goes is set in the page."
+
+  - name: page-resources
+    label: "Page: resources"
+    type: file
+    path: src/content/pages/resources.json
+    format: json
+    fields:
+      - name: seoTitle
+        label: "Search title"
+        type: string
+        description: "The title in browser tabs and search results, keyword first, under about 60 characters, usually ending | Practeva."
+      - name: description
+        label: "Search description"
+        type: text
+        required: true
+        description: "Shown under the title in search results: under about 160 characters. Facts can be written {{cohort.next}}, {{cohort.programme}}, {{cohort.schedule}} and the other names listed in the FAQ forms; they are filled in when the site builds."
+      - name: hero
+        label: "The first section"
+        type: object
+        fields:
+          - name: eyebrow
+            label: "Small label above the heading"
+            type: string
+            description: "Four or five words at most."
+          - name: title
+            label: "Heading"
+            type: string
+            required: true
+            description: "Put asterisks around exactly one word: that word is the italic accent, and the brand allows one per page, in this heading. A no-break space between two words is kept as typed. Sentence case, no em dashes. Facts can be written {{cohort.next}}, {{cohort.programme}}, {{cohort.schedule}} and the other names listed in the FAQ forms; they are filled in when the site builds."
+          - name: sub
+            label: "Introduction"
+            type: text
+      - name: sections
+        label: "Section headings"
+        type: object
+        list: true
+        description: "The label, heading and note over each section. The ids are fixed: do not add, remove or rename sections here."
+        fields:
+          - name: id
+            label: "Section (fixed)"
+            type: string
+            required: true
+            readonly: true
+          - name: label
+            label: "Label"
+            type: string
+            required: true
+            description: "A short label over a hairline."
+          - name: title
+            label: "Heading"
+            type: string
+            required: true
+          - name: note
+            label: "Note"
+            type: text
+            description: "Optional line beside the heading."
+      - name: band
+        label: "Closing band"
+        type: object
+        fields:
+          - name: title
+            label: "Heading"
+            type: string
+            required: true
+          - name: note
+            label: "Note"
+            type: text
+            required: true
+          - name: cta
+            label: "Button"
+            type: string
+            required: true
+            description: "A verb and an object, for example Book a call. Where it goes is set in the page."
+
+  - name: page-about
+    label: "Page: about"
+    type: file
+    path: src/content/pages/about.json
+    format: json
+    fields:
+      - name: seoTitle
+        label: "Search title"
+        type: string
+        description: "The title in browser tabs and search results, keyword first, under about 60 characters, usually ending | Practeva."
+      - name: description
+        label: "Search description"
+        type: text
+        required: true
+        description: "Shown under the title in search results: under about 160 characters. Facts can be written {{cohort.next}}, {{cohort.programme}}, {{cohort.schedule}} and the other names listed in the FAQ forms; they are filled in when the site builds."
+      - name: hero
+        label: "The first section"
+        type: object
+        fields:
+          - name: eyebrow
+            label: "Small label above the heading"
+            type: string
+            description: "Four or five words at most."
+          - name: title
+            label: "Heading"
+            type: string
+            required: true
+            description: "Put asterisks around exactly one word: that word is the italic accent, and the brand allows one per page, in this heading. A no-break space between two words is kept as typed. Sentence case, no em dashes. Facts can be written {{cohort.next}}, {{cohort.programme}}, {{cohort.schedule}} and the other names listed in the FAQ forms; they are filled in when the site builds."
+          - name: sub
+            label: "Introduction"
+            type: text
+      - name: sections
+        label: "Section headings"
+        type: object
+        list: true
+        description: "The label, heading and note over each section. The ids are fixed: do not add, remove or rename sections here."
+        fields:
+          - name: id
+            label: "Section (fixed)"
+            type: string
+            required: true
+            readonly: true
+          - name: label
+            label: "Label"
+            type: string
+            required: true
+            description: "A short label over a hairline."
+          - name: title
+            label: "Heading"
+            type: string
+            required: true
+          - name: note
+            label: "Note"
+            type: text
+            description: "Optional line beside the heading."
+      - name: band
+        label: "Closing band"
+        type: object
+        fields:
+          - name: title
+            label: "Heading"
+            type: string
+            required: true
+          - name: note
+            label: "Note"
+            type: text
+            required: true
+          - name: cta
+            label: "Button"
+            type: string
+            required: true
+            description: "A verb and an object, for example Book a call. Where it goes is set in the page."
+
+  - name: page-international
+    label: "Page: advisory from abroad"
+    type: file
+    path: src/content/pages/international.json
+    format: json
+    fields:
+      - name: seoTitle
+        label: "Search title"
+        type: string
+        description: "The title in browser tabs and search results, keyword first, under about 60 characters, usually ending | Practeva."
+      - name: description
+        label: "Search description"
+        type: text
+        required: true
+        description: "Shown under the title in search results: under about 160 characters. Facts can be written {{cohort.next}}, {{cohort.programme}}, {{cohort.schedule}} and the other names listed in the FAQ forms; they are filled in when the site builds."
+      - name: hero
+        label: "The first section"
+        type: object
+        fields:
+          - name: eyebrow
+            label: "Small label above the heading"
+            type: string
+            description: "Four or five words at most."
+          - name: title
+            label: "Heading"
+            type: string
+            required: true
+            description: "Put asterisks around exactly one word: that word is the italic accent, and the brand allows one per page, in this heading. A no-break space between two words is kept as typed. Sentence case, no em dashes. Facts can be written {{cohort.next}}, {{cohort.programme}}, {{cohort.schedule}} and the other names listed in the FAQ forms; they are filled in when the site builds."
+          - name: sub
+            label: "Introduction"
+            type: text
+      - name: sections
+        label: "Section headings"
+        type: object
+        list: true
+        description: "The label, heading and note over each section. The ids are fixed: do not add, remove or rename sections here."
+        fields:
+          - name: id
+            label: "Section (fixed)"
+            type: string
+            required: true
+            readonly: true
+          - name: label
+            label: "Label"
+            type: string
+            required: true
+            description: "A short label over a hairline."
+          - name: title
+            label: "Heading"
+            type: string
+            required: true
+          - name: note
+            label: "Note"
+            type: text
+            description: "Optional line beside the heading."
+      - name: band
+        label: "Closing band"
+        type: object
+        fields:
+          - name: title
+            label: "Heading"
+            type: string
+            required: true
+          - name: note
+            label: "Note"
+            type: text
+            required: true
+          - name: cta
+            label: "Button"
+            type: string
+            required: true
+            description: "A verb and an object, for example Book a call. Where it goes is set in the page."

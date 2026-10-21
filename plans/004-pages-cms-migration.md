@@ -1,6 +1,6 @@
 # 004: Edit the site's content in Pages CMS
 
-- Status: IN PROGRESS (Phases 0 to 3 done; Phase 4, the pilot and handover, is next and needs Ubon)
+- Status: IN PROGRESS (Phases 0 to 3 done; Phase 4 pilot under way; Phase 5: page copy done, Insights and images to come)
 - Written at commit: d4c3efa
 - Files: new `.pages.yml`, new `src/content/*.json`, new `src/data/content.ts`, new `scripts/test-content.mjs`; edits to `src/data/site.ts`, `src/data/offers.ts`, `src/pages/*.astro` (FAQ lists only), `scripts/test-enrol.mjs`, `CLAUDE.md`, `README.md`
 
@@ -97,7 +97,7 @@ What the pilot showed (21 October 2026): Pages CMS writes two-space JSON with no
 
 ### Phase 5: Optional, later
 
-- Page headings and section copy as one JSON file per page.
+- Page headings and section copy as one JSON file per page. Done for home, advisory, training, careers, resources, about and international: search title and description, first section, section heads and closing band, in `src/content/pages/`. The accent word is marked `*like this*` and the build requires exactly one. One difference from the earlier phases: the no-break spaces in three headings are now written as the character instead of `&nbsp;`, which browsers show the same; every other byte of both builds is identical. Still in code: the copy inside components, the privacy notice, the 404 page, the contact page and the guide.
 - An `insights` Markdown collection (title, description, date, body; no author field, the site names no person) in `src/content/insights/`, which also gives the planned Insights pages a home.
 - Move the career-changer guide into that collection once Insights exists.
 - Images through Pages CMS `media` (`public/images`), only if Ubon needs to swap images himself.

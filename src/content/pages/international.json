@@ -1,0 +1,34 @@
+{
+  "seoTitle": "Remote business analysis for international teams | Practeva",
+  "description": "Remote business analysis and digital transformation from Lagos for teams in the UK, Europe, North America, the UAE, Australia and New Zealand, in US dollars.",
+  "hero": {
+    "eyebrow": "For teams outside Nigeria",
+    "title": "Business analysis from Lagos, on your working *day*.",
+    "sub": "Requirements, process mapping, automation and digital transformation support for teams in the UK, Ireland, Europe, North America, the UAE, Australia and New Zealand, delivered remotely and quoted in {{markets.abroadCurrency}}."
+  },
+  "sections": [
+    {
+      "id": "hours",
+      "label": "Working hours",
+      "title": "Our day, in your time.",
+      "note": "Lagos doesn't change its clocks. This is our 9am to 5pm in your local time, in standard time and when your clocks go forward."
+    },
+    {
+      "id": "services",
+      "label": "What we take on",
+      "title": "The same work, delivered remotely.",
+      "note": "Bring us one piece of this, or the whole of it."
+    },
+    {
+      "id": "remote",
+      "label": "How it works",
+      "title": "How a remote engagement runs.",
+      "note": "The same path as every engagement, run over video calls and shared documents."
+    }
+  ],
+  "band": {
+    "title": "Tell us what you're working on.",
+    "note": "Send a few lines about the change you're planning. We'll reply by email and set up a call at a time that suits your time zone.",
+    "cta": "Book a call"
+  }
+}
