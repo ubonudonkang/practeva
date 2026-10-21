@@ -1,0 +1,24 @@
+{
+  "seoTitle": "Business analysis training in Nigeria | BA Bridge Cohort",
+  "description": "Twelve weeks of live online, case-based business analysis training for career changers in Nigeria, the UK, Australia and more. Join the {{cohort.next}} waitlist.",
+  "descriptionWhenOpen": "Twelve weeks of live online, case-based business analysis training for career changers in Nigeria, the UK, Australia and more. Enrol in the {{cohort.next}} cohort.",
+  "hero": {
+    "eyebrow": "{{cohort.programme}}, {{cohort.next}}",
+    "title": "Learn business analysis by *doing* the work.",
+    "sub": "Live online cohorts, real case work and career support for people in Nigeria and abroad moving into IT business analysis."
+  },
+  "sections": [
+    {
+      "id": "who",
+      "label": "Who it's for",
+      "title": "You already have more BA skills than you think.",
+      "note": "Most strong business analysts didn't start as business analysts. The cohort is built for people bringing experience from somewhere else."
+    },
+    {
+      "id": "times",
+      "label": "Joining from abroad",
+      "title": "Live sessions, in your time.",
+      "note": "Classes run {{cohort.sessionTimes}} on Wednesdays and Saturdays, and both are recorded. {{cohort.abroadFee}}"
+    }
+  ]
+}

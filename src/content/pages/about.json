@@ -1,0 +1,31 @@
+{
+  "seoTitle": "About Practeva | Business analysis firm in Lagos State, Nigeria",
+  "description": "Practeva Limited (RC 9931539) is a business analysis and technology advisory firm in Lagos State, Nigeria, registered on 12 October 2026.",
+  "hero": {
+    "title": "A business and technology firm that thinks like an *analyst*.",
+    "sub": "{{company.legalName}} was registered in Nigeria in October 2026 and works with organisations in Nigeria and abroad. It does three things well: advise organisations on their processes, systems and automation, train the analysts who do that work, and help them show it to employers."
+  },
+  "sections": [
+    {
+      "id": "pillars",
+      "label": "What we do",
+      "title": "Three practices, one craft."
+    },
+    {
+      "id": "principles",
+      "label": "How we work",
+      "title": "Four things we hold to.",
+      "note": "They shape how we write, how we teach and what we will and won't say we can do."
+    },
+    {
+      "id": "facts",
+      "label": "Company details",
+      "title": "The formal bits."
+    }
+  ],
+  "band": {
+    "title": "Work with us, or learn with us.",
+    "note": "Whether you're planning a build, training a team or changing careers, start with a conversation.",
+    "cta": "Book a call"
+  }
+}

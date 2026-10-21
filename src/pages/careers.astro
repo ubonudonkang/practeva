@@ -1,4 +1,8 @@
 ---
+// First, so the page's stylesheets keep the order they had before its words moved into src/content.
+import copyContent from '../content/pages/careers.json';
+import { pageCopy } from '../data/pages';
+
 import Page from '../layouts/Page.astro';
 import Arrow from '../components/Arrow.astro';
 import PageHero from '../components/PageHero.astro';
@@ -9,18 +13,21 @@ import ContactBand from '../components/ContactBand.astro';
 import { careerServices, careerSteps } from '../data/offers';
 import { cohort } from '../data/site';
 import { services as serviceNodes } from '../data/schema';
+
+// The page's words are in src/content/pages/careers.json (edited in Pages CMS)
+const copy = pageCopy('careers', copyContent, ['services', 'process']);
 ---
 <Page
   tone="paper"
-  title="Business analyst CV and interview support in Nigeria | Practeva"
-  description="CV and LinkedIn rewrites, mock interviews and portfolio reviews for business analysts applying for roles in Nigeria, the UK and beyond."
+  title={copy.seoTitle}
+  description={copy.description}
   schema={serviceNodes('/careers/', careerServices, 'Career support for business analysts')}
 >
   <PageHero
     crumbs={[{ label: 'Home', href: '/' }, { label: 'Careers' }]}
-    sub="CV and profile rewrites, mock interviews and portfolio reviews for new and aspiring business analysts, applying in Nigeria or abroad."
+    sub={copy.hero.sub}
   >
-    <Fragment slot="title">Let employers see the <em class="accent">work</em> you can&nbsp;do.</Fragment>
+    <Fragment slot="title">{copy.hero.title.before}<em class="accent">{copy.hero.title.accent}</em>{copy.hero.title.after}</Fragment>
     <Fragment slot="actions">
       <a class="btn" href="/contact?topic=careers">Book careers support<Arrow /></a>
       <a class="link" href="#services">See what we offer</a>
@@ -29,19 +36,14 @@ import { services as serviceNodes } from '../data/schema';
 
   <section class="ground-paper section" id="services" aria-labelledby="services-title">
     <div class="container">
-      <SectionHead
-        id="services-title"
-        label="Careers support"
-        title="Three ways we help you apply."
-        note="Book one, or all three. Each one is one to one."
-      />
+      <SectionHead id="services-title" {...copy.section('services')} />
       <OfferCards items={careerServices} topic="careers" />
     </div>
   </section>
 
   <section class="ground-paper section process" aria-labelledby="process-title">
     <div class="container">
-      <SectionHead id="process-title" label="How it works" title="From your first draft to your next application." />
+      <SectionHead id="process-title" {...copy.section('process')} />
       <ProcessFlow steps={careerSteps} label="Careers support, step by step" />
     </div>
   </section>
@@ -60,9 +62,9 @@ import { services as serviceNodes } from '../data/schema';
   </section>
 
   <ContactBand
-    title="Applying for analyst roles?"
-    note="Tell us where you are and the roles you're aiming for, and we'll suggest where to start."
-    cta={{ label: 'Book careers support', href: '/contact?topic=careers' }}
+    title={copy.band.title}
+    note={copy.band.note}
+    cta={{ label: copy.band.label, href: '/contact?topic=careers' }}
   />
 </Page>
 

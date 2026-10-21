@@ -1,4 +1,8 @@
 ---
+// First, so the page's stylesheets keep the order they had before its words moved into src/content.
+import copyContent from '../content/pages/training.json';
+import { pageCopy } from '../data/pages';
+
 import Page from '../layouts/Page.astro';
 import Arrow from '../components/Arrow.astro';
 import PageHero from '../components/PageHero.astro';
@@ -19,6 +23,9 @@ import { cohort, enrolment, join } from '../data/site';
 import { trainingFaqs } from '../data/faqs';
 import { cohortAudiences } from '../data/offers';
 import { orgId, pageUrl } from '../data/schema';
+
+// The page's words are in src/content/pages/training.json (edited in Pages CMS)
+const copy = pageCopy('training', copyContent, ['who', 'times']);
 
 // The questions are in src/content/faqs/training.json (edited in Pages CMS); the answers that depend on
 // whether enrolment is open, or on the fee and dates, are filled in by src/data/faqs.ts.
@@ -67,18 +74,18 @@ const course = {
 ---
 <Page
   tone="night"
-  title="Business analysis training in Nigeria | BA Bridge Cohort"
-  description={`Twelve weeks of live online, case-based business analysis training for career changers in Nigeria, the UK, Australia and more. ${enrolment.open ? `Enrol in the ${cohort.next} cohort.` : `Join the ${cohort.next} waitlist.`}`}
+  title={copy.seoTitle}
+  description={copy.description}
   schema={[course]}
   cta={{ label: join.label, href: join.href.replace('/training', '') }}
 >
   <PageHero
     tone="night"
     crumbs={[{ label: 'Home', href: '/' }, { label: 'Training' }]}
-    eyebrow={`${cohort.programme}, ${cohort.next}`}
-    sub="Live online cohorts, real case work and career support for people in Nigeria and abroad moving into IT business analysis."
+    eyebrow={copy.hero.eyebrow}
+    sub={copy.hero.sub}
   >
-    <Fragment slot="title">Learn business analysis by <em class="accent">doing</em> the&nbsp;work.</Fragment>
+    <Fragment slot="title">{copy.hero.title.before}<em class="accent">{copy.hero.title.accent}</em>{copy.hero.title.after}</Fragment>
     <Fragment slot="actions">
       <a class="btn" href={join.href.replace('/training', '')}>{join.label}<Arrow /></a>
       <a class="link" href="#how">See how a cohort works</a>
@@ -95,12 +102,7 @@ const course = {
 
   <section class="ground-paper section" id="who" aria-labelledby="who-title">
     <div class="container">
-      <SectionHead
-        id="who-title"
-        label="Who it's for"
-        title="You already have more BA skills than you think."
-        note="Most strong business analysts didn't start as business analysts. The cohort is built for people bringing experience from somewhere else."
-      />
+      <SectionHead id="who-title" {...copy.section('who')} />
       <NumberedGrid items={cohortAudiences} cols={4} />
       <JoinCta spaced />
     </div>
@@ -113,12 +115,7 @@ const course = {
 
   <section class="ground-paper section" id="times" aria-labelledby="times-title">
     <div class="container">
-      <SectionHead
-        id="times-title"
-        label="Joining from abroad"
-        title="Live sessions, in your time."
-        note={`Classes run ${cohort.schedule.replace('Wednesdays and Saturdays, ', '')} on Wednesdays and Saturdays, and both are recorded. ${cohort.abroadFee}`}
-      />
+      <SectionHead id="times-title" {...copy.section('times')} />
       <LocalTimes from={20} to={22} />
       <JoinCta spaced />
     </div>

@@ -89,6 +89,14 @@ let closedDir = '';
   assert.notEqual(badPhase.status, 0, 'an em dash in the content must not build');
   assert.match(badPhase.stdout + badPhase.stderr, /programme\.json is not valid[\s\S]*phases\[0\]\.name: contains an em dash/);
 
+  // a page's words: one accent word in the heading, and the sections the page needs
+  const twoAccents = build(copySite({ 'src/content/pages/about.json': json((p) => { p.hero.title = 'A *business* firm that thinks like an *analyst*.'; return p; }) }));
+  assert.notEqual(twoAccents.status, 0, 'two accent words must not build');
+  assert.match(twoAccents.stdout + twoAccents.stderr, /pages\/about\.json is not valid[\s\S]*hero\.title: must mark exactly one word/);
+  const noSection = build(copySite({ 'src/content/pages/advisory.json': json((p) => { p.sections = p.sections.slice(1); return p; }) }));
+  assert.notEqual(noSection.status, 0, 'a page without one of its sections must not build');
+  assert.match(noSection.stdout + noSection.stderr, /but the page needs \[[^\]]*who/);
+
   // two packages that share a link name would break the contact form's preselect
   const sameSlug = build(copySite({ 'src/content/packages.json': json((d) => { d.packages[1].slug = d.packages[0].slug; return d; }) }));
   assert.notEqual(sameSlug.status, 0, 'two packages with one slug must not build');

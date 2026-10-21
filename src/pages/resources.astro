@@ -1,21 +1,28 @@
 ---
+// First, so the page's stylesheets keep the order they had before its words moved into src/content.
+import copyContent from '../content/pages/resources.json';
+import { pageCopy } from '../data/pages';
+
 import Page from '../layouts/Page.astro';
 import Arrow from '../components/Arrow.astro';
 import PageHero from '../components/PageHero.astro';
 import SectionHead from '../components/SectionHead.astro';
 import ContactBand from '../components/ContactBand.astro';
 import { resources } from '../data/offers';
+
+// The page's words are in src/content/pages/resources.json (edited in Pages CMS)
+const copy = pageCopy('resources', copyContent, ['library']);
 ---
 <Page
   tone="paper"
-  title="Business analysis templates and resources | Practeva"
-  description="Templates for the documents business analysts write: requirements, user stories, BPMN process maps, stakeholder maps and UAT test plans."
+  title={copy.seoTitle}
+  description={copy.description}
 >
   <PageHero
     crumbs={[{ label: 'Home', href: '/' }, { label: 'Resources' }]}
-    sub="Requirements, user stories, process maps and test plans, set out the way we teach them. The first templates are on their way."
+    sub={copy.hero.sub}
   >
-    <Fragment slot="title">Templates for the documents every analyst <em class="accent">writes</em>.</Fragment>
+    <Fragment slot="title">{copy.hero.title.before}<em class="accent">{copy.hero.title.accent}</em>{copy.hero.title.after}</Fragment>
     <Fragment slot="actions">
       <a class="btn" href="/contact?topic=resources">Ask for early access<Arrow /></a>
     </Fragment>
@@ -24,7 +31,7 @@ import { resources } from '../data/offers';
   <section class="ground-paper section" aria-labelledby="library-title">
     <div class="container library-grid">
       <div class="library-main">
-        <SectionHead id="library-title" label="The library" title="What's coming first." />
+        <SectionHead id="library-title" {...copy.section('library')} />
         <ul class="resources">
           {resources.map((r) => (
             <li class="resource">
@@ -44,9 +51,9 @@ import { resources } from '../data/offers';
   </section>
 
   <ContactBand
-    title="Need a template we haven't listed?"
-    note="Tell us the document you're stuck on. It helps us decide what to make next."
-    cta={{ label: 'Suggest a template', href: '/contact?topic=resources' }}
+    title={copy.band.title}
+    note={copy.band.note}
+    cta={{ label: copy.band.label, href: '/contact?topic=resources' }}
   />
 </Page>
 

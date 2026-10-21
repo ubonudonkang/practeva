@@ -3,6 +3,10 @@
 // quoted in US dollars. LocalTimes shows our 9am to 5pm (West Africa Time, UTC+1, no
 // daylight saving) in each city in site.ts, in standard and summer time.
 // First, so the page's stylesheets keep the order they had before the FAQ moved into src/content.
+// First, so the page's stylesheets keep the order they had before its words moved into src/content.
+import copyContent from '../../content/pages/international.json';
+import { pageCopy } from '../../data/pages';
+
 import { internationalFaqs } from '../../data/faqs';
 import Page from '../../layouts/Page.astro';
 import Arrow from '../../components/Arrow.astro';
@@ -18,8 +22,10 @@ import { engagement, services } from '../../data/offers';
 import { markets } from '../../data/site';
 import { areaServed, orgId, pageUrl } from '../../data/schema';
 
-const path = '/advisory/international/';
+// The page's words are in src/content/pages/international.json (edited in Pages CMS)
+const copy = pageCopy('international', copyContent, ['hours', 'services', 'remote']);
 
+const path = '/advisory/international/';
 
 const faqs = internationalFaqs; // src/content/faqs/international.json
 
@@ -38,16 +44,16 @@ const service = {
 ---
 <Page
   tone="paper"
-  title="Remote business analysis for international teams | Practeva"
-  description="Remote business analysis and digital transformation from Lagos for teams in the UK, Europe, North America, the UAE, Australia and New Zealand, in US dollars."
+  title={copy.seoTitle}
+  description={copy.description}
   schema={[service]}
 >
   <PageHero
     crumbs={[{ label: 'Home', href: '/' }, { label: 'Advisory', href: '/advisory' }, { label: 'International clients' }]}
-    eyebrow="For teams outside Nigeria"
-    sub={`Requirements, process mapping, automation and digital transformation support for teams in the UK, Ireland, Europe, North America, the UAE, Australia and New Zealand, delivered remotely and quoted in ${markets.abroadCurrency}.`}
+    eyebrow={copy.hero.eyebrow}
+    sub={copy.hero.sub}
   >
-    <Fragment slot="title">Business analysis from Lagos, on your working <em class="accent">day</em>.</Fragment>
+    <Fragment slot="title">{copy.hero.title.before}<em class="accent">{copy.hero.title.accent}</em>{copy.hero.title.after}</Fragment>
     <Fragment slot="actions">
       <a class="btn" href="/contact?topic=advisory">Book a call<Arrow /></a>
       <a class="link" href="#hours">See our hours in your time</a>
@@ -63,24 +69,14 @@ const service = {
 
   <section class="ground-paper section" id="hours" aria-labelledby="hours-title">
     <div class="container">
-      <SectionHead
-        id="hours-title"
-        label="Working hours"
-        title="Our day, in your time."
-        note="Lagos doesn't change its clocks. This is our 9am to 5pm in your local time, in standard time and when your clocks go forward."
-      />
+      <SectionHead id="hours-title" {...copy.section('hours')} />
       <LocalTimes from={9} to={17} share />
     </div>
   </section>
 
   <section class="services ground-wash section" aria-labelledby="services-title">
     <div class="container">
-      <SectionHead
-        id="services-title"
-        label="What we take on"
-        title="The same work, delivered remotely."
-        note="Bring us one piece of this, or the whole of it."
-      >
+      <SectionHead id="services-title" {...copy.section('services')}>
         <a slot="aside" class="link" href="/advisory#packages">See the packages</a>
       </SectionHead>
       <NumberedGrid items={services} cols={3} />
@@ -89,12 +85,7 @@ const service = {
 
   <section class="ground-paper section" aria-labelledby="remote-title">
     <div class="container">
-      <SectionHead
-        id="remote-title"
-        label="How it works"
-        title="How a remote engagement runs."
-        note="The same path as every engagement, run over video calls and shared documents."
-      />
+      <SectionHead id="remote-title" {...copy.section('remote')} />
       <ProcessFlow steps={engagement} label="A remote engagement, step by step" />
 
       <div class="notes">
@@ -117,9 +108,9 @@ const service = {
   <Faq items={faqs} title="Questions from teams abroad" />
 
   <ContactBand
-    title="Tell us what you're working on."
-    note="Send a few lines about the change you're planning. We'll reply by email and set up a call at a time that suits your time zone."
-    cta={{ label: 'Book a call', href: '/contact?topic=advisory' }}
+    title={copy.band.title}
+    note={copy.band.note}
+    cta={{ label: copy.band.label, href: '/contact?topic=advisory' }}
   />
 </Page>
 

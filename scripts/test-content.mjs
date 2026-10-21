@@ -19,7 +19,7 @@ const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..')
 const require = createRequire(import.meta.url);
 const yaml = require('js-yaml');
 const content = await import(path.join(root, 'src/data/content.ts'));
-const { parseCohort, parseProgramme, parseEnrolment, parseFaqs, fillTokens, checkOpening, FAQ_TOKENS } = content;
+const { parseCohort, parseProgramme, parseEnrolment, parseFaqs, parsePage, splitAccent, fillTokens, checkOpening, FAQ_TOKENS } = content;
 // the offers files and the function that checks each
 const offers = {
   pillars: content.parsePillars, advisory: content.parseAdvisory, packages: content.parsePackages, careers: content.parseCareers,
@@ -38,6 +38,9 @@ parseCohort(cohort);
 parseProgramme(programme);
 const enrolmentFacts = parseEnrolment(enrolment);
 checkOpening(enrolmentFacts, cohort);
+const pageFiles = fs.readdirSync(path.join(root, 'src/content/pages')).filter((f) => f.endsWith('.json')).map((f) => `pages/${f.replace(/\.json$/, '')}`);
+for (const file of pageFiles) parsePage(file, read(`${file}.json`));
+assert.deepEqual(pageFiles.sort(), ['pages/about', 'pages/advisory', 'pages/careers', 'pages/home', 'pages/international', 'pages/resources', 'pages/training']);
 assert.deepEqual(faqFiles.sort(), ['faqs/guide', 'faqs/home', 'faqs/international', 'faqs/training']);
 for (const file of faqFiles) parseFaqs(file, read(`${file}.json`));
 for (const [name, parse] of Object.entries(offers)) parse(read(`${name}.json`));
@@ -130,6 +133,25 @@ const refuses = (run, pattern, why) => assert.throws(run, pattern, why);
   refuses(() => fillTokens('{{nope}}', values, 'test'), /not a known name/, 'unknown name at fill time');
 }
 
+// a page's words: one accent word, facts, sections
+{
+  const page = read('pages/training.json');
+  const edit = (change) => { const p = clone(page); change(p); return p; };
+  refuses(() => parsePage('pages/training', edit((p) => { p.hero.title = 'Learn by doing the work.'; })), /pages\/training\.json is not valid[\s\S]*hero\.title: must mark exactly one word with asterisks/, 'no accent word');
+  refuses(() => parsePage('pages/training', edit((p) => { p.hero.title = 'Learn *by* *doing* the work.'; })), /hero\.title/, 'two accent words');
+  refuses(() => parsePage('pages/training', edit((p) => { p.hero.title = 'Learn *by doing* the work.'; })), /hero\.title/, 'the accent is one word');
+  refuses(() => parsePage('pages/training', edit((p) => { p.hero.sub = 'Learn *by* doing.'; })), /hero\.sub: contains an asterisk/, 'an accent marked outside the heading');
+  refuses(() => parsePage('pages/training', edit((p) => { p.sections[0].title += ' \u2014 really'; })), /sections\[0\]\.title: contains an em dash/, 'em dash in a section heading');
+  refuses(() => parsePage('pages/training', edit((p) => { p.description = 'Join the {{cohort.nextt}} waitlist.'; })), /description: uses a \{\{name\}\} that does not exist/, 'unknown name in a description');
+  refuses(() => parsePage('pages/training', edit((p) => { p.sections.push(clone(p.sections[0])); })), /two sections with the same id/, 'one section id twice');
+  refuses(() => parsePage('pages/training', edit((p) => { delete p.hero.title; })), /hero/, 'a page needs its heading');
+  refuses(() => parsePage('pages/training', edit((p) => { p.band = { title: 'x', note: 'y' }; })), /band/, 'a band needs its button');
+  parsePage('pages/training', edit((p) => { delete p.hero.eyebrow; delete p.seoTitle; })); // both may be left out
+  assert.deepEqual(splitAccent('Learn by *doing* the\u00a0work.'), { before: 'Learn by ', accent: 'doing', after: ' the\u00a0work.' });
+  // every page marks exactly one accent word, as the brand allows
+  for (const file of pageFiles) assert.equal((read(`${file}.json`).hero.title.match(/\*/g) ?? []).length, 2, `${file}: one accent word`);
+}
+
 // the offers: slugs, pillars, counts
 {
   const packages = read('packages.json');
@@ -212,7 +234,7 @@ function matches(fields, value, where) {
   }
 }
 
-const files = [...fs.readdirSync(path.join(root, 'src/content')).filter((f) => f.endsWith('.json')), ...faqFiles.map((f) => `${f}.json`)];
+const files = [...fs.readdirSync(path.join(root, 'src/content')).filter((f) => f.endsWith('.json')), ...faqFiles.map((f) => `${f}.json`), ...pageFiles.map((f) => `${f}.json`)];
 const described = new Set();
 for (const entry of config.content) {
   assert.equal(entry.type, 'file', `${entry.name}: each entry is a single file`);
@@ -228,7 +250,7 @@ assert.deepEqual([...described].sort(), files.sort(), 'every file in src/content
 
 // the files are written the way Pages CMS writes them: two-space JSON, no final newline, no key for
 // a field that is empty
-const MAY_BE_EMPTY = new Set(['answerWhenOpen', 'price', 'startDate', 'applyBy']);
+const MAY_BE_EMPTY = new Set(['answerWhenOpen', 'price', 'startDate', 'applyBy', 'seoTitle', 'descriptionWhenOpen', 'eyebrow', 'sub', 'note']);
 const noEmpties = (value, where) => {
   if (Array.isArray(value)) value.forEach((v, n) => noEmpties(v, `${where}[${n}]`));
   else if (value && typeof value === 'object') {

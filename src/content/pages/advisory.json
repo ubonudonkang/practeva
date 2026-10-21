@@ -1,0 +1,44 @@
+{
+  "seoTitle": "Business analysis consulting in Nigeria | Practeva advisory",
+  "description": "Business analysis consulting, process automation and digital transformation for organisations in Nigeria, from a quick read to a full feasibility study.",
+  "hero": {
+    "title": "Business analysis, automation and digital *transformation*.",
+    "sub": "From a first look at an idea to a new process or system in daily use: requirements, process improvement, automation and the technology choices in between."
+  },
+  "sections": [
+    {
+      "id": "who",
+      "label": "Who we help",
+      "title": "Bring us in before the change starts."
+    },
+    {
+      "id": "difference",
+      "label": "The difference",
+      "title": "What changes when the analysis comes first.",
+      "note": "The same change, with and without the processes, requirements and decisions settled before anyone buys or builds."
+    },
+    {
+      "id": "packages",
+      "label": "Packages",
+      "title": "Three ways to start.",
+      "note": "Pick the depth you need now. A quick read can always grow into a fuller study later."
+    },
+    {
+      "id": "services",
+      "label": "What we take on",
+      "title": "From requirements to transformation.",
+      "note": "Bring us one piece of this, or the whole of it."
+    },
+    {
+      "id": "process",
+      "label": "How it works",
+      "title": "How an engagement runs.",
+      "note": "Every engagement follows the same path, so you always know what comes next."
+    }
+  ],
+  "band": {
+    "title": "Start with a quick read.",
+    "note": "Send us what you have, or book a call to talk it through. We'll tell you plainly whether we can help.",
+    "cta": "Book a call"
+  }
+}

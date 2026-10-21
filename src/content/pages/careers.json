@@ -1,0 +1,26 @@
+{
+  "seoTitle": "Business analyst CV and interview support in Nigeria | Practeva",
+  "description": "CV and LinkedIn rewrites, mock interviews and portfolio reviews for business analysts applying for roles in Nigeria, the UK and beyond.",
+  "hero": {
+    "title": "Let employers see the *work* you can do.",
+    "sub": "CV and profile rewrites, mock interviews and portfolio reviews for new and aspiring business analysts, applying in Nigeria or abroad."
+  },
+  "sections": [
+    {
+      "id": "services",
+      "label": "Careers support",
+      "title": "Three ways we help you apply.",
+      "note": "Book one, or all three. Each one is one to one."
+    },
+    {
+      "id": "process",
+      "label": "How it works",
+      "title": "From your first draft to your next application."
+    }
+  ],
+  "band": {
+    "title": "Applying for analyst roles?",
+    "note": "Tell us where you are and the roles you're aiming for, and we'll suggest where to start.",
+    "cta": "Book careers support"
+  }
+}

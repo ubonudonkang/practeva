@@ -22,7 +22,7 @@ const clean = (schema: z.ZodString) =>
     .refine(onlyOurEmail, `contains an email address other than ${ALLOWED_EMAIL}`);
 const text = (max: number) => clean(z.string().trim().min(1, 'is empty').max(max, `is longer than ${max} characters`));
 
-// Facts that FAQ answers can use, written {{name}}. The values are worked out in src/data/faqs.ts from
+// Facts that FAQ answers and page copy can use, written {{name}}. The values are worked out in src/data/faqs.ts from
 // site.ts, so an answer changes with the cohort instead of being retyped. An unknown name stops the build.
 export const FAQ_TOKENS = [
   'cohort.programme',
@@ -34,8 +34,10 @@ export const FAQ_TOKENS = [
   'cohort.applyBy',
   'cohort.schedule',
   'cohort.formatLower',
+  'cohort.sessionTimes',
   'cohort.abroadFee',
   'markets.abroadCurrency',
+  'company.legalName',
   'email',
 ] as const;
 const TOKEN = /\{\{([^{}]*)\}\}/g;
@@ -147,6 +149,29 @@ const teamTrainingSchema = z.strictObject({
 const resourcesSchema = z.strictObject({ resources: z.array(nameDetail(40, 160)).min(1).max(12) });
 const principlesSchema = z.strictObject({ principles: z.array(nameDetail(40, 200)).min(2).max(4) });
 
+// A page's own words: the search title and description, the first section, the heads of its sections and its
+// closing band. The accent word in the heading is marked with asterisks, *like this*: the brand allows exactly
+// one per page, in the h1 (a no-break space between two words is kept as typed). Facts can be written {{name}}.
+const noStar = (s: string) => !s.includes('*');
+const pageText = (max: number) => text(max).refine(noStar, 'contains an asterisk; only the heading marks its accent word with asterisks').refine(tokensKnown, tokenHint);
+const optionalPageText = (max: number) => clean(z.string().trim().max(max)).refine(noStar, 'contains an asterisk').refine(tokensKnown, tokenHint).default('');
+const heroTitle = text(140)
+  .refine((s) => /^[^*]*\*[^*\s]+\*[^*]*$/.test(s), 'must mark exactly one word with asterisks, for example Learn by *doing* the work')
+  .refine(tokensKnown, tokenHint);
+
+const pageSchema = z.strictObject({
+  seoTitle: optionalPageText(75),
+  // The brand asks for under about 160 characters once the facts are filled in; pages.ts checks that
+  description: pageText(200),
+  descriptionWhenOpen: optionalPageText(200),
+  hero: z.strictObject({ eyebrow: optionalPageText(60), title: heroTitle, sub: optionalPageText(300) }),
+  sections: z
+    .array(z.strictObject({ id: slug, label: pageText(40), title: pageText(120), note: optionalPageText(300) }))
+    .max(8)
+    .refine((items) => new Set(items.map((i) => i.id)).size === items.length, 'has two sections with the same id'),
+  band: z.strictObject({ title: pageText(80), note: pageText(240), cta: pageText(40) }).optional(),
+});
+
 const faqsSchema = z.strictObject({
   questions: z
     .array(z.strictObject({ question: text(140), answer: answer(900), answerWhenOpen: answerWhenOpen(900) }))
@@ -183,6 +208,7 @@ export type CohortContent = z.infer<typeof cohortSchema>;
 export type ProgrammeContent = z.infer<typeof programmeSchema>;
 export type EnrolmentContent = z.infer<typeof enrolmentSchema>;
 export type FaqsContent = z.infer<typeof faqsSchema>;
+export type PageContent = z.infer<typeof pageSchema>;
 
 function read<T>(file: string, schema: z.ZodType<T>, raw: unknown): T {
   const result = schema.safeParse(raw);
@@ -207,6 +233,15 @@ export const parseResources = (raw: unknown) => read('resources', resourcesSchem
 export const parsePrinciples = (raw: unknown) => read('principles', principlesSchema, raw);
 // `file` is the path under src/content without .json, for example faqs/home
 export const parseFaqs = (file: string, raw: unknown) => read(file, faqsSchema, raw);
+// `file` is pages/<name>
+export const parsePage = (file: string, raw: unknown) => read(file, pageSchema, raw);
+
+// The heading's text in three parts, with the accent word in the middle
+export function splitAccent(title: string) {
+  const m = /^([^*]*)\*([^*]+)\*([^*]*)$/.exec(title);
+  if (!m) throw new Error(`"${title}" has no accent word marked with asterisks.`);
+  return { before: m[1], accent: m[2], after: m[3] };
+}
 
 // Puts the facts into an answer. A fact that is empty at the moment (the fee while enrolment is
 // closed, say) stops the build rather than leaving a gap in a sentence.
