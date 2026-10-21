@@ -12,6 +12,7 @@ import ProcessFlow from '../../components/ProcessFlow.astro';
 import Faq from '../../components/Faq.astro';
 import CohortBanner from '../../components/CohortBanner.astro';
 import { cohort, join, site } from '../../data/site';
+import { guideFaqs } from '../../data/faqs';
 import { orgId, pageUrl } from '../../data/schema';
 
 const path = '/training/how-to-become-a-business-analyst-in-nigeria/';
@@ -43,28 +44,7 @@ const steps = [
   { name: 'Practise interviews', detail: 'Explain your work out loud' },
 ];
 
-const faqs = [
-  {
-    q: 'Can I become a business analyst without a technical background?',
-    a: 'Yes. The role is about understanding how work happens and writing it down clearly. People move into it from operations, customer service, finance, sales and teaching, among other jobs. Technical knowledge helps later, and you can build it as you go.',
-  },
-  {
-    q: 'Do I need to learn to code?',
-    a: "No. You need to understand systems well enough to describe what they should do. Some SQL is useful for checking data yourself, but writing code is the developers' job.",
-  },
-  {
-    q: 'How long does it take to become a business analyst?',
-    a: `It depends on where you start. A structured programme such as the ${cohort.programme} takes twelve weeks; after that, how long it takes to land a role depends on your experience, your portfolio and the jobs you apply for. We don't promise jobs or timelines.`,
-  },
-  {
-    q: 'Is business analysis the same as data analysis?',
-    a: 'No, though they overlap. A data analyst works mainly with data to answer questions. A business analyst works mainly with people and processes to define what a change should do, and uses data as one source of evidence.',
-  },
-  {
-    q: 'Where can I learn business analysis in Nigeria?',
-    a: `From books such as the IIBA's BABOK Guide, self-paced online courses, or a live programme with feedback on your work. The ${cohort.programme} is Practeva's live online programme, built around one case and the documents analysts write.`,
-  },
-];
+const faqs = guideFaqs; // src/content/faqs/guide.json
 
 const article = {
   '@type': 'Article',

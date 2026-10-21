@@ -2,6 +2,8 @@
 // Advisory for teams outside Nigeria: the same services, delivered remotely from Lagos and
 // quoted in US dollars. LocalTimes shows our 9am to 5pm (West Africa Time, UTC+1, no
 // daylight saving) in each city in site.ts, in standard and summer time.
+// First, so the page's stylesheets keep the order they had before the FAQ moved into src/content.
+import { internationalFaqs } from '../../data/faqs';
 import Page from '../../layouts/Page.astro';
 import Arrow from '../../components/Arrow.astro';
 import PageHero from '../../components/PageHero.astro';
@@ -19,24 +21,7 @@ import { areaServed, orgId, pageUrl } from '../../data/schema';
 const path = '/advisory/international/';
 
 
-const faqs = [
-  {
-    q: 'Do you work with clients outside Nigeria?',
-    a: 'Yes. We work remotely with teams in the UK, Ireland, Europe, the United States, Canada, the UAE, Australia and New Zealand, as well as with organisations across Nigeria.',
-  },
-  {
-    q: 'How do you price international work?',
-    a: `Each engagement is quoted in ${markets.abroadCurrency} after an intro call, once we understand the scope. Packages run from a quick read of what you have to a full feasibility study.`,
-  },
-  {
-    q: 'What time zone do you work in?',
-    a: 'West Africa Time, UTC+1, all year. That is the same as UK time in summer and an hour ahead in winter, and the same as Central Europe in winter. Our working day covers the Dubai afternoon and the North American morning. For Australia and New Zealand, we meet in your late afternoon or evening, which is our early morning.',
-  },
-  {
-    q: 'Is the BA Bridge Cohort open to people outside Nigeria?',
-    a: `Yes. It is taught live online at 8 to 10pm West Africa Time: 7 to 9pm in London in winter, 11pm in Dubai, and early morning in Sydney and Auckland. Both sessions are recorded. People joining from outside Nigeria pay in ${markets.abroadCurrency}.`,
-  },
-];
+const faqs = internationalFaqs; // src/content/faqs/international.json
 
 const service = {
   '@type': 'Service',

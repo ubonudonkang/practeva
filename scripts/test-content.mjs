@@ -16,19 +16,22 @@ import path from 'node:path';
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const require = createRequire(import.meta.url);
 const yaml = require('js-yaml');
-const { parseCohort, parseProgramme, parseEnrolment, checkOpening } = await import(path.join(root, 'src/data/content.ts'));
+const { parseCohort, parseProgramme, parseEnrolment, parseFaqs, fillTokens, checkOpening, FAQ_TOKENS } = await import(path.join(root, 'src/data/content.ts'));
 
 const read = (file) => JSON.parse(fs.readFileSync(path.join(root, 'src/content', file), 'utf8'));
 const clone = (value) => structuredClone(value);
 const cohort = read('cohort.json');
 const programme = read('programme.json');
 const enrolment = read('enrolment.json');
+const faqFiles = fs.readdirSync(path.join(root, 'src/content/faqs')).filter((f) => f.endsWith('.json')).map((f) => `faqs/${f.replace(/\.json$/, '')}`);
 
 /* ── 1. What is in the repository is valid ── */
 parseCohort(cohort);
 parseProgramme(programme);
 const enrolmentFacts = parseEnrolment(enrolment);
 checkOpening(enrolmentFacts, cohort);
+assert.deepEqual(faqFiles.sort(), ['faqs/guide', 'faqs/home', 'faqs/international', 'faqs/training']);
+for (const file of faqFiles) parseFaqs(file, read(`${file}.json`));
 
 /* ── 2. The checks refuse what they should, and say where ── */
 const refuses = (run, pattern, why) => assert.throws(run, pattern, why);
@@ -94,6 +97,30 @@ const refuses = (run, pattern, why) => assert.throws(run, pattern, why);
   refuses(() => parseProgramme(none), /includes/, 'nothing included');
 }
 
+// FAQs and their {{tokens}}
+{
+  const faq = read('faqs/training.json');
+  const edit = (change) => { const f = clone(faq); change(f.questions[0]); return f; };
+  refuses(() => parseFaqs('faqs/training', edit((i) => { i.answer = 'Starts {{cohort.nextDate}}.'; })), /faqs\/training\.json is not valid[\s\S]*questions\[0\]\.answer: uses a \{\{name\}\} that does not exist/, 'unknown token');
+  refuses(() => parseFaqs('faqs/training', edit((i) => { i.answerWhenOpen = 'Starts {{cohort.next}'; })), /answerWhenOpen/, 'a brace that is not closed');
+  refuses(() => parseFaqs('faqs/training', edit((i) => { i.answer = 'No dashes \u2014 here'; })), /em dash/, 'em dash in an answer');
+  refuses(() => parseFaqs('faqs/training', edit((i) => { delete i.answerWhenOpen; })), /answerWhenOpen/, 'the open answer key must be present, even if empty');
+  refuses(() => parseFaqs('faqs/training', { questions: [] }), /questions/, 'no questions');
+  parseFaqs('faqs/training', edit((i) => { i.answerWhenOpen = ''; })); // empty is fine
+  // every token the files use is one the page knows how to fill
+  for (const file of faqFiles) {
+    for (const item of read(`${file}.json`).questions) {
+      for (const text of [item.answer, item.answerWhenOpen]) {
+        for (const [, name] of text.matchAll(/\{\{([^{}]*)\}\}/g)) assert.ok(FAQ_TOKENS.includes(name), `${file}: ${name}`);
+      }
+    }
+  }
+  const values = { 'cohort.next': 'February 2027', 'cohort.fee': '' };
+  assert.equal(fillTokens('The {{cohort.next}} cohort', values, 'test'), 'The February 2027 cohort');
+  refuses(() => fillTokens('The fee is {{cohort.fee}}.', values, 'test'), /\{\{cohort\.fee\}\} is empty here/, 'a fact that is empty leaves no gap');
+  refuses(() => fillTokens('{{nope}}', values, 'test'), /not a known name/, 'unknown name at fill time');
+}
+
 // numbers
 {
   for (const amount of [-1, 80000.5, '80000']) {
@@ -130,13 +157,13 @@ const keysOf = (value) => {
 // the same shape from the fields in the form
 const fieldsToShape = (fields) => Object.fromEntries(fields.map((f) => [f.name, f.type === 'object' ? fieldsToShape(f.fields ?? []) : null]));
 
-const files = fs.readdirSync(path.join(root, 'src/content')).filter((f) => f.endsWith('.json'));
+const files = [...fs.readdirSync(path.join(root, 'src/content')).filter((f) => f.endsWith('.json')), ...faqFiles.map((f) => `${f}.json`)];
 const described = new Set();
 for (const entry of config.content) {
   assert.equal(entry.type, 'file', `${entry.name}: each entry is a single file`);
   assert.equal(entry.format, 'json', `${entry.name}: format is json`);
   assert.ok(fs.existsSync(path.join(root, entry.path)), `${entry.name}: ${entry.path} exists`);
-  described.add(path.basename(entry.path));
+  described.add(path.relative('src/content', entry.path));
   const data = JSON.parse(fs.readFileSync(path.join(root, entry.path), 'utf8'));
   assert.deepEqual(fieldsToShape(entry.fields), keysOf(data), `${entry.path}: the form fields and the keys in the file are the same`);
   for (const field of entry.fields) {

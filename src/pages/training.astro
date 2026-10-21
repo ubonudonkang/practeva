@@ -15,72 +15,14 @@ import Enrol from '../components/Enrol.astro';
 import JoinCta from '../components/JoinCta.astro';
 import SectionHead from '../components/SectionHead.astro';
 import LocalTimes from '../components/LocalTimes.astro';
-import { cohort, enrolment, join, site } from '../data/site';
+import { cohort, enrolment, join } from '../data/site';
+import { trainingFaqs } from '../data/faqs';
 import { cohortAudiences } from '../data/offers';
 import { orgId, pageUrl } from '../data/schema';
 
-// When the cohort starts, as a phrase: the exact date once it is fixed (site.ts), else the rough one
-const starts = cohort.startDate ? `on ${cohort.startDate}` : `at ${cohort.nextStart}`;
-
-const faqs = [
-  {
-    q: 'When does the next cohort start?',
-    a: `The ${cohort.next} cohort starts ${starts}. ${
-      enrolment.open
-        ? `Enrolment is open${cohort.applyBy ? `, and applications close on ${cohort.applyBy} or earlier if places fill` : ''}.`
-        : 'It opens to the waitlist first.'
-    }`,
-  },
-  {
-    // TODO(ubon): confirm this answer reflects your entry requirements.
-    q: 'Do I need a technical background?',
-    a: 'No. Most people come from research, banking, operations or customer-facing roles, and week 1 starts from the foundations of the role.',
-  },
-  {
-    q: 'Can I join from outside Nigeria?',
-    a: 'Yes, from anywhere in Nigeria or abroad. Live sessions run 8 to 10pm West Africa Time: 7 to 9pm in London and Dublin in winter, 11pm in Dubai, 2 to 4pm in New York and Toronto, and early morning in Sydney and Auckland. The table of session times shows your city. Both sessions are recorded.',
-  },
-  {
-    q: 'How much time does it take each week?',
-    a: `Two live sessions a week (${cohort.schedule}), both recorded, plus time on your weekly deliverable and a pod session your group arranges.`,
-  },
-  {
-    q: 'How much does it cost?',
-    a: cohort.fee
-      ? `The fee is ${cohort.fee}, paid in full when you enrol, by card, bank transfer or USSD through Squad. We don't offer instalments at the moment. ${cohort.abroadFee}`
-      : `The ${cohort.next} fee goes to the waitlist first, before public enrolment. The ${cohort.previous} cohort was ${cohort.previousFee}, paid in full when you enrolled. We don't offer instalments at the moment. ${cohort.abroadFee}`,
-  },
-  {
-    q: 'When is my place confirmed?',
-    a: enrolment.open
-      ? "Submit the enrolment form first; Squad's secure checkout then opens. Squad confirms your payment to us directly, and we check it against your enrolment and email your joining details."
-      : 'Joining the waitlist does not reserve a place. When enrolment opens, we will explain how to enrol and confirm a place.',
-  },
-  {
-    q: 'What if I miss a live session?',
-    a: "Every session is recorded, so you can catch up and still submit that week's assignment.",
-  },
-  {
-    q: 'Will this get me certified?',
-    a: 'The cohort covers the BABOK foundations and ends with an ECBA roadmap. When you finish, you receive a BA Bridge Cohort certificate of completion. Professional certification exams, such as the ECBA, are taken separately through IIBA.',
-  },
-  {
-    q: 'Will I get a job at the end?',
-    a: "We don't promise jobs. You finish with real case work to show, a rewritten CV and a mock interview behind you.",
-  },
-  {
-    q: 'Can I defer to a later cohort?',
-    a: 'Not once training has begun. Before the cohort starts, you can move your place once to the next cohort at no cost.',
-  },
-  {
-    q: 'What is the refund policy?',
-    a: `If you withdraw before the cohort begins, you can request a refund less a 10% administrative fee, or move your place once to the next cohort at no cost. Once training has begun, fees are non-refundable and non-transferable. If Practeva postpones or cancels the cohort, you can choose a full refund with no deduction or a place in the next cohort. Send refund requests in writing to ${site.email}; we process them within 14 working days.`,
-  },
-  {
-    q: 'Can you train my team instead?',
-    a: 'Yes. Team training is run separately from the cohort, for organisations. Tell us about your team through the contact form.',
-  },
-];
+// The questions are in src/content/faqs/training.json (edited in Pages CMS); the answers that depend on
+// whether enrolment is open, or on the fee and dates, are filled in by src/data/faqs.ts.
+const faqs = trainingFaqs;
 
 // The cohort as a Course for search results and AI assistants: only what the page says.
 // No price until the February fee is set (cohort.fee).
