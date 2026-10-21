@@ -2,10 +2,12 @@
 //
 //   node scripts/test-enrol.mjs
 //
-// The site ships with enrolment closed (enrolment.open is false in src/data/site.ts), so this builds
-// a copy of the site with it open at a test fee, serves it, and drives the form. It also checks the
-// build refuses an open page that has no fee or a sandbox Squad key. It skips itself when Playwright
-// is not installed (npm install does not bring it; it is only used here).
+// The site ships with enrolment closed (open is false in src/content/enrolment.json), so this builds
+// a copy of the site with it open at a test fee and dates, serves it, and drives the form. It also
+// checks the build refuses an open page that has no fee, an unconfirmed fee, no dates or a sandbox
+// Squad key, and a content edit that breaks a rule. What the pages should say is read from
+// src/content, so editing the content in Pages CMS does not fail this test. It skips itself when
+// Playwright is not installed (npm install does not bring it; it is only used here).
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
@@ -28,43 +30,67 @@ for (const where of ['axe-core/axe.min.js', process.env.AXE_PATH || '']) {
 
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const FEE = 80000;
+// The dates a real opening would set (src/content/cohort.json); enrolment cannot open without them
+const START = '2 February 2027';
+const APPLY_BY = '25 January 2027';
 
-/* A copy of the site we can change: everything but node_modules (linked), dist and .git */
-function copySite(patch) {
+// What the content files say, so the expectations below follow edits made in Pages CMS
+const readContent = (file) => JSON.parse(fs.readFileSync(path.join(root, 'src/content', file), 'utf8'));
+const cohortFacts = readContent('cohort.json');
+const programme = readContent('programme.json');
+const monthOf = (cohortName) => cohortName.split(' ')[0];
+
+/* A copy of the site we can change: everything but node_modules (linked), dist and .git.
+   `patches` maps a file in the copy to a function that rewrites its text. */
+function copySite(patches = {}) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'practeva-enrol-'));
   for (const entry of fs.readdirSync(root)) {
     if (['node_modules', 'dist', '.git', '.astro'].includes(entry)) continue;
     fs.cpSync(path.join(root, entry), path.join(dir, entry), { recursive: true });
   }
   fs.symlinkSync(path.join(root, 'node_modules'), path.join(dir, 'node_modules'));
-  const file = path.join(dir, 'src/data/site.ts');
-  fs.writeFileSync(file, patch(fs.readFileSync(file, 'utf8')));
+  for (const [name, change] of Object.entries(patches)) {
+    const file = path.join(dir, name);
+    fs.writeFileSync(file, change(fs.readFileSync(file, 'utf8')));
+  }
   return dir;
 }
 const build = (dir, env = {}) => spawnSync('npx', ['astro', 'build'], { cwd: dir, env: { ...process.env, ...env }, encoding: 'utf8' });
-const openWith = (amount, key) => (src) => {
-  let out = src.replace('open: false,', 'open: true,').replace(/amount: \d+,/, `amount: ${amount},`);
-  if (key) out = out.replace(/squadPublicKey: '[^']*'/, `squadPublicKey: '${key}'`);
-  return out;
-};
+const json = (change) => (src) => JSON.stringify(change(JSON.parse(src)), null, 2) + '\n';
+// Enrolment open at a fee. `confirmed` is the retyped fee, `dates` whether start and deadline are set.
+const openWith = ({ amount = FEE, confirmed = amount, dates = true, key } = {}) => ({
+  'src/content/enrolment.json': json(() => ({ open: true, amount, scriptAmountConfirmed: confirmed })),
+  'src/content/cohort.json': json((c) => ({ ...c, startDate: dates ? START : '', applyBy: dates ? APPLY_BY : '' })),
+  ...(key ? { 'src/data/site.ts': (src) => src.replace(/squadPublicKey: '[^']*'/, `squadPublicKey: '${key}'`) } : {}),
+});
 
 let closedDir = '';
 
 /* ── The build refuses an open page that could not take a payment the script will recognise ── */
 {
-  const noFee = copySite(openWith(0));
-  const result = build(noFee);
-  assert.notEqual(result.status, 0, 'open with no fee must not build');
-  assert.match(result.stdout + result.stderr, /enrolment\.open is true but enrolment\.amount is 0/);
+  const refuses = (options, pattern, why) => {
+    const result = build(copySite(openWith(options)));
+    assert.notEqual(result.status, 0, `${why}: must not build`);
+    assert.match(result.stdout + result.stderr, pattern, why);
+  };
+  refuses({ amount: 0 }, /open is true but amount is 0/, 'open with no fee');
+  refuses({ confirmed: 0 }, /scriptAmountConfirmed \(0\) is not the same as amount \(80000\)/, 'open with the fee not confirmed');
+  refuses({ confirmed: FEE - 10000 }, /scriptAmountConfirmed \(70000\) is not the same as amount \(80000\)/, 'open with a different fee confirmed');
+  refuses({ dates: false }, /startDate or applyBy is empty/, 'open without a start date and deadline');
 
-  const sandbox = copySite(openWith(FEE, 'sandbox_pk_test123'));
+  const sandbox = copySite(openWith({ key: 'sandbox_pk_test123' }));
   const refused = build(sandbox);
   assert.notEqual(refused.status, 0, 'a production build with a sandbox key must not build');
   assert.match(refused.stdout + refused.stderr, /sandbox Squad key/);
   assert.equal(build(sandbox, { ALLOW_SANDBOX_KEY: '1' }).status, 0, 'a test build with a sandbox key is allowed');
 
+  // an edit that breaks a content rule stops the build, and says where
+  const badPhase = build(copySite({ 'src/content/programme.json': json((p) => { p.phases[0].name += ' \u2014 plus'; return p; }) }));
+  assert.notEqual(badPhase.status, 0, 'an em dash in the content must not build');
+  assert.match(badPhase.stdout + badPhase.stderr, /programme\.json is not valid[\s\S]*phases\[0\]\.name: contains an em dash/);
+
   // closed (as shipped) builds and shows the waitlist
-  closedDir = copySite((src) => src);
+  closedDir = copySite();
   const closed = closedDir;
   assert.equal(build(closed).status, 0);
   const closedTraining = fs.readFileSync(path.join(closed, 'dist/training/index.html'), 'utf8');
@@ -86,15 +112,11 @@ async function serveBuilt(dist) {
   await new Promise((r) => server.listen(0, '127.0.0.1', r));
   return { server, base: `http://127.0.0.1:${server.address().port}` };
 }
-const dir = copySite(openWith(FEE));
-// The same open site with the exact start date and deadline set, as on the day enrolment opens
-const datedDir = copySite((src) => openWith(FEE)(src).replace("startDate: ''", "startDate: '2 February 2027'").replace("applyBy: ''", "applyBy: '25 January 2027'"));
-assert.equal(build(datedDir).status, 0, 'the dated open site builds');
+const dir = copySite(openWith());
 const built = build(dir);
 assert.equal(built.status, 0, built.stdout + built.stderr);
 const open_ = await serveBuilt(path.join(dir, 'dist'));
 const closed_ = await serveBuilt(path.join(closedDir, 'dist'));
-const dated_ = await serveBuilt(path.join(datedDir, 'dist'));
 const server = open_.server;
 const base = open_.base;
 
@@ -139,7 +161,7 @@ try {
     assert.equal(await page.locator('main a.btn').first().getAttribute('href'), '#enrol');
     assert.match(await page.locator('#enrol .section-head').textContent(), /The fee is ₦80,000, paid in full when you enrol\. If you are joining from outside Nigeria, ask us for a quote in US dollars/);
     const text = await page.locator('main').textContent(); // textContent, because FAQ answers are folded away
-    assert.match(text, /Enrolment is open\./);
+    assert.ok(text.includes(`Enrolment is open, and applications close on ${APPLY_BY}`));
     assert.match(text, /The fee is ₦80,000, paid in full when you enrol, by card, bank transfer or USSD through Squad\./);
     assert.doesNotMatch(text, /—/, 'no em dashes on the page');
     assert.doesNotMatch(text, /opens to the waitlist first/);
@@ -147,9 +169,9 @@ try {
     const home = await context.newPage();
     await home.goto(base + '/');
     assert.equal(await home.locator('.cohort-banner a.btn').getAttribute('href'), '/training#enrol');
-    assert.match(await home.locator('.cohort-banner').textContent(), /Enrolment for the February 2027 cohort is open\./);
+    assert.ok((await home.locator('.cohort-banner').textContent()).includes(`Enrolment for the ${cohortFacts.next} cohort is open.`));
     const llms = await (await context.request.get(base + '/llms.txt')).text();
-    assert.match(llms, /Next cohort: February 2027, enrolment open \(₦80,000, paid in full through Squad\)/);
+    assert.ok(llms.includes(`Next cohort: ${cohortFacts.next}, enrolment open (\u20A680,000, paid in full through Squad)`));
     assert.deepEqual(errors, []);
     await context.close();
   }
@@ -233,13 +255,12 @@ try {
       text: document.querySelector('main').textContent,
     }));
     const common = (info, label) => {
-      assert.deepEqual(info.who, ['Researchers and analysts', 'Banking and finance staff', 'Operations and support', 'Graduates and early career'], label);
-      assert.deepEqual(info.phases.map((p) => p.name), ['Foundations', 'Stakeholders and elicitation', 'Requirements and modelling', 'Delivery', 'Career launch'], label);
-      assert.deepEqual(info.phases.map((p) => p.weeks), ['Weeks 1 to 2', 'Weeks 3 to 5', 'Weeks 6 to 8', 'Weeks 9 to 10', 'Weeks 11 to 12'], label);
-      assert.deepEqual(info.phases.map((p) => p.final), [false, false, false, false, true], `${label}: the last phase closes the cohort`);
-      assert.equal(info.phases[1].deliverable, 'Stakeholder map and elicitation notes');
-      assert.equal(info.includes.length, 9, `${label}: nine things a place includes`);
-      assert.ok(info.includes.includes('Every session recorded'));
+      assert.deepEqual(info.who, programme.audiences.map((a) => a.name), label);
+      assert.deepEqual(info.phases.map((p) => p.name), programme.phases.map((p) => p.name), label);
+      assert.deepEqual(info.phases.map((p) => p.weeks), programme.phases.map((p) => p.weeks), label);
+      assert.deepEqual(info.phases.map((p) => p.final), programme.phases.map((_, i) => i === programme.phases.length - 1), `${label}: the last phase closes the cohort`);
+      assert.deepEqual(info.phases.map((p) => p.deliverable), programme.phases.map((p) => p.deliverable), label);
+      assert.deepEqual(info.includes, programme.includes, `${label}: what a place includes`);
       const order = info.order.filter((id) => ['who', 'how', 'market-day', 'weeks', 'cohort', 'times', 'team', 'faq'].includes(id));
       assert.deepEqual(order, ['who', 'how', 'market-day', 'weeks', 'cohort', 'times', 'team', 'faq'], `${label}: sections in order`);
       for (const q of ['When is my place confirmed?', 'What if I miss a live session?', 'Will this get me certified?', 'Can I defer to a later cohort?', 'What is the refund policy?']) {
@@ -254,36 +275,33 @@ try {
     const c = await visit(browser, { from: closed_.base });
     const closedInfo = await read(c.page);
     common(closedInfo, 'closed');
-    assert.equal(closedInfo.cardTitle, 'November is full. Get first notice for February.');
-    assert.match(closedInfo.cardNote, /planned for February 2027/);
-    assert.equal(closedInfo.cardStatus, 'November cohort: fully booked');
-    assert.deepEqual(closedInfo.cardRows, { 'Next cohort': 'February 2027', Registration: 'Waitlist open', 'Cohort size': '10 to 15 people' });
+    assert.equal(closedInfo.cardTitle, `${monthOf(cohortFacts.previous)} is full. Get first notice for ${monthOf(cohortFacts.next)}.`);
+    assert.ok(closedInfo.cardNote.includes(`planned for ${cohortFacts.next}`));
+    assert.equal(closedInfo.cardStatus, `${monthOf(cohortFacts.previous)} cohort: ${cohortFacts.previousStatus.toLowerCase()}`);
+    assert.deepEqual(closedInfo.cardRows, { 'Next cohort': cohortFacts.next, Registration: 'Waitlist open', 'Cohort size': cohortFacts.size });
+    // the waitlist form posts under a name and type that follow the cohort, as the personal site's does
+    assert.equal(await c.page.locator('.waitlist-form input[name="form_name"]').getAttribute('value'), `ba-waitlist-${cohortFacts.next.slice(0, 3).toLowerCase()}-${cohortFacts.next.slice(-4)}`);
+    assert.equal(await c.page.locator('.waitlist-form input[name="type"]').getAttribute('value'), `BA Bridge ${cohortFacts.next} waitlist (practevahq.com)`);
+    assert.equal(await c.page.locator('.waitlist-form input[name="cohort"]').getAttribute('value'), cohortFacts.next);
     assert.equal(closedInfo.price, null, 'closed: no fee on the card');
     assert.match(closedInfo.faq['When is my place confirmed?'], /Joining the waitlist does not reserve a place/);
-    assert.match(closedInfo.faq['When does the next cohort start?'], /starts at the end of February\. It opens to the waitlist first\./);
+    assert.equal(closedInfo.faq['When does the next cohort start?'], `The ${cohortFacts.next} cohort starts at ${cohortFacts.nextStart}. It opens to the waitlist first.`);
     assert.doesNotMatch(closedInfo.text, /Enrol now|Apply by/);
     await c.context.close();
 
+    // the day enrolment opens: the fee, the exact start date and the deadline appear in the card and the FAQ
     const o = await visit(browser);
     const openInfo = await read(o.page);
     common(openInfo, 'open');
-    assert.equal(openInfo.cardTitle, 'Join the February 2027 cohort.');
+    assert.equal(openInfo.cardTitle, `Join the ${cohortFacts.next} cohort.`);
     assert.equal(openInfo.cardStatus, 'Enrolment open');
     assert.equal(openInfo.price, '\u20A680,000');
-    assert.deepEqual(openInfo.cardRows, { Starts: 'End of February', 'Cohort size': '10 to 15 people' }, 'open without dates: rough start, no deadline row');
-    assert.match(openInfo.cardNote, /Each cohort takes 10 to 15 people/);
+    assert.deepEqual(openInfo.cardRows, { Starts: START, 'Apply by': APPLY_BY, 'Cohort size': cohortFacts.size });
+    assert.equal(openInfo.cardNote, `Applications close on ${APPLY_BY}, or earlier if places fill.`);
+    assert.equal(openInfo.faq['When does the next cohort start?'], `The ${cohortFacts.next} cohort starts on ${START}. Enrolment is open, and applications close on ${APPLY_BY} or earlier if places fill.`);
     assert.match(openInfo.faq['When is my place confirmed?'], /Squad's secure checkout then opens/);
     assert.doesNotMatch(openInfo.text, /Joining the waitlist does not reserve|Get first notice/);
     await o.context.close();
-
-    // the day enrolment opens: the exact start date and the deadline appear in the card and the FAQ
-    const d = await visit(browser, { from: dated_.base });
-    const datedInfo = await read(d.page);
-    common(datedInfo, 'open with dates');
-    assert.deepEqual(datedInfo.cardRows, { Starts: '2 February 2027', 'Apply by': '25 January 2027', 'Cohort size': '10 to 15 people' });
-    assert.equal(datedInfo.cardNote, 'Applications close on 25 January 2027, or earlier if places fill.');
-    assert.equal(datedInfo.faq['When does the next cohort start?'], 'The February 2027 cohort starts on 2 February 2027. Enrolment is open, and applications close on 25 January 2027 or earlier if places fill.');
-    await d.context.close();
   }
 
   /* ── The form: checks, "Other" boxes, three wishes at most ── */
@@ -479,7 +497,6 @@ try {
   await browser.close();
   open_.server.close();
   closed_.server.close();
-  dated_.server.close();
 }
 if (failed) throw failed;
 console.log('Enrolment tests passed (build guards, open and closed pages, the form, the Squad journey, returns, failures, layout).');

@@ -26,9 +26,10 @@ Copy that describes Advisory should name both, not business analysis alone.
   - `Faq`: the accordion on home (questions about the company as a whole) and on training (questions about the cohort). Each page keeps its questions at the top of its own file and builds any fact (dates, fees, format) from `site.ts`, so the answers change with the facts. Pass `joined={false}` when it follows a night or wash section.
   - Forms: `ContactForm`, `Waitlist`, with shared behaviour in `src/scripts/forms.ts`, and `Enrol` (the enrolment form with Squad checkout, behaviour in `src/scripts/enrol.ts`), which replaces `Waitlist` on `/training` once `enrolment.open` is true. All three post to the Apps Script described under Forms below.
   - `Arrow`: the one arrow, inside CTA pills only.
-- `src/data/site.ts`: every repeated fact (company details, markets, nav, cohort dates, size, schedule, fee, form endpoints, contact topics). Change facts here, not in components.
+- `src/data/site.ts`: every repeated fact (company details, markets, nav, cohort dates, size, schedule, fee, form endpoints, contact topics). Change facts here, not in components. The cohort's facts, the enrolment switch and the fee are read from `src/content/cohort.json` and `enrolment.json` (see Editing content in Pages CMS).
 - `src/data/schema.ts`: the structured data (JSON-LD) helpers; see Search.
-- `src/data/offers.ts`: what Practeva sells, in the site's words: pillars, advisory packages, services, engagement steps, team training, careers services, resources, principles.
+- `src/data/offers.ts`: what Practeva sells, in the site's words: pillars, advisory packages, services, engagement steps, team training, careers services, resources, principles. The cohort's audiences, phases and what a place includes are read from `src/content/programme.json`.
+- `src/content/*.json`, `.pages.yml` and `src/data/content.ts`: the content edited in Pages CMS, the form that describes it, and the checks the build runs on it (see below).
 - `src/styles/global.css`: brand tokens, the three grounds (`.ground-paper`, `.ground-wash`, `.ground-night`), type styles, buttons, tags, form fields, leaf tiles.
 - `public/brand/`: the supplied logo files. Never redraw, recolour or retype the logo.
 - `public/brand/patterns/`: the leaf pattern in its deep-green colourway (`column-3x5` and `band-12x3`). The full set, with other colourways, a repeat tile and a generator, is in Ubon's `practeva-leaf-pattern.zip`.
@@ -36,6 +37,18 @@ Copy that describes Advisory should name both, not business analysis alone.
 - `public/og/practeva.png` (the 1200 x 630 social preview), `public/brand/practeva-logo-512.png` (the logo for search engines), `public/apple-touch-icon.png`, `public/robots.txt` and the IndexNow key file (`public/<key>.txt`).
 
 Links into the contact form can preselect a topic and start the message: `/contact?topic=advisory&offer=quick-read`. Topics are in `site.ts`; offer slugs come from `packages` and `careerServices`.
+
+## Editing content in Pages CMS
+
+Ubon edits the cohort's content in Pages CMS (app.pagescms.org, the GitHub App is installed on this repository only). Each save is a commit to `main`, and the deploy workflow builds and publishes it; a build that fails never deploys, so the live site stays on the last good version and GitHub emails the committer. The plan, with the phases still to come (FAQs, offers, page copy, Insights), is `plans/004-pages-cms-migration.md`.
+
+- **What is editable today:** `src/content/enrolment.json` (`open`, `amount`, `scriptAmountConfirmed`), `cohort.json` (the facts: `next`, `nextStart`, `startDate`, `applyBy`, `previous`, `previousStatus`, `size`, `format`, `schedule`, `previousFee`, `abroadFee`) and `programme.json` (`audiences`, `phases`, `includes`).
+- **What is not:** the Squad public key, the form endpoints, `formSite`, `topics`, the company's legal details, components and styles. `waitlistFormName` and `waitlistType` are worked out from `cohort.next` in `site.ts`, so the waitlist form, its type and its cohort field always agree and follow the personal site's pattern (`ba-waitlist-feb-2027`).
+- **How an edit is checked:** `site.ts` and `offers.ts` pass each file through `src/data/content.ts` (zod) when the site builds. It refuses unknown or missing keys, text that is empty or too long, an em dash, an email address other than info@practevahq.com, dates not written in full (`2 February 2027`), and too few or too many items. With enrolment open it also refuses a fee of 0, a `scriptAmountConfirmed` that is not the same number as `amount` (retyping it confirms that `EXPECTED_AMOUNT` in the Apps Script was changed and redeployed, which no build can see), and an empty `startDate` or `applyBy`. The error names the file and the field.
+- **Adding or renaming a field:** change the JSON, the schema in `content.ts`, the field in `.pages.yml` and whatever reads it, then run `node scripts/test-content.mjs`. It fails when the form and the files disagree.
+- **Keep the files as Pages CMS writes them:** two-space JSON with a final newline. The tests check it.
+- **Undoing a bad edit:** revert the commit in GitHub; the deploy runs again.
+- **Tests:** `node scripts/test-content.mjs` (no browser; the checks and `.pages.yml`) and `node scripts/test-enrol.mjs` (builds the site closed and open). `test-enrol.mjs` reads what the pages should say from `src/content`, so editing the content does not fail it.
 
 ## Forms
 
@@ -49,7 +62,7 @@ Both forms post to the one Apps Script web app behind ubonudonkang.com's forms. 
 - `_gotcha` is the honeypot. Notifications for both go to the script's `SITE_NOTIFY_EMAIL`.
 - `src/scripts/forms.ts` sends URL-encoded data, reads the script's `{"result":"ok"}` answer, and if the browser cannot read it, resends once with `no-cors`. The dedupe keys make that resend safe; a blind send is not proof of a save, so check the sheet after any change to the script or its deployment.
 - To keep a new field (a WhatsApp number on the waitlist, say), add it to `FORM_TABS` in the script and redeploy it first: the script adds the column on the right. A field the script does not know is dropped silently.
-- When the cohort changes, update `cohort.next`, `waitlistFormName` and `waitlistType` together, matching the personal site's waitlist.
+- When the cohort changes, change `next` in Cohort facts (Pages CMS); the waitlist form name and type follow it, matching the personal site's waitlist.
 
 ## Brand rules (from the Practeva Brand Guide; follow them in every change)
 
@@ -135,15 +148,15 @@ The site animates very little, on purpose. Before adding motion, it needs a reas
 
 ## Opening enrolment
 
-Enrolment is closed as shipped (`enrolment.open: false` in `site.ts`): the page shows the waitlist and says the cohort opens to the waitlist first. Opening is one switch, but do the list in order. `node scripts/test-enrol.mjs` builds a copy of the site with enrolment open and drives the form against a stubbed script and Squad widget; run it after any change to the form, `enrol.ts` or `site.ts`. A build with `open: true` fails if `enrolment.amount` is 0 or the Squad key is a sandbox key (a production build only).
+Enrolment is closed as shipped (`open: false` in `src/content/enrolment.json`, edited in Pages CMS under Enrolment): the page shows the waitlist and says the cohort opens to the waitlist first. Opening is one switch, but do the list in order. `node scripts/test-enrol.mjs` builds a copy of the site with enrolment open and drives the form against a stubbed script and Squad widget; run it after any change to the form, `enrol.ts` or `site.ts`. A build with `open` true fails if the fee is 0, the fee has not been retyped as `scriptAmountConfirmed`, `startDate` or `applyBy` is empty, or (a production build only) the Squad key is a sandbox key.
 
-1. **Fee.** Set `enrolment.amount` (whole naira) and set the same number as `EXPECTED_AMOUNT` in the Apps Script (`scripts/site_forms.gs` in `ubonudonkang/ubonudonkang.github.io`), then redeploy both of its deployments (its README says how). If the personal site enrols the same cohort, its open command sets its price: the three must agree. A payment of any other amount shows in the dashboard as "Check the amount".
-2. **Cohort facts.** `cohort.next`, `nextStart`, `schedule`, `size`, `waitlistFormName` and `waitlistType`, and the exact `startDate` and `applyBy` (for example `2 February 2027` and `25 January 2027`; they show in the cohort card and the FAQ, and the personal site's open command takes the same dates). Read the FAQ answers on `/training` and the home page.
+1. **Fee.** Set `EXPECTED_AMOUNT` (whole naira) in the Apps Script (`scripts/site_forms.gs` in `ubonudonkang/ubonudonkang.github.io`) and redeploy both of its deployments (its README says how). Only then set the fee in the CMS (step 6): `amount`, and the same number again as `scriptAmountConfirmed`. If the personal site enrols the same cohort, its open command sets its price: the three must agree. A payment of any other amount shows in the dashboard as "Check the amount".
+2. **Cohort facts** (Pages CMS, Cohort facts). `next`, `nextStart`, `schedule`, `size`, and the exact `startDate` and `applyBy` (for example `2 February 2027` and `25 January 2027`; they show in the cohort card and the FAQ, and the personal site's open command takes the same dates). Read the FAQ answers on `/training` and the home page.
 3. **Squad, in the sandbox first.** Put the `sandbox_pk_...` key in `squadPublicKey` and the matching `sandbox_sk_...` in the script's `SQUAD_SECRET_KEY` property, run `npm run dev`, and make one payment. Check, in the dashboard: the enrolment appears with *Registered via practevahq.com*; the payment is recognised and the review email arrives; *Confirm payment* sends a welcome email that comes from Practeva, in the plural, signed "The Practeva team". Then put the live `pk_...` and `sk_...` back. The sandbox and live keys must match each other.
 4. **Squad dashboard.** The webhook URL is the script's `/exec` address (the one in `site.ts`), unchanged. The account has one redirect URL; set it to `https://practevahq.com/training/`. Checkout runs in a window on the page, so the redirect is only a fallback, and the page reads `?reference=` to show the buyer their reference.
 5. **Privacy notice.** It already describes what enrolment collects and that Squad takes the payment (updated 17 October 2026); read it again and confirm the retention lines.
-6. **Switch.** `enrolment.open: true`, `npm run build`, `node scripts/test-enrol.mjs`, merge to `main`. The header button, home banner, footer, guide and `llms.txt` all change from "Join the waitlist" to "Enrol now" by themselves, and so do the join buttons in the training sections and the cohort card (which swaps "November is full. Get first notice for February." for the fee, start date, deadline and "Join the February 2027 cohort.").
-7. **Closing again.** Set `open: false` (the waitlist returns), clear `startDate` and `applyBy`, and update `cohort` for the next one (`previous`, `previousStatus`, `next`). The cohort card then says "<previous month> is full. Get first notice for <next month>."
+6. **Switch.** In Pages CMS, Enrolment: set `amount`, retype it as `scriptAmountConfirmed`, turn on `open` and save (the build refuses if anything in steps 1 and 2 is missing). If you change the files in code instead, run `npm run build` and `node scripts/test-enrol.mjs` first and merge to `main`. The header button, home banner, footer, guide and `llms.txt` all change from "Join the waitlist" to "Enrol now" by themselves, and so do the join buttons in the training sections and the cohort card (which swaps "November is full. Get first notice for February." for the fee, start date, deadline and "Join the February 2027 cohort.").
+7. **Closing again.** In Pages CMS, turn `open` off (the waitlist returns), set `amount` and `scriptAmountConfirmed` back to 0 until the next fee is fixed (otherwise the FAQ keeps quoting the fee), clear `startDate` and `applyBy`, and update Cohort facts for the next one (`previous`, `previousStatus`, `next`). The cohort card then says "<previous month> is full. Get first notice for <next month>."
 
 ## Open items before launch
 
@@ -152,7 +165,7 @@ Enrolment is closed as shipped (`enrolment.open: false` in `site.ts`): the page 
 3. Careers services and team training (`careerServices`, `teamTraining`): confirm contents and prices.
 4. Resources (`resources`): the list is a placeholder marked "Coming soon". Replace with the real templates, formats, prices and links.
 5. About principles (`principles`): confirm they read the way you want Practeva to work.
-6. Set the February 2027 fee (`cohort.fee`) once it is fixed; until then the FAQ says it goes to the waitlist first and quotes the November fee (₦80,000, `cohort.previousFee`).
+6. Set the February 2027 fee (`amount` under Enrolment in Pages CMS; `cohort.fee` follows it) once it is fixed; until then the FAQ says it goes to the waitlist first and quotes the November fee (₦80,000, `cohort.previousFee`).
 7. Confirm the FAQ answer to "Do I need a technical background?" (`src/pages/training.astro`). Three other training answers are settled, and match ubonudonkang.com's BA Bridge page: Practeva issues a certificate of completion; a place can move once to the next cohort at no cost before the cohort begins (the refund policy and the deferral answer say so); sessions are Wednesday and Saturday, 8 to 10pm WAT, two hours each.
 8. Only if the founder returns: confirm the government accounting system record (`founder.record`): it said 14 modules with Ubon as the sole business analyst, while ubonudonkang.com describes two portals and eight finance modules and does not say "sole".
 9. Off the site, for search: verify practevahq.com in Google Search Console (a DNS TXT record at Spaceship) and submit `https://practevahq.com/sitemap.xml`; import the site into Bing Webmaster Tools from Search Console; the Google Business Profile (a service-area business in Lagos State, address hidden) is in verification: once it is live, add its Maps link to `site.profiles` in `site.ts`. The LinkedIn page (linkedin.com/company/practeva) is in `site.profiles` already, which puts it in the structured data's `sameAs`, `llms.txt` and the footer. Keep the name, description and location the same everywhere.
@@ -172,6 +185,7 @@ Enrolment is closed as shipped (`enrolment.open: false` in `site.ts`): the page 
 ## Checks before shipping a change
 
 - `npm run build` passes with no warnings.
+- `node scripts/test-content.mjs` passes (and `node scripts/test-enrol.mjs` after a change to enrolment, the cohort or the training page).
 - Every page at 390px and 1280px: no horizontal scroll, the menu opens and closes (Escape closes it too), one h1 and one italic accent word.
 - Text meets 4.5:1 contrast on its ground (3:1 at 24px and above), including at the strongest point of a wash.
 - Search the diff for em dashes and for a second italic accent word on a page.

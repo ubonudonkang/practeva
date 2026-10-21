@@ -1,4 +1,9 @@
 // What Practeva offers, in the words the site uses. Pages and components read from here.
+// The cohort's audiences, phases and what a place includes are edited in Pages CMS
+// (src/content/programme.json) and checked by ./content.ts when the site builds.
+import programmeContent from '../content/programme.json';
+import { parseProgramme } from './content';
+
 // Each pillar keeps its colour everywhere: Advisory = deep-green, Training = leaf-green,
 // Careers = forest-green.
 
@@ -170,66 +175,17 @@ export const teamTraining = {
 /* The BA Bridge Cohort: who it is for, what the twelve weeks cover and what a place includes.
    The same programme is described on ubonudonkang.com/ba-training; keep the two in step. */
 
-export const cohortAudiences = [
-  { name: 'Researchers and analysts', detail: 'You already frame good questions and read data. We turn that into requirements work.' },
-  { name: 'Banking and finance staff', detail: 'You know the processes analysts get hired to fix. Learn to document and improve them.' },
-  { name: 'Operations and support', detail: 'You see where systems break every day. That is the raw material of good requirements.' },
-  { name: 'Graduates and early career', detail: 'Start with a clear path and a portfolio, instead of guessing what employers want.' },
-];
+const programme = parseProgramme(programmeContent);
+
+export const cohortAudiences = programme.audiences;
 
 // Five phases, one deliverable each. The last one closes the cohort, so it is drawn as the end of
 // the process (a deep-green box), the way ProcessFlow draws its last step.
-export const cohortPhases = [
-  {
-    weeks: 'Weeks 1 to 2',
-    name: 'Foundations',
-    detail: 'The IT analyst role, the software delivery lifecycle, Agile and Scrum against Waterfall, and how analysts work with project managers and product owners.',
-    tools: 'Scrum ceremonies, Jira boards, Confluence',
-    deliverable: 'Capstone project brief',
-  },
-  {
-    weeks: 'Weeks 3 to 5',
-    name: 'Stakeholders and elicitation',
-    detail: 'Interviews and workshops, stakeholder mapping, prioritisation, and the 4C Framework: Clarity, Conflict, Consensus, Commitment.',
-    tools: 'MoSCoW, RICE, 5 Whys, fishbone, story mapping',
-    deliverable: 'Stakeholder map and elicitation notes',
-  },
-  {
-    weeks: 'Weeks 6 to 8',
-    name: 'Requirements and modelling',
-    detail: 'Business and functional requirements documents, user stories and acceptance criteria, process and data modelling, and reading an API the way an analyst does.',
-    tools: 'BPMN 2.0, UML, ERDs, SQL joins, REST and JSON in Postman, Figma wireframes',
-    deliverable: 'Requirements document, process maps and backlog',
-  },
-  {
-    weeks: 'Weeks 9 to 10',
-    name: 'Delivery',
-    detail: 'Traceability, user acceptance testing, change management, and working in regulated settings such as fintech and telecoms.',
-    tools: 'Test case design, defect triage, traceability matrix, integrations and webhooks, RPA basics',
-    deliverable: 'UAT plan and traceability matrix',
-  },
-  {
-    weeks: 'Weeks 11 to 12',
-    name: 'Career launch',
-    detail: 'The board presentation, a CV and LinkedIn rewrite, mock interviews, and your ECBA roadmap.',
-    tools: 'Portfolio review, STAR interview practice, BABOK mapping',
-    deliverable: 'Portfolio and interview-ready CV',
-  },
-];
+export const cohortPhases = programme.phases;
 
 // What a place includes. Practeva issues a certificate of completion; the FAQ says professional
 // certification exams are taken separately, and the brand rules still forbid promising certifications.
-export const cohortIncludes = [
-  'Two live sessions a week for 12 weeks',
-  'Every session recorded',
-  'Weekly written feedback on assignments',
-  'A capstone project and a peer review pod',
-  'Template pack: requirements document, user stories, UAT plan, traceability matrix',
-  'A CV and LinkedIn rewrite',
-  'An interview question bank, email templates and mock interviews with feedback',
-  'An ECBA certification roadmap',
-  'A certificate of completion',
-];
+export const cohortIncludes = programme.includes;
 
 /* Careers */
 

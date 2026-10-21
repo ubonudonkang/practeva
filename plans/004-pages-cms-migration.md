@@ -1,6 +1,6 @@
 # 004: Edit the site's content in Pages CMS
 
-- Status: PLANNED
+- Status: IN PROGRESS (Phase 0 and Phase 1 done in code; the Phase 1 round trip waits for the merge)
 - Written at commit: d4c3efa
 - Files: new `.pages.yml`, new `src/content/*.json`, new `src/data/content.ts`, new `scripts/test-content.mjs`; edits to `src/data/site.ts`, `src/data/offers.ts`, `src/pages/*.astro` (FAQ lists only), `scripts/test-enrol.mjs`, `CLAUDE.md`, `README.md`
 
@@ -69,7 +69,7 @@ Each phase is its own pull request, no AI attribution (see `CLAUDE.md`, Git and 
 2. Add `src/data/content.ts`: load, validate, export. Rebuild `cohort` and `enrolment` in `site.ts` from the JSON (`fee` stays derived from `amount`); rebuild the three programme exports in `offers.ts` from the JSON.
 3. Add `.pages.yml` with entries for both files, readable labels and hints (for example, on `applyBy`: "The last day to apply, for example 25 January 2027. Leave empty until it is fixed").
 4. Add `scripts/test-content.mjs` (valid content passes; an em dash, an unknown token, a missing field and a stray key each fail) and make `test-enrol.mjs` read the JSON.
-5. Check: `dist/` identical before and after; `npm run build`, `node scripts/test-content.mjs` and `node scripts/test-enrol.mjs` pass.
+5. Check: `dist/` identical before and after; `npm run build`, `node scripts/test-content.mjs` and `node scripts/test-enrol.mjs` pass. Done: the closed and the open site (with dates) were byte-identical to the build before the move. Two things followed from it: `waitlistFormName` and `waitlistType` are now worked out from `cohort.next` instead of being separate fields, and an open site now always has `startDate` and `applyBy` (Decision 7), so `test-enrol.mjs` builds its open site with dates.
 6. Round trip: open each file in Pages CMS and save with no change. The commit should be empty, or formatting only. If it is formatting, commit the CMS's formatting as the new baseline.
 
 ### Phase 2: FAQs (about 2 hours)

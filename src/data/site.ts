@@ -1,4 +1,14 @@
 // One place for the facts the site repeats. Change facts here, not in components.
+//
+// The cohort's facts, the enrolment switch and the fee are edited in Pages CMS (src/content/cohort.json
+// and enrolment.json, described in .pages.yml). They are checked by ./content.ts when the site builds.
+import cohortContent from '../content/cohort.json';
+import enrolmentContent from '../content/enrolment.json';
+import { checkOpening, parseCohort, parseEnrolment } from './content';
+
+const cohortFacts = parseCohort(cohortContent);
+const enrolmentFacts = parseEnrolment(enrolmentContent);
+checkOpening(enrolmentFacts, cohortFacts);
 
 export const site = {
   name: 'Practeva',
@@ -65,11 +75,13 @@ export const nav = [
 const naira = (n: number) => '\u20A6' + n.toLocaleString('en-NG');
 
 export const enrolment = {
-  open: false,
+  // From enrolment.json. The page shows the waitlist while it is false, the form once it is true.
+  open: enrolmentFacts.open,
   // Naira, whole. It must equal EXPECTED_AMOUNT in the Apps Script (scripts/site_forms.gs in the
   // ubonudonkang.github.io repo): the script checks every payment with Squad against that number,
-  // and shows a payment of any other amount as "Check the amount" in the dashboard.
-  amount: 0,
+  // and shows a payment of any other amount as "Check the amount" in the dashboard. Opening is
+  // refused unless enrolment.json repeats the number as scriptAmountConfirmed (see content.ts).
+  amount: enrolmentFacts.amount,
   // Squad's public key. It is meant to sit in page code: sandbox_pk_... while testing, pk_... live.
   // The secret key lives only in the Apps Script's script properties, never here.
   squadPublicKey: 'pk_87829ad6c810e30065ebfee10ac6a16884446b5c',
@@ -82,30 +94,20 @@ export const join = enrolment.open
 
 export const cohort = {
   programme: 'BA Bridge Cohort',
-  next: 'February 2027',
-  nextStart: 'the end of February',
-  // Once they are fixed (before enrolment opens): the exact start date, for example '2 February
-  // 2027', and the last day to apply. Empty, the page says "the end of February" and shows no deadline.
-  startDate: '',
-  applyBy: '',
-  previous: 'November 2026',
-  previousStatus: 'Fully booked',
-  size: '10 to 15 people',
-  format: 'Twelve weeks, live online',
-  schedule: 'Wednesdays and Saturdays, 8 to 10pm WAT',
+  // From cohort.json: next, nextStart, startDate, applyBy, previous, previousStatus, size, format,
+  // schedule, previousFee, abroadFee. startDate and applyBy are empty until they are fixed; empty, the
+  // page says "the end of February" and shows no deadline. abroadFee: the cohort is charged in naira,
+  // there is no dollar fee for now, and people outside Nigeria are quoted on request. previousFee is
+  // the November 2026 BA Bridge price (ubonudonkang.com README, and EXPECTED_AMOUNT then).
+  ...cohortFacts,
   // The fee follows enrolment.amount, so the page and the payment cannot disagree. While it is
-  // empty (amount 0), the FAQ says the fee goes to the waitlist first and quotes the November fee.
+  // empty (amount 0), the FAQ says the fee goes to the waitlist first and quotes the previous fee.
   fee: enrolment.amount ? naira(enrolment.amount) : '',
-  // The cohort is charged in naira. There is no dollar fee for now: people joining from outside
-  // Nigeria are quoted in US dollars on request, through the contact form.
-  abroadFee: 'If you are joining from outside Nigeria, ask us for a quote in US dollars through the contact form.',
-  // The November 2026 BA Bridge product sold at ₦80,000 (ubonudonkang.com README, and
-  // EXPECTED_AMOUNT in the Apps Script).
-  previousFee: '₦80,000',
-  // Matches the personal site's waitlist, so a signup on either site lands once in the same
-  // Waitlist tab (the Apps Script skips a repeat email and cohort).
-  waitlistFormName: 'ba-waitlist-feb-2027',
-  waitlistType: 'BA Bridge February 2027 waitlist (practevahq.com)',
+  // Match the personal site's waitlist, so a signup on either site lands once in the same Waitlist
+  // tab (the Apps Script skips a repeat email and cohort). They follow `next`, so changing the
+  // cohort in the CMS keeps the form, the type and the cohort field in step.
+  waitlistFormName: `ba-waitlist-${cohortFacts.next.slice(0, 3).toLowerCase()}-${cohortFacts.next.slice(-4)}`,
+  waitlistType: `BA Bridge ${cohortFacts.next} waitlist (practevahq.com)`,
 };
 
 // The one Apps Script web app behind ubonudonkang.com's forms (its scripts/site_forms.gs).
