@@ -72,6 +72,8 @@ Each phase is its own pull request, no AI attribution (see `CLAUDE.md`, Git and 
 5. Check: `dist/` identical before and after; `npm run build`, `node scripts/test-content.mjs` and `node scripts/test-enrol.mjs` pass. Done: the closed and the open site (with dates) were byte-identical to the build before the move. Two things followed from it: `waitlistFormName` and `waitlistType` are now worked out from `cohort.next` instead of being separate fields, and an open site now always has `startDate` and `applyBy` (Decision 7), so `test-enrol.mjs` builds its open site with dates.
 6. Round trip: open each file in Pages CMS and save with no change. The commit should be empty, or formatting only. If it is formatting, commit the CMS's formatting as the new baseline.
 
+What the pilot showed (21 October 2026): Pages CMS writes two-space JSON with no final newline and leaves out any field that is empty. The first save of an FAQ file therefore failed the build, because the validator required `answerWhenOpen` to be present; the build stopped, nothing deployed, and the live site stayed on the last good version, which is what the checks are for. The validator now treats fields that may be empty (`answerWhenOpen`, `price`, `startDate`, `applyBy`) as optional, the committed files are written the way the CMS writes them, and `test-content.mjs` checks both.
+
 ### Phase 2: FAQs (about 2 hours)
 
 1. One file per page in `src/content/faqs/`: `home`, `training`, `international`, `guide`.

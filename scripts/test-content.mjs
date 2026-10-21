@@ -6,7 +6,9 @@
 // 2. Those checks refuse what they should: an em dash, a stray email address, an unknown key, a
 //    missing key, a badly written date, too few or too many items, and opening enrolment half-ready.
 // 3. .pages.yml and the JSON files agree: every key in a file has a field in the form and every
-//    field has a key, so the CMS form and the checks cannot drift apart.
+//    required field has a key, so the CMS form and the checks cannot drift apart.
+// 4. The files are written the way Pages CMS writes them (two-space JSON, no final newline, and no
+//    key for a field that is empty), so saving a file in the CMS with no change is not a change.
 // Needs Node 22.18 or later (it loads the TypeScript file directly) and js-yaml, which Astro brings.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -111,14 +113,14 @@ const refuses = (run, pattern, why) => assert.throws(run, pattern, why);
   refuses(() => parseFaqs('faqs/training', edit((i) => { i.answer = 'Starts {{cohort.nextDate}}.'; })), /faqs\/training\.json is not valid[\s\S]*questions\[0\]\.answer: uses a \{\{name\}\} that does not exist/, 'unknown token');
   refuses(() => parseFaqs('faqs/training', edit((i) => { i.answerWhenOpen = 'Starts {{cohort.next}'; })), /answerWhenOpen/, 'a brace that is not closed');
   refuses(() => parseFaqs('faqs/training', edit((i) => { i.answer = 'No dashes \u2014 here'; })), /em dash/, 'em dash in an answer');
-  refuses(() => parseFaqs('faqs/training', edit((i) => { delete i.answerWhenOpen; })), /answerWhenOpen/, 'the open answer key must be present, even if empty');
+  assert.equal(parseFaqs('faqs/training', edit((i) => { delete i.answerWhenOpen; })).questions[0].answerWhenOpen, '', 'Pages CMS leaves out an empty answerWhenOpen');
   refuses(() => parseFaqs('faqs/training', { questions: [] }), /questions/, 'no questions');
   parseFaqs('faqs/training', edit((i) => { i.answerWhenOpen = ''; })); // empty is fine
   // every token the files use is one the page knows how to fill
   for (const file of faqFiles) {
     for (const item of read(`${file}.json`).questions) {
       for (const text of [item.answer, item.answerWhenOpen]) {
-        for (const [, name] of text.matchAll(/\{\{([^{}]*)\}\}/g)) assert.ok(FAQ_TOKENS.includes(name), `${file}: ${name}`);
+        for (const [, name] of (text ?? '').matchAll(/\{\{([^{}]*)\}\}/g)) assert.ok(FAQ_TOKENS.includes(name), `${file}: ${name}`);
       }
     }
   }
@@ -150,6 +152,22 @@ const refuses = (run, pattern, why) => assert.throws(run, pattern, why);
   assert.ok(packages.packages.every((p) => /^[a-z0-9-]+$/.test(p.slug)));
 }
 
+// a field that is empty is left out of the file by Pages CMS, and reads as empty
+{
+  const c = clone(cohort);
+  delete c.startDate;
+  delete c.applyBy;
+  const parsed = parseCohort(c);
+  assert.equal(parsed.startDate, '');
+  assert.equal(parsed.applyBy, '');
+  const pk = clone(read('packages.json'));
+  delete pk.packages[0].price;
+  assert.equal(offers.packages(pk).packages[0].price, '');
+  const incomplete = clone(cohort);
+  delete incomplete.next;
+  refuses(() => parseCohort(incomplete), /next/, 'a required key is still required');
+}
+
 // numbers
 {
   for (const amount of [-1, 80000.5, '80000']) {
@@ -177,14 +195,22 @@ const refuses = (run, pattern, why) => assert.throws(run, pattern, why);
 const config = yaml.load(fs.readFileSync(path.join(root, '.pages.yml'), 'utf8'));
 assert.ok(Array.isArray(config.content) && config.content.length, '.pages.yml has content entries');
 
-// the keys an object has, and for a list of objects, the keys its items have
-const keysOf = (value) => {
-  if (Array.isArray(value)) return keysOf(value[0]);
-  if (value && typeof value === 'object') return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, keysOf(v)]));
-  return null;
-};
-// the same shape from the fields in the form
-const fieldsToShape = (fields) => Object.fromEntries(fields.map((f) => [f.name, f.type === 'object' ? fieldsToShape(f.fields ?? []) : null]));
+// Every key in a file has a field in the form; every required field is in the file (in each item
+// of a list); a field is a list exactly when the file holds a list there.
+function matches(fields, value, where) {
+  if (Array.isArray(value)) { value.forEach((item, n) => matches(fields, item, `${where}[${n}]`)); return; }
+  if (value === null || typeof value !== 'object') return;
+  const byName = Object.fromEntries(fields.map((f) => [f.name, f]));
+  for (const [key, inner] of Object.entries(value)) {
+    const field = byName[key];
+    assert.ok(field, `${where}.${key} is in the file but has no field in .pages.yml`);
+    assert.equal(Array.isArray(inner), field.list === true, `${where}.${key}: the field is a list exactly when the file holds a list`);
+    if (field.type === 'object') matches(field.fields ?? [], inner, `${where}.${key}`);
+  }
+  for (const field of fields) {
+    if (field.required) assert.ok(field.name in value, `${where}.${field.name} is required in .pages.yml but missing from the file`);
+  }
+}
 
 const files = [...fs.readdirSync(path.join(root, 'src/content')).filter((f) => f.endsWith('.json')), ...faqFiles.map((f) => `${f}.json`)];
 const described = new Set();
@@ -194,19 +220,28 @@ for (const entry of config.content) {
   assert.ok(fs.existsSync(path.join(root, entry.path)), `${entry.name}: ${entry.path} exists`);
   described.add(path.relative('src/content', entry.path));
   const data = JSON.parse(fs.readFileSync(path.join(root, entry.path), 'utf8'));
-  assert.deepEqual(fieldsToShape(entry.fields), keysOf(data), `${entry.path}: the form fields and the keys in the file are the same`);
-  for (const field of entry.fields) {
-    assert.ok(field.label && field.label.trim(), `${entry.name}.${field.name} has a label`);
-    if (Array.isArray(data[field.name])) assert.equal(field.list, true, `${entry.name}.${field.name} is a list in the file, so the field is a list`);
-    else assert.notEqual(field.list, true, `${entry.name}.${field.name} is not a list in the file`);
-  }
+  matches(entry.fields, data, entry.path);
+  // and a field the form offers is one the file can hold: it is either in the file or may be left out
+  for (const field of entry.fields) assert.ok(field.label && field.label.trim(), `${entry.name}.${field.name} has a label`);
 }
 assert.deepEqual([...described].sort(), files.sort(), 'every file in src/content is described in .pages.yml, and the reverse');
 
-// the files are written the way Pages CMS writes them: two-space JSON
+// the files are written the way Pages CMS writes them: two-space JSON, no final newline, no key for
+// a field that is empty
+const MAY_BE_EMPTY = new Set(['answerWhenOpen', 'price', 'startDate', 'applyBy']);
+const noEmpties = (value, where) => {
+  if (Array.isArray(value)) value.forEach((v, n) => noEmpties(v, `${where}[${n}]`));
+  else if (value && typeof value === 'object') {
+    for (const [k, v] of Object.entries(value)) {
+      assert.ok(!(MAY_BE_EMPTY.has(k) && v === ''), `${where}.${k} is empty; Pages CMS leaves out an empty field, so leave the key out`);
+      noEmpties(v, `${where}.${k}`);
+    }
+  }
+};
 for (const file of files) {
   const raw = fs.readFileSync(path.join(root, 'src/content', file), 'utf8');
-  assert.equal(raw, JSON.stringify(JSON.parse(raw), null, 2) + '\n', `${file} is formatted as two-space JSON with a final newline`);
+  assert.equal(raw, JSON.stringify(JSON.parse(raw), null, 2), `${file} is formatted as two-space JSON with no final newline, as Pages CMS writes it`);
+  noEmpties(JSON.parse(raw), file);
 }
 assert.doesNotMatch(fs.readFileSync(path.join(root, '.pages.yml'), 'utf8'), /\u2014/, 'no em dashes in the form text');
 

@@ -9,8 +9,7 @@
         "A short written note on gaps and risks",
         "A call to talk it through"
       ],
-      "bestFor": "Early ideas and briefs that need a second pair of eyes.",
-      "price": ""
+      "bestFor": "Early ideas and briefs that need a second pair of eyes."
     },
     {
       "slug": "viability-review",
@@ -22,8 +21,7 @@
         "Key requirements and risks",
         "A go, change or stop recommendation"
       ],
-      "bestFor": "Founders and teams deciding whether to commit a budget.",
-      "price": ""
+      "bestFor": "Founders and teams deciding whether to commit a budget."
     },
     {
       "slug": "full-feasibility",
@@ -35,8 +33,7 @@
         "Current and future process maps",
         "Options compared, with risks and a recommended route"
       ],
-      "bestFor": "Larger changes, system choices and funding decisions.",
-      "price": ""
+      "bestFor": "Larger changes, system choices and funding decisions."
     }
   ]
 }
