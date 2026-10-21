@@ -135,3 +135,107 @@ content:
         type: string
         list: true
         description: "One line each, up to 14. Do not promise jobs, salaries or certifications."
+
+  - name: faqs-training
+    label: "FAQ: training page"
+    type: file
+    path: src/content/faqs/training.json
+    format: json
+    fields:
+      - name: questions
+        label: Questions
+        type: object
+        list: true
+        description: "Shown in this order on the training page, at most 20. Do not promise jobs, salaries or certifications."
+        fields:
+          - name: question
+            label: Question
+            type: string
+            required: true
+          - name: answer
+            label: Answer
+            type: text
+            required: true
+            description: "Facts can be written into an answer as {{name}} and are filled in when the site builds, so they stay right when the cohort changes: {{cohort.programme}}, {{cohort.next}}, {{cohort.previous}}, {{cohort.previousFee}}, {{cohort.fee}}, {{cohort.starts}}, {{cohort.applyBy}}, {{cohort.schedule}}, {{cohort.formatLower}}, {{cohort.abroadFee}}, {{markets.abroadCurrency}}, {{email}}. {{cohort.fee}} and {{cohort.applyBy}} are empty until enrolment opens, so use them only in the answer for when enrolment is open."
+          - name: answerWhenOpen
+            label: Answer when enrolment is open
+            type: text
+            description: "Leave empty if the answer is the same whether or not enrolment is open. If you fill it in, it is used instead of the answer above while enrolment is open."
+
+  - name: faqs-home
+    label: "FAQ: home page"
+    type: file
+    path: src/content/faqs/home.json
+    format: json
+    fields:
+      - name: questions
+        label: Questions
+        type: object
+        list: true
+        description: "Questions about the company as a whole, shown in this order on the home page."
+        fields:
+          - name: question
+            label: Question
+            type: string
+            required: true
+          - name: answer
+            label: Answer
+            type: text
+            required: true
+            description: "Facts can be written into an answer as {{name}} and are filled in when the site builds, so they stay right when the cohort changes: {{cohort.programme}}, {{cohort.next}}, {{cohort.previous}}, {{cohort.previousFee}}, {{cohort.fee}}, {{cohort.starts}}, {{cohort.applyBy}}, {{cohort.schedule}}, {{cohort.formatLower}}, {{cohort.abroadFee}}, {{markets.abroadCurrency}}, {{email}}. {{cohort.fee}} and {{cohort.applyBy}} are empty until enrolment opens, so use them only in the answer for when enrolment is open."
+          - name: answerWhenOpen
+            label: Answer when enrolment is open
+            type: text
+            description: "Leave empty if the answer is the same whether or not enrolment is open. If you fill it in, it is used instead of the answer above while enrolment is open."
+
+  - name: faqs-international
+    label: "FAQ: advisory from abroad"
+    type: file
+    path: src/content/faqs/international.json
+    format: json
+    fields:
+      - name: questions
+        label: Questions
+        type: object
+        list: true
+        description: "Shown in this order on the page for teams outside Nigeria."
+        fields:
+          - name: question
+            label: Question
+            type: string
+            required: true
+          - name: answer
+            label: Answer
+            type: text
+            required: true
+            description: "Facts can be written into an answer as {{name}} and are filled in when the site builds, so they stay right when the cohort changes: {{cohort.programme}}, {{cohort.next}}, {{cohort.previous}}, {{cohort.previousFee}}, {{cohort.fee}}, {{cohort.starts}}, {{cohort.applyBy}}, {{cohort.schedule}}, {{cohort.formatLower}}, {{cohort.abroadFee}}, {{markets.abroadCurrency}}, {{email}}. {{cohort.fee}} and {{cohort.applyBy}} are empty until enrolment opens, so use them only in the answer for when enrolment is open."
+          - name: answerWhenOpen
+            label: Answer when enrolment is open
+            type: text
+            description: "Leave empty if the answer is the same whether or not enrolment is open. If you fill it in, it is used instead of the answer above while enrolment is open."
+
+  - name: faqs-guide
+    label: "FAQ: the career-changer guide"
+    type: file
+    path: src/content/faqs/guide.json
+    format: json
+    fields:
+      - name: questions
+        label: Questions
+        type: object
+        list: true
+        description: "Shown in this order at the foot of the guide to becoming a business analyst in Nigeria."
+        fields:
+          - name: question
+            label: Question
+            type: string
+            required: true
+          - name: answer
+            label: Answer
+            type: text
+            required: true
+            description: "Facts can be written into an answer as {{name}} and are filled in when the site builds, so they stay right when the cohort changes: {{cohort.programme}}, {{cohort.next}}, {{cohort.previous}}, {{cohort.previousFee}}, {{cohort.fee}}, {{cohort.starts}}, {{cohort.applyBy}}, {{cohort.schedule}}, {{cohort.formatLower}}, {{cohort.abroadFee}}, {{markets.abroadCurrency}}, {{email}}. {{cohort.fee}} and {{cohort.applyBy}} are empty until enrolment opens, so use them only in the answer for when enrolment is open."
+          - name: answerWhenOpen
+            label: Answer when enrolment is open
+            type: text
+            description: "Leave empty if the answer is the same whether or not enrolment is open. If you fill it in, it is used instead of the answer above while enrolment is open."

@@ -89,6 +89,14 @@ let closedDir = '';
   assert.notEqual(badPhase.status, 0, 'an em dash in the content must not build');
   assert.match(badPhase.stdout + badPhase.stderr, /programme\.json is not valid[\s\S]*phases\[0\]\.name: contains an em dash/);
 
+  // an FAQ answer with a name that does not exist, or with a fact that is empty while closed, stops the build
+  const badToken = build(copySite({ 'src/content/faqs/home.json': json((f) => { f.questions[0].answer += ' {{cohort.nope}}'; return f; }) }));
+  assert.notEqual(badToken.status, 0, 'an unknown {{name}} in an FAQ must not build');
+  assert.match(badToken.stdout + badToken.stderr, /faqs\/home\.json is not valid[\s\S]*questions\[0\]\.answer: uses a \{\{name\}\} that does not exist/);
+  const emptyFee = build(copySite({ 'src/content/faqs/training.json': json((f) => { f.questions[0].answer = 'The fee is {{cohort.fee}}.'; return f; }) }));
+  assert.notEqual(emptyFee.status, 0, 'a fee in a closed-state answer must not build');
+  assert.match(emptyFee.stdout + emptyFee.stderr, /\{\{cohort\.fee\}\} is empty here/);
+
   // closed (as shipped) builds and shows the waitlist
   closedDir = copySite();
   const closed = closedDir;

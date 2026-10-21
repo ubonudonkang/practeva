@@ -1,6 +1,6 @@
 # 004: Edit the site's content in Pages CMS
 
-- Status: IN PROGRESS (Phase 0 and Phase 1 done in code; the Phase 1 round trip waits for the merge)
+- Status: IN PROGRESS (Phases 0 to 2 done; the round trip in Phase 1 is Ubon's check in Pages CMS)
 - Written at commit: d4c3efa
 - Files: new `.pages.yml`, new `src/content/*.json`, new `src/data/content.ts`, new `scripts/test-content.mjs`; edits to `src/data/site.ts`, `src/data/offers.ts`, `src/pages/*.astro` (FAQ lists only), `scripts/test-enrol.mjs`, `CLAUDE.md`, `README.md`
 
@@ -77,7 +77,7 @@ Each phase is its own pull request, no AI attribution (see `CLAUDE.md`, Git and 
 1. One file per page in `src/content/faqs/`: `home`, `training`, `international`, `guide`.
 2. Move the questions, turning the interpolated ones into tokens and `answerWhenOpen` fields. The training page's state-dependent answers (start date, cost, place confirmed) are the test: closed and open builds must produce the same text as today.
 3. `Faq` and its FAQPage structured data are unchanged; they read the same array.
-4. Check: `dist/` identical in both the closed build and the open build that `test-enrol.mjs` makes.
+4. Check: `dist/` identical in both the closed build and the open build that `test-enrol.mjs` makes. Done: both identical. One quirk: importing `faqs.ts` into the international page changed the order of two component stylesheets in its HTML (Faq and LocalTimes, both scoped, so no visual difference); importing it first in the file keeps the output byte-identical. Choices made: the state switch for an answer is `enrolment.open` alone (the old code also looked at the fee), and every item carries an `answerWhenOpen` key, empty when unused, so the CMS form and the files have the same shape.
 
 ### Phase 3: Offers (about half a day)
 
