@@ -21,7 +21,7 @@ To confirm in the sandbox before Phase 1 (the docs searched did not settle them)
 - Editors change content in Pages CMS; each save is a commit to `main`; the existing deploy workflow builds and publishes it. A broken build never deploys (the `deploy` job needs the `build` job), so the previous version stays live.
 - Content lives in `src/content/*.json`. Pages import it through `src/data/content.ts`, which validates every file when the site builds and fails with a readable message (`cohort.json: phases[2].tools is required`).
 - `site.ts` and `offers.ts` keep exporting the same names (`cohortPhases`, `packages`, `cohort`, and so on), so components and pages do not change. Only the FAQ arrays move out of the page files.
-- Nothing that touches payments or forms is editable in the CMS.
+- Opening and closing enrolment and setting the fee are editable in the CMS, behind build-time guards (see Decision 7). The Squad key, form endpoints and form routing stay in code.
 
 ## Scope
 
@@ -29,6 +29,7 @@ In the CMS:
 
 | Content | Today | Notes |
 | --- | --- | --- |
+| Enrolment: `open`, `amount` and a confirmation of the amount | `enrolment` in `site.ts` | Editable by Ubon's decision; guarded, see Decision 7. |
 | Cohort facts: `next`, `nextStart`, `startDate`, `applyBy`, `previous`, `previousStatus`, `size`, `format`, `schedule`, `previousFee`, `abroadFee` | `cohort` in `site.ts` | The facts Ubon changes every cohort. `fee` stays derived from `enrolment.amount` in code. |
 | The programme: `cohortAudiences`, `cohortPhases`, `cohortIncludes` | `offers.ts` | Same programme as ubonudonkang.com/ba-training; keep the two in step. |
 | FAQs for home, training, international and the guide | `faqs` in four pages | Need tokens, see Decisions. |
@@ -37,7 +38,7 @@ In the CMS:
 
 Not in the CMS, on purpose:
 
-- `enrolment` (the open switch, the fee, the Squad public key), `forms`, `formSite`, `waitlistFormName`, `waitlistType`, `topics`. A wrong value here breaks payments or sends submissions to the wrong tab. Opening enrolment stays the checklist in `CLAUDE.md`, done in code.
+- The Squad public key, `forms`, `formSite`, `waitlistFormName`, `waitlistType`, `topics`. A wrong value here breaks payments or sends submissions to the wrong tab. The enrolment switch and fee are editable (Decision 7), but the Squad key stays in code.
 - `company` (legal name, RC number, registration date), `site.legal`, the privacy notice. Legal text changes go through a pull request.
 - Components, styles, brand rules, structured-data helpers.
 - Page headings and section copy (hero lines, section heads). A later phase, only if Ubon wants it.
@@ -49,7 +50,8 @@ Not in the CMS, on purpose:
 3. **Tokens for facts inside sentences.** Several answers build text from facts and from the enrolment state ("starts at the end of February" or "starts on 2 February 2027"). Content uses a small set of tokens, `{{cohort.next}}`, `{{cohort.fee}}`, `{{cohort.starts}}`, `{{cohort.schedule}}`, `{{email}}`, replaced at build. An unknown token fails the build. A question whose answer differs when enrolment is open gets two fields, `answer` and `answerWhenOpen`.
 4. **Drift test.** `scripts/test-content.mjs` checks that every key in each JSON file has a field in `.pages.yml` and the reverse, so the CMS form and the validator cannot disagree.
 5. **Tests read the content.** `scripts/test-enrol.mjs` asserts literal strings today ("Researchers and analysts", "Weeks 1 to 2"). It must derive them from the JSON, or an editor fixing a typo would fail the next test run.
-6. **Edit `main` directly.** Right for one or two editors and a site that only deploys on success. If more people edit later, switch to a `content` branch and a pull request (revisit after Phase 4).
+6. **Edit `main` directly.** Agreed: Ubon is the only editor, and a failed build never deploys. If more people edit later, switch to a `content` branch and a pull request.
+7. **Enrolment in the CMS, guarded.** `src/content/enrolment.json` holds `open`, `amount` and `scriptAmountConfirmed`. The build fails if `open` is true and any of these is missing or wrong: `amount` is not a positive whole number; `scriptAmountConfirmed` is not equal to `amount` (the editor retypes the number to confirm that `EXPECTED_AMOUNT` in the Apps Script was changed and both deployments redeployed, which no build can check); `startDate` or `applyBy` is empty; the Squad key is a sandbox key (existing guard). Closing (`open` false) needs nothing. The field hints in `.pages.yml` spell out the order: Apps Script first, then the CMS.
 
 ## Steps
 
@@ -59,12 +61,12 @@ Each phase is its own pull request, no AI attribution (see `CLAUDE.md`, Git and 
 
 1. Install the Pages CMS GitHub App on `ubonudonkang/practeva` only, not the whole account.
 2. Sign in at app.pagescms.org, open the repository, and note which branch it offers. Do not save anything yet.
-3. Decide who else edits (see Questions).
+3. Ubon is the only editor, so no collaborators to invite.
 
 ### Phase 1: Foundation and the cohort (about half a day)
 
-1. Add `src/content/cohort.json` (the facts) and `src/content/programme.json` (audiences, phases, includes), with the current text moved over unchanged.
-2. Add `src/data/content.ts`: load, validate, export. Rebuild `cohort` in `site.ts` from the JSON plus the derived `fee`; rebuild the three programme exports in `offers.ts` from the JSON.
+1. Add `src/content/cohort.json` (the facts), `src/content/programme.json` (audiences, phases, includes) and `src/content/enrolment.json` (`open`, `amount`, `scriptAmountConfirmed`), with the current values moved over unchanged. Build the guards from Decision 7 and extend `test-enrol.mjs` and `test-content.mjs` to cover them (open without a confirmation, with a mismatched confirmation, without dates).
+2. Add `src/data/content.ts`: load, validate, export. Rebuild `cohort` and `enrolment` in `site.ts` from the JSON (`fee` stays derived from `amount`); rebuild the three programme exports in `offers.ts` from the JSON.
 3. Add `.pages.yml` with entries for both files, readable labels and hints (for example, on `applyBy`: "The last day to apply, for example 25 January 2027. Leave empty until it is fixed").
 4. Add `scripts/test-content.mjs` (valid content passes; an em dash, an unknown token, a missing field and a stray key each fail) and make `test-enrol.mjs` read the JSON.
 5. Check: `dist/` identical before and after; `npm run build`, `node scripts/test-content.mjs` and `node scripts/test-enrol.mjs` pass.
@@ -87,7 +89,7 @@ Each phase is its own pull request, no AI attribution (see `CLAUDE.md`, Git and 
 ### Phase 4: Pilot and handover (about 2 hours, Ubon with Claude)
 
 1. Ubon makes three real edits in Pages CMS: a FAQ sentence, a package line, and the cohort `startDate` and `applyBy`. Watch each deploy finish (about a minute).
-2. Make one deliberately bad edit on a scratch copy (an em dash, an unknown token) and confirm the build fails, nothing deploys, and the live site is unchanged. Revert it.
+2. Make one deliberately bad edit (an em dash, an unknown token, `open` true with no dates) and confirm the build fails, nothing deploys, and the live site is unchanged. Revert it.
 3. Write the runbook into `CLAUDE.md` and `README.md`: where content lives, what must not be edited in the CMS, how to revert a bad edit (revert the commit in GitHub), and what a failed deploy email means.
 4. Update `CLAUDE.md`: "Where things are", the Forms and Opening enrolment sections (the cohort facts are now edited in the CMS), and the Open items that refer to files.
 
@@ -105,7 +107,7 @@ Each phase is its own pull request, no AI attribution (see `CLAUDE.md`, Git and 
 | An edit breaks the build | The validator names the file and field; the deploy needs a green build, so the live site stays on the last good version; GitHub emails the committer. |
 | An edit is valid but wrong (a typo in a fee) | Fees are not in the CMS; they derive from `enrolment.amount`. Everything else is visible copy, fixed by editing again or reverting the commit. |
 | CMS and code disagree about a key | The drift test in `test-content.mjs`. |
-| Editing content opens enrolment by accident | `enrolment.open` is not editable in the CMS. Opening stays a code change with the checklist. |
+| Enrolment opened from the CMS before the Apps Script price or Squad are ready | Decision 7: the build refuses an open page without a matching confirmed amount and dates. It cannot check Squad's live mode or the Apps Script deployment, so the "Opening enrolment" list in `CLAUDE.md` stays the checklist, now followed before the CMS edit. A wrong amount shows in the dashboard as "Check the amount"; closing again is one switch. |
 | CMS save reformats files and creates noisy commits | Settled in the Phase 1 round trip. |
 | Merge conflicts when code and content change together | Content and code live in different files, so conflicts are rare. Pull before starting code work. |
 | No live preview | Pages CMS has none for this site. Edits go live in about a minute and are cheap to revert; run `npm run dev` for anything large. |
@@ -117,9 +119,13 @@ Each phase is its own pull request, no AI attribution (see `CLAUDE.md`, Git and 
 - ubonudonkang.com. Its pages are hand-written HTML, which a CMS cannot edit well. Revisit after this works on practevahq.com.
 - Anything in the Apps Script, the sheet or the dashboard.
 
-## Questions for Ubon
+## Answers from Ubon
 
-1. Who else will edit besides you, and do they have GitHub accounts?
-2. Is editing straight to `main` fine, given that a failed build never goes live?
-3. Do you agree the enrolment switch, fee and Squad key stay in code?
-4. After Phase 4, do you want Phase 5, and in which order (page copy, Insights, images)?
+1. Who edits: just Ubon.
+2. Edit `main` directly: yes.
+3. The enrolment switch and fees can be edited in the CMS: yes, with the guards in Decision 7.
+4. Phase 5 (page copy, Insights, images): yes, after the pilot.
+
+## Open
+
+- The Pages CMS behaviours listed under "To confirm" are checked in Phase 0 and Phase 1.
