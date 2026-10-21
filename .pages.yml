@@ -1,0 +1,137 @@
+# Pages CMS (app.pagescms.org) reads this file to decide what can be edited from the browser.
+# Every key below must match a key in the JSON file it describes: scripts/test-content.mjs checks
+# it, and src/data/content.ts checks the values when the site builds (a bad edit stops the build
+# and the live site stays on the last good version). Notes on each file are in plans/004-pages-cms-migration.md.
+
+content:
+  - name: enrolment
+    label: Enrolment
+    type: file
+    path: src/content/enrolment.json
+    format: json
+    fields:
+      - name: open
+        label: Enrolment open
+        type: boolean
+        description: "Off: the page offers the waitlist. On: the page takes enrolments and payments through Squad. Before turning it on, work through the Opening enrolment list in CLAUDE.md: change EXPECTED_AMOUNT in the Apps Script, redeploy both its deployments, and set the dates in Cohort facts. The site will not build if the amount is not confirmed or the dates are empty."
+      - name: amount
+        label: Fee in naira
+        type: number
+        description: "Whole naira, for example 80000. It must be the same number as EXPECTED_AMOUNT in the Apps Script. Leave 0 while enrolment is closed."
+      - name: scriptAmountConfirmed
+        label: Fee in the Apps Script (retype it)
+        type: number
+        description: "Type the fee again, only after you have changed EXPECTED_AMOUNT in the Apps Script and redeployed both deployments. The site will not build with enrolment open unless this equals the fee above."
+
+  - name: cohort
+    label: Cohort facts
+    type: file
+    path: src/content/cohort.json
+    format: json
+    fields:
+      - name: next
+        label: Next cohort
+        type: string
+        required: true
+        description: "Month and year, for example February 2027. The waitlist form and its sheet entry follow this, so change it only when the next cohort changes."
+      - name: nextStart
+        label: Rough start
+        type: string
+        required: true
+        description: "Used until the exact date is fixed, in the sentence 'starts at ...', for example the end of February."
+      - name: startDate
+        label: Start date
+        type: string
+        description: "The exact start date written in full, for example 2 February 2027. Leave empty until it is fixed. Required before enrolment opens."
+      - name: applyBy
+        label: Apply by
+        type: string
+        description: "The last day to apply, written in full, for example 25 January 2027. Leave empty until it is fixed. Required before enrolment opens."
+      - name: previous
+        label: Cohort that has just filled
+        type: string
+        required: true
+        description: "Month and year, for example November 2026. The cohort card says '<month> is full'."
+      - name: previousStatus
+        label: Its status
+        type: string
+        required: true
+        description: "A few words, for example Fully booked."
+      - name: size
+        label: Cohort size
+        type: string
+        required: true
+        description: "For example 10 to 15 people."
+      - name: format
+        label: Format
+        type: string
+        required: true
+        description: "For example Twelve weeks, live online."
+      - name: schedule
+        label: Schedule
+        type: string
+        required: true
+        description: "Days and time in West Africa Time, for example Wednesdays and Saturdays, 8 to 10pm WAT. The table of local times on the page is worked out from 8 to 10pm WAT, so tell Claude if the hours change."
+      - name: previousFee
+        label: Previous fee
+        type: string
+        required: true
+        description: "The fee of the cohort that has just filled, with the naira sign, for example ₦80,000. Quoted in the FAQ until the new fee is set."
+      - name: abroadFee
+        label: Fee for people abroad
+        type: text
+        required: true
+        description: "The sentence about students outside Nigeria. There is no dollar fee for now."
+
+  - name: programme
+    label: The programme
+    type: file
+    path: src/content/programme.json
+    format: json
+    fields:
+      - name: audiences
+        label: Who it is for
+        type: object
+        list: true
+        description: "Two to four groups. They appear as numbered columns, so keep each description to a sentence."
+        fields:
+          - name: name
+            label: Group
+            type: string
+            required: true
+          - name: detail
+            label: Description
+            type: text
+            required: true
+      - name: phases
+        label: The 12 weeks
+        type: object
+        list: true
+        description: "Two to eight phases, in order. The last one is drawn as the end of the process, in a deep-green box."
+        fields:
+          - name: weeks
+            label: Weeks
+            type: string
+            required: true
+            description: "For example Weeks 1 to 2."
+          - name: name
+            label: Phase
+            type: string
+            required: true
+          - name: detail
+            label: What is taught
+            type: text
+            required: true
+          - name: tools
+            label: Tools
+            type: string
+            required: true
+          - name: deliverable
+            label: Deliverable
+            type: string
+            required: true
+      - name: includes
+        label: What a place includes
+        type: string
+        list: true
+        description: "One line each, up to 14. Do not promise jobs, salaries or certifications."

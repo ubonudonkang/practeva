@@ -25,3 +25,9 @@ The three touch different files except `CLAUDE.md` (001 and 002 edit different b
 ## Not planned (possible later)
 
 - Cross-page fade with the View Transitions API (`@view-transition { navigation: auto; }`) for a softer move between pages.
+
+## Other plans
+
+| Plan | Status |
+| --- | --- |
+| [004 Edit the site's content in Pages CMS](004-pages-cms-migration.md) | IN PROGRESS |
