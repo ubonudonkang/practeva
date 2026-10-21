@@ -16,7 +16,13 @@ import path from 'node:path';
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const require = createRequire(import.meta.url);
 const yaml = require('js-yaml');
-const { parseCohort, parseProgramme, parseEnrolment, parseFaqs, fillTokens, checkOpening, FAQ_TOKENS } = await import(path.join(root, 'src/data/content.ts'));
+const content = await import(path.join(root, 'src/data/content.ts'));
+const { parseCohort, parseProgramme, parseEnrolment, parseFaqs, fillTokens, checkOpening, FAQ_TOKENS } = content;
+// the offers files and the function that checks each
+const offers = {
+  pillars: content.parsePillars, advisory: content.parseAdvisory, packages: content.parsePackages, careers: content.parseCareers,
+  'team-training': content.parseTeamTraining, resources: content.parseResources, principles: content.parsePrinciples,
+};
 
 const read = (file) => JSON.parse(fs.readFileSync(path.join(root, 'src/content', file), 'utf8'));
 const clone = (value) => structuredClone(value);
@@ -32,6 +38,7 @@ const enrolmentFacts = parseEnrolment(enrolment);
 checkOpening(enrolmentFacts, cohort);
 assert.deepEqual(faqFiles.sort(), ['faqs/guide', 'faqs/home', 'faqs/international', 'faqs/training']);
 for (const file of faqFiles) parseFaqs(file, read(`${file}.json`));
+for (const [name, parse] of Object.entries(offers)) parse(read(`${name}.json`));
 
 /* ── 2. The checks refuse what they should, and say where ── */
 const refuses = (run, pattern, why) => assert.throws(run, pattern, why);
@@ -119,6 +126,28 @@ const refuses = (run, pattern, why) => assert.throws(run, pattern, why);
   assert.equal(fillTokens('The {{cohort.next}} cohort', values, 'test'), 'The February 2027 cohort');
   refuses(() => fillTokens('The fee is {{cohort.fee}}.', values, 'test'), /\{\{cohort\.fee\}\} is empty here/, 'a fact that is empty leaves no gap');
   refuses(() => fillTokens('{{nope}}', values, 'test'), /not a known name/, 'unknown name at fill time');
+}
+
+// the offers: slugs, pillars, counts
+{
+  const packages = read('packages.json');
+  const edit = (file, change) => { const d = clone(read(file)); change(d); return d; };
+  refuses(() => offers.packages(edit('packages.json', (d) => { d.packages[1].slug = d.packages[0].slug; })), /packages\.json is not valid[\s\S]*same slug/, 'two packages with one slug');
+  refuses(() => offers.packages(edit('packages.json', (d) => { d.packages[0].slug = 'Quick Read'; })), /packages\[0\]\.slug: must be lower case words/, 'a slug with capitals and a space');
+  refuses(() => offers.careers(edit('careers.json', (d) => { d.services[1].slug = d.services[0].slug; })), /same slug/, 'two careers services with one slug');
+  refuses(() => offers.packages(edit('packages.json', (d) => { d.packages[0].summary = 'Fast \u2014 and clear.'; })), /em dash/, 'em dash in a package');
+  refuses(() => offers.packages(edit('packages.json', (d) => { d.packages[0].includes = []; })), /includes/, 'a package with nothing included');
+  refuses(() => offers.packages(edit('packages.json', (d) => { d.packages[0].price = 'x'.repeat(41); })), /price: is longer than 40/, 'a long price');
+  offers.packages(edit('packages.json', (d) => { d.packages[0].price = '\u20A6150,000'; })); // a price is fine
+  refuses(() => offers.pillars(edit('pillars.json', (d) => { d.pillars.reverse(); })), /advisory, training and careers, in that order/, 'pillars reordered');
+  refuses(() => offers.pillars(edit('pillars.json', (d) => { d.pillars[0].key = 'consulting'; })), /pillars\[0\]\.key/, 'a pillar key that sets no colour');
+  refuses(() => offers.pillars(edit('pillars.json', (d) => { d.pillars.pop(); })), /pillars/, 'two pillars');
+  refuses(() => offers.advisory(edit('advisory.json', (d) => { d.engagement = d.engagement.slice(0, 2); })), /engagement/, 'a process with two steps');
+  refuses(() => offers.advisory(edit('advisory.json', (d) => { d.services = d.services.slice(0, 2); })), /services/, 'two services do not fill a row of three');
+  refuses(() => offers.advisory(edit('advisory.json', (d) => { d.beforeAfter.after.items = []; })), /beforeAfter\.after\.items/, 'an empty column');
+  refuses(() => offers['team-training'](edit('team-training.json', (d) => { d.topics.push(d.topics[0], d.topics[0]); })), /topics/, 'six topics do not fit four columns');
+  refuses(() => offers.principles(edit('principles.json', (d) => { d.principles[0].extra = 'x'; })), /extra/, 'a key that is not editable');
+  assert.ok(packages.packages.every((p) => /^[a-z0-9-]+$/.test(p.slug)));
 }
 
 // numbers

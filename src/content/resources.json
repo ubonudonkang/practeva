@@ -1,0 +1,28 @@
+{
+  "resources": [
+    {
+      "name": "Requirements document template",
+      "detail": "A structure for business requirements, with notes on what goes in each section."
+    },
+    {
+      "name": "User story pack",
+      "detail": "User story and acceptance criteria templates, with worked examples."
+    },
+    {
+      "name": "Process mapping kit",
+      "detail": "Shapes, conventions and a checklist for clear current and future process maps."
+    },
+    {
+      "name": "Stakeholder map",
+      "detail": "A template for mapping who a change touches and what each of them needs."
+    },
+    {
+      "name": "UAT test plan",
+      "detail": "A test plan and script template for user acceptance testing."
+    },
+    {
+      "name": "Feasibility checklist",
+      "detail": "The questions to answer before you commit a budget."
+    }
+  ]
+}

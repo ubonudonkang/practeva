@@ -1,0 +1,56 @@
+{
+  "services": [
+    {
+      "slug": "cv-rewrite",
+      "name": "CV and profile rewrite",
+      "summary": "Your CV and LinkedIn profile rewritten around business analysis work: what you analysed, documented and changed.",
+      "includes": [
+        "A rewritten CV",
+        "A rewritten LinkedIn headline and summary"
+      ],
+      "price": ""
+    },
+    {
+      "slug": "mock-interview",
+      "name": "Mock interview",
+      "summary": "A one-to-one practice interview for business analyst roles, with honest feedback straight after.",
+      "includes": [
+        "Common BA questions and a short case",
+        "Feedback on every answer"
+      ],
+      "price": ""
+    },
+    {
+      "slug": "portfolio-review",
+      "name": "Portfolio review",
+      "summary": "We review the work you plan to show employers and help you present it clearly.",
+      "includes": [
+        "Feedback on each piece",
+        "How to talk about it in an interview"
+      ],
+      "price": ""
+    }
+  ],
+  "steps": [
+    {
+      "name": "Book a session",
+      "detail": "Pick the support you need"
+    },
+    {
+      "name": "Share your materials",
+      "detail": "Your CV, profile and target roles"
+    },
+    {
+      "name": "Rewrite and review",
+      "detail": "We work through it with you"
+    },
+    {
+      "name": "Practise",
+      "detail": "A mock interview with feedback"
+    },
+    {
+      "name": "Apply",
+      "detail": "With materials that show your work"
+    }
+  ]
+}

@@ -239,3 +239,279 @@ content:
             label: Answer when enrolment is open
             type: text
             description: "Leave empty if the answer is the same whether or not enrolment is open. If you fill it in, it is used instead of the answer above while enrolment is open."
+
+  - name: pillars
+    label: "Home: the three pillars"
+    type: file
+    path: src/content/pillars.json
+    format: json
+    fields:
+      - name: pillars
+        label: "Pillars"
+        type: object
+        list: true
+        description: "The three doors on the home page. Edit the words; the key and link must stay as they are, and the order is fixed."
+        fields:
+          - name: key
+            label: "Key"
+            type: string
+            required: true
+            description: "Sets the pillar colour. Do not change."
+          - name: name
+            label: "Name"
+            type: string
+            required: true
+          - name: href
+            label: "Link"
+            type: string
+            required: true
+            description: "The page it opens, for example /advisory. Do not change."
+          - name: tease
+            label: "Who it is for"
+            type: string
+            required: true
+            description: "A few words under the name."
+          - name: line
+            label: "One line"
+            type: text
+            required: true
+
+  - name: advisory
+    label: "Advisory page"
+    type: file
+    path: src/content/advisory.json
+    format: json
+    fields:
+      - name: audiences
+        label: "Who we help"
+        type: object
+        list: true
+        description: "Two to four groups, shown as numbered columns."
+        fields:
+          - name: name
+            label: "Group"
+            type: string
+            required: true
+          - name: detail
+            label: "Description"
+            type: text
+            required: true
+      - name: beforeAfter
+        label: "Before and after"
+        type: object
+        fields:
+          - name: before
+            label: "Without a plan"
+            type: object
+            fields:
+              - name: label
+                label: "Heading"
+                type: string
+                required: true
+              - name: items
+                label: "Points"
+                type: string
+                list: true
+                description: "One to five short lines."
+          - name: after
+            label: "With Practeva"
+            type: object
+            fields:
+              - name: label
+                label: "Heading"
+                type: string
+                required: true
+              - name: items
+                label: "Points"
+                type: string
+                list: true
+                description: "One to five short lines."
+      - name: services
+        label: "What we take on"
+        type: object
+        list: true
+        description: "Three to twelve, shown in columns of three."
+        fields:
+          - name: name
+            label: "Service"
+            type: string
+            required: true
+          - name: detail
+            label: "Description"
+            type: text
+            required: true
+      - name: engagement
+        label: "How an engagement runs"
+        type: object
+        list: true
+        description: "Three to five steps, drawn as a process. Names of two to four words; details under eight."
+        fields:
+          - name: name
+            label: "Step"
+            type: string
+            required: true
+          - name: detail
+            label: "Short detail"
+            type: text
+            required: true
+
+  - name: packages
+    label: "Advisory packages"
+    type: file
+    path: src/content/packages.json
+    format: json
+    fields:
+      - name: packages
+        label: "Packages"
+        type: object
+        list: true
+        description: "Up to six. Shown on the advisory and home pages."
+        fields:
+          - name: slug
+            label: "Link name"
+            type: string
+            required: true
+            description: "Lower case words joined by hyphens. The contact form uses it to preselect this offer in links, so change it only if you also change the links that point to it."
+          - name: name
+            label: "Name"
+            type: string
+            required: true
+          - name: tag
+            label: "Tag"
+            type: string
+            required: true
+            description: "One or two words above the name, for example Start here."
+          - name: summary
+            label: "Summary"
+            type: text
+            required: true
+          - name: includes
+            label: "What it includes"
+            type: string
+            list: true
+            description: "One to six short lines."
+          - name: bestFor
+            label: "Best for"
+            type: string
+            required: true
+          - name: price
+            label: "Price"
+            type: string
+            description: "Leave empty to show 'Quoted after an intro call'. Only put a price here once it is fixed."
+
+  - name: careers
+    label: "Careers page"
+    type: file
+    path: src/content/careers.json
+    format: json
+    fields:
+      - name: services
+        label: "Services"
+        type: object
+        list: true
+        description: "Up to six."
+        fields:
+          - name: slug
+            label: "Link name"
+            type: string
+            required: true
+            description: "Lower case words joined by hyphens. The contact form uses it to preselect this offer in links, so change it only if you also change the links that point to it."
+          - name: name
+            label: "Name"
+            type: string
+            required: true
+          - name: summary
+            label: "Summary"
+            type: text
+            required: true
+          - name: includes
+            label: "What it includes"
+            type: string
+            list: true
+            description: "One to six short lines."
+          - name: price
+            label: "Price"
+            type: string
+            description: "Leave empty to show 'Quoted after an intro call'. Only put a price here once it is fixed."
+      - name: steps
+        label: "How it works"
+        type: object
+        list: true
+        description: "Three to five steps, drawn as a process."
+        fields:
+          - name: name
+            label: "Step"
+            type: string
+            required: true
+          - name: detail
+            label: "Short detail"
+            type: text
+            required: true
+
+  - name: team-training
+    label: "Team training"
+    type: file
+    path: src/content/team-training.json
+    format: json
+    fields:
+      - name: topics
+        label: "Topics"
+        type: object
+        list: true
+        description: "Two to four, shown as numbered columns."
+        fields:
+          - name: name
+            label: "Topic"
+            type: string
+            required: true
+          - name: detail
+            label: "Description"
+            type: text
+            required: true
+      - name: formats
+        label: "Formats"
+        type: string
+        list: true
+        description: "For example Online, In person, Blended."
+
+  - name: resources
+    label: "Resources page"
+    type: file
+    path: src/content/resources.json
+    format: json
+    fields:
+      - name: resources
+        label: "Templates and resources"
+        type: object
+        list: true
+        description: "The list is a placeholder marked Coming soon. Replace it with the real templates when they exist."
+        fields:
+          - name: name
+            label: "Name"
+            type: string
+            required: true
+          - name: detail
+            label: "Description"
+            type: text
+            required: true
+
+  - name: principles
+    label: "About: how we work"
+    type: file
+    path: src/content/principles.json
+    format: json
+    fields:
+      - name: principles
+        label: "Principles"
+        type: object
+        list: true
+        description: "Two to four, shown as numbered columns. Do not promise jobs, salaries or certifications."
+        fields:
+          - name: name
+            label: "Principle"
+            type: string
+            required: true
+          - name: detail
+            label: "Description"
+            type: text
+            required: true

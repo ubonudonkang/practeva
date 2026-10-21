@@ -1,0 +1,25 @@
+{
+  "topics": [
+    {
+      "name": "Business analysis foundations",
+      "detail": "Requirements, stakeholders and the documents analysts write, for people new to the role."
+    },
+    {
+      "name": "Process improvement",
+      "detail": "Mapping how work flows today, finding the waste and agreeing a better way."
+    },
+    {
+      "name": "Agile delivery",
+      "detail": "User stories, backlogs and working well with product and engineering teams."
+    },
+    {
+      "name": "Digital skills",
+      "detail": "Practical tools and habits for teams moving their work onto new systems."
+    }
+  ],
+  "formats": [
+    "Online",
+    "In person",
+    "Blended"
+  ]
+}

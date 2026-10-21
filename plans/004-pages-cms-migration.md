@@ -1,6 +1,6 @@
 # 004: Edit the site's content in Pages CMS
 
-- Status: IN PROGRESS (Phases 0 to 2 done; the round trip in Phase 1 is Ubon's check in Pages CMS)
+- Status: IN PROGRESS (Phases 0 to 3 done; Phase 4, the pilot and handover, is next and needs Ubon)
 - Written at commit: d4c3efa
 - Files: new `.pages.yml`, new `src/content/*.json`, new `src/data/content.ts`, new `scripts/test-content.mjs`; edits to `src/data/site.ts`, `src/data/offers.ts`, `src/pages/*.astro` (FAQ lists only), `scripts/test-enrol.mjs`, `CLAUDE.md`, `README.md`
 
@@ -84,7 +84,7 @@ Each phase is its own pull request, no AI attribution (see `CLAUDE.md`, Git and 
 1. Move `packages`, `services`, `engagement`, `teamTraining`, `careerServices`, `careerSteps`, `audiences`, `beforeAfter`, `resources`, `principles` and the text of `pillars`, one file per group.
 2. Prices stay an optional field; an empty price keeps showing "Quoted after an intro call".
 3. Link slugs used by the contact form (`?offer=quick-read`) come from `packages` and `careerServices`; make `slug` a `readonly` field so an edit cannot break a link.
-4. Check: `dist/` identical; the contact form still preselects each offer.
+4. Check: `dist/` identical; the contact form still preselects each offer. Done: closed and open builds identical. The `TODO(ubon)` comments that sat above these lists are gone with the code; the open items they recorded stay in `CLAUDE.md` and the field hints in `.pages.yml`. Files: `pillars`, `advisory` (audiences, before and after, services, engagement), `packages`, `careers` (services and steps), `team-training`, `resources`, `principles`. A slug is editable but must be lower case with hyphens and unique, checked at build; `readonly` would have blocked adding a new package.
 
 ### Phase 4: Pilot and handover (about 2 hours, Ubon with Claude)
 
