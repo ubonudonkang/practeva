@@ -65,7 +65,7 @@ export const nav = [
   { href: '/advisory', label: 'Advisory' },
   { href: '/training', label: 'Training' },
   { href: '/careers', label: 'Careers' },
-  { href: '/resources', label: 'Resources' },
+  { href: '/toolkit', label: 'Toolkit' },
   { href: '/about', label: 'About' },
 ];
 

@@ -51,7 +51,8 @@ ${list(careerServices)}
 - [Training](${u('/training/')}): the ${cohort.programme}, team training and ${enrolment.open ? 'enrolment' : 'the waitlist'}
 - [How to become a business analyst in Nigeria](${u('/training/how-to-become-a-business-analyst-in-nigeria/')}): a guide for career changers
 - [Careers](${u('/careers/')}): CV, profile, interview and portfolio support
-- [Resources](${u('/resources/')}): business analysis templates (coming soon)
+- [Free BA starter toolkit](${u('/toolkit/')}): a free 30-day plan, ten Word and Excel templates, a practice case with data, and checked links to learning, tools, certificates and job boards
+- [Resources](${u('/resources/')}): more business analysis templates (coming soon)
 - [About](${u('/about/')}): the company and how it works
 - [Contact](${u('/contact/')}): book a call
 - [Privacy notice](${u('/privacy/')})

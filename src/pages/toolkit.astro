@@ -1,0 +1,686 @@
+---
+// The free BA starter toolkit: a 30-day plan, ten templates, a practice case with data, and
+// checked links to learning, tools, certifications and jobs. Free and open, with no email gate.
+// Every word and link is in src/data/toolkit.ts, kept in code (not Pages CMS) because each link
+// and price was checked on a date and must be re-checked before it changes.
+import Page from '../layouts/Page.astro';
+import Arrow from '../components/Arrow.astro';
+import PageHero from '../components/PageHero.astro';
+import SectionHead from '../components/SectionHead.astro';
+import NumberedGrid from '../components/NumberedGrid.astro';
+import CohortBanner from '../components/CohortBanner.astro';
+import { orgId, pageUrl } from '../data/schema';
+import {
+  books, careers, certs, checked, community, files, follow, learning, practice, techniques, templates, thirtyDays, tools,
+} from '../data/toolkit';
+
+const jump = [
+  ['start', 'Start here'],
+  ['thirty-days', 'First 30 days'],
+  ['techniques', 'Techniques'],
+  ['templates', 'Templates'],
+  ['practice', 'Practice brief'],
+  ['learn', 'Learning'],
+  ['tools', 'Tools'],
+  ['books', 'Books and certificates'],
+  ['careers', 'CV and jobs'],
+  ['community', 'Communities'],
+];
+
+const gap = [
+  { name: 'As-is', detail: 'How the work actually happens now, who does each step, and where it goes wrong.' },
+  { name: 'To-be', detail: 'How it should work after the change, and what has to be true for that to happen.' },
+  { name: 'The gap', detail: 'What has to change in between: requirements, priorities, data, people and a plan.' },
+];
+
+const title = 'Free business analyst starter toolkit | Practeva';
+const description =
+  'Free toolkit for new business analysts in Nigeria and abroad: a 30-day plan, ten templates, a practice case with data, and checked links to learning and jobs.';
+
+const mime = {
+  Word: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  Excel: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+};
+
+// The ten templates as a list of free documents, for search engines and AI assistants
+const templateList = {
+  '@type': 'ItemList',
+  name: 'Free business analysis templates',
+  numberOfItems: templates.length,
+  itemListElement: templates.map((t, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    item: {
+      '@type': 'DigitalDocument',
+      name: t.name,
+      description: t.what,
+      url: pageUrl(t.href),
+      encodingFormat: mime[t.format],
+      isAccessibleForFree: true,
+      publisher: { '@id': orgId },
+    },
+  })),
+};
+---
+<Page tone="night" title={title} description={description} pageType="CollectionPage" schema={[templateList]}>
+  <PageHero
+    tone="night"
+    crumbs={[{ label: 'Home', href: '/' }, { label: 'Free toolkit' }]}
+    eyebrow="Free BA starter toolkit"
+    sub="A 30-day plan, ten templates, a practice case with real data to query, and links to learning, tools and job boards that we opened and checked. Free to use, with no sign-up."
+  >
+    <Fragment slot="title">Everything you need to <em class="accent">start</em> in business analysis.</Fragment>
+    <Fragment slot="actions">
+      <a class="btn" href={files.zip.href} download>Download the whole toolkit<Arrow /></a>
+      <a class="link" href="#templates">Or pick one template</a>
+    </Fragment>
+  </PageHero>
+
+  <nav class="jump ground-paper" aria-label="On this page">
+    <div class="container">
+      <ul>
+        {jump.map(([id, label]) => <li><a href={`#${id}`}>{label}</a></li>)}
+      </ul>
+      <p class="caption">Links and plan details checked on {checked}.</p>
+    </div>
+  </nav>
+
+  <section class="ground-paper section" id="start" aria-labelledby="start-title">
+    <div class="container">
+      <SectionHead
+        id="start-title"
+        label="Start here"
+        title="What a business analyst does."
+        note="A business analyst works out what a change needs to achieve and helps a team deliver it. In practice that means understanding how work happens today, agreeing how it should work, and writing that down so people can build and test it."
+      />
+      <NumberedGrid items={gap} cols={3} />
+
+      <div class="split split-after">
+        <div class="stack">
+          <h3 class="subheading">Is it right for you?</h3>
+          <ul class="bullets">
+            <li>You like finding out why something is slow, confusing or costly.</li>
+            <li>You are comfortable asking people questions and writing things down clearly.</li>
+            <li>You can work with data, or want to learn to.</li>
+            <li>You can disagree with someone politely and still keep the relationship.</li>
+          </ul>
+        </div>
+        <div class="stack">
+          <h3 class="subheading">How it differs from nearby roles</h3>
+          <ul class="bullets">
+            <li><strong>Product owner:</strong> decides what goes into a product and in what order.</li>
+            <li><strong>Project manager:</strong> plans and controls the delivery.</li>
+            <li><strong>Business analyst:</strong> defines the need and the requirements, and checks the solution meets them.</li>
+          </ul>
+          <p class="caption">Titles overlap between employers; read the advert, not just the title.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="ground-night section" id="thirty-days" aria-labelledby="days-title">
+    <div class="container">
+      <SectionHead
+        id="days-title"
+        label="First 30 days"
+        title="A self-study path, one week at a time."
+        note="About five hours a week is enough. Each step uses a template or a resource from this page."
+      />
+      <ol class="weeks">
+        {thirtyDays.map((w) => (
+          <li class="week">
+            <p class="eyebrow">{w.week}</p>
+            <h3 class="subheading">{w.title}</h3>
+            <ul class="bullets">
+              {w.items.map((i) => <li>{i}</li>)}
+            </ul>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="ground-paper section" id="techniques" aria-labelledby="tech-title">
+    <div class="container">
+      <SectionHead id="tech-title" label="Core techniques" title="Six techniques to learn first." />
+      <div class="cards">
+        {techniques.map((t) => (
+          <article class="card">
+            <h3 class="subheading">{t.name}</h3>
+            <p>{t.what}</p>
+            <p><strong>In practice:</strong> {t.use}</p>
+            <p class="muted"><strong>Watch for:</strong> {t.watch}</p>
+            <a class="link" href={t.href} rel="noopener">{t.link}</a>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="templates ground-wash section" id="templates" aria-labelledby="tpl-title">
+    <div class="container">
+      <SectionHead
+        id="tpl-title"
+        label="Templates"
+        title="Ten templates you can use today."
+        note="Word and Excel files with guidance inside. They open in Microsoft Office, and in Google Docs and Sheets if you upload them. Free to use and adapt."
+      />
+      <ul class="rows">
+        {templates.map((t) => (
+          <li class="row">
+            <div>
+              <h3 class="subheading">{t.name}</h3>
+              <p class="muted">{t.what}</p>
+            </div>
+            <p class="tags-inline">
+              <span class="tag">{t.format}</span>
+              <a class="link" href={t.href} download>Download<span class="visually-hidden"> {t.name}</span></a>
+            </p>
+          </li>
+        ))}
+      </ul>
+      <p class="caption">Prefer one download? <a class="link" href={files.zip.href} download>{files.zip.label}</a>, including the practice brief and data.</p>
+    </div>
+  </section>
+
+  <section class="ground-paper section" id="practice" aria-labelledby="prac-title">
+    <div class="container split">
+      <div class="stack">
+        <p class="eyebrow">Free practice brief</p>
+        <h2 id="prac-title" class="display">{practice.title}</h2>
+        <p class="lead">{practice.blurb}</p>
+        <p>It is a different case from the one in the BA Bridge Cohort. Allow two to three hours a task, and read the answer notes at the end only after you have finished.</p>
+        <ul class="links">
+          {practice.files.map((f) => <li><a class="link" href={f.href} download>{f.label}</a></li>)}
+        </ul>
+      </div>
+      <div class="panel">
+        <h3 class="subheading">Seven tasks</h3>
+        <ol class="steps">
+          {practice.tasks.map((t) => <li>{t}</li>)}
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="ground-night section" id="learn" aria-labelledby="learn-title">
+    <div class="container">
+      <SectionHead
+        id="learn-title"
+        label="Free learning"
+        title="Where to learn each part."
+        note={'Tagged by cost and level. "Free account" means you must sign up but pay nothing.'}
+      />
+      {learning.map((g) => (
+        <div class="group">
+          <h3 class="subheading">{g.group}</h3>
+          <ul class="rows">
+            {g.items.map((r) => (
+              <li class="row">
+                <div>
+                  <a class="name" href={r.href} rel="noopener">{r.name}</a>
+                  {r.by && <span class="by"> by {r.by}</span>}
+                  <p class="muted">{r.note}</p>
+                </div>
+                <p class="tags-inline">
+                  <span class="tag">{r.cost}</span>
+                  {r.level && <span class="tag">{r.level}</span>}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="ground-paper section" id="tools" aria-labelledby="tools-title">
+    <div class="container">
+      <SectionHead
+        id="tools-title"
+        label="Tools"
+        title="Tools you can try without paying."
+        note="Plans change often. Open the link to confirm what the free plan covers today."
+      />
+      <div class="cards cards-tight">
+        {tools.map((t) => (
+          <article class="card">
+            <h3 class="subheading"><a class="plain" href={t.href} rel="noopener">{t.name}</a></h3>
+            <p>{t.use}</p>
+            <p class="caption">{t.plan}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="joined ground-paper section" id="books" aria-labelledby="books-title">
+    <div class="container joined-inner">
+      <SectionHead id="books-title" label="Books and certificates" title="Reading, and what the exams ask of you." />
+      <h3 class="subheading">Books</h3>
+      <ul class="rows">
+        {books.map((b) => (
+          <li class="row">
+            <div>
+              <a class="name" href={b.href} rel="noopener">{b.title}</a>
+              <span class="by"> by {b.by}</span>
+              <p class="muted">{b.note}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+
+      <h3 class="subheading gap-top">Certificates</h3>
+      <p class="lead">A certificate can help you learn and can show commitment. It is not needed to start, and no certificate guarantees a job. Practeva does not offer these exams; the details below are from each body's own site on {checked}.</p>
+      <div class="cards">
+        {certs.map((c) => (
+          <article class="card">
+            <h3 class="subheading"><a class="plain" href={c.href} rel="noopener">{c.name}</a></h3>
+            <p class="caption">{c.body}</p>
+            <p><strong>Entry:</strong> {c.entry}</p>
+            <p><strong>Exam:</strong> {c.exam}</p>
+            <p><strong>Cost:</strong> {c.cost}</p>
+          </article>
+        ))}
+      </div>
+      <p class="caption">We did not list PMI-PBA because we could not confirm its current status from PMI's own site. Check with PMI before you plan around it.</p>
+    </div>
+  </section>
+
+  <section class="careers ground-wash section" id="careers" aria-labelledby="careers-title">
+    <div class="container">
+      <SectionHead id="careers-title" label="CV, interviews and jobs" title="Show your work to employers." />
+      <ol class="numbered-steps">
+        {careers.steps.map((s) => <li>{s}</li>)}
+      </ol>
+
+      <h3 class="subheading gap-top">Job boards</h3>
+      <ul class="rows rows-cols">
+        {careers.boards.map((b) => (
+          <li class="row"><div><a class="name" href={b.href} rel="noopener">{b.name}</a><p class="muted">{b.note}</p></div></li>
+        ))}
+      </ul>
+
+      <div class="panel panel-note">
+        <p class="eyebrow">Stay safe</p>
+        <p>{careers.scam}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="ground-paper section" id="community" aria-labelledby="community-title">
+    <div class="container">
+      <SectionHead id="community-title" label="Communities" title="Where analysts talk to each other." />
+      <div class="split">
+        <div class="stack">
+          <h3 class="subheading">Communities</h3>
+          <ul class="rows">
+            {community.map((c) => (
+              <li class="row"><div><a class="name" href={c.href} rel="noopener">{c.name}</a><p class="muted">{c.note}</p></div></li>
+            ))}
+          </ul>
+        </div>
+        <div class="stack">
+          <h3 class="subheading">People and sites worth following</h3>
+          <ul class="rows">
+            {follow.map((c) => (
+              <li class="row"><div><a class="name" href={c.href} rel="noopener">{c.name}</a><p class="muted">{c.note}</p></div></li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <CohortBanner />
+</Page>
+
+<style>
+  /* On-page jump links: a row of pills under the hero */
+  .jump {
+    padding-block: var(--space-6);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .jump ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-3);
+  }
+
+  .jump a {
+    display: inline-block;
+    padding: 6px 14px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-pill);
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 600;
+    color: var(--accent-text);
+    text-decoration: none;
+  }
+
+  .jump .caption {
+    margin-top: var(--space-4);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .jump a:hover {
+      border-color: var(--accent-text);
+    }
+  }
+
+  .stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    min-width: 0;
+  }
+
+  .split {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-8) clamp(32px, 6vw, 96px);
+    align-items: start;
+  }
+
+  /* The two lists that follow the numbered grid */
+  .split-after {
+    margin-top: clamp(48px, 7vw, 88px);
+  }
+
+  /* The leaf, as a list bullet */
+  .bullets {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .bullets li {
+    position: relative;
+    padding-left: 26px;
+  }
+
+  .bullets li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 9px;
+    width: 10px;
+    height: 10px;
+    border-radius: 5px 0 5px 0;
+    background: var(--accent);
+  }
+
+  .weeks {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    border-top: 1px solid var(--line);
+  }
+
+  .week {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-6) var(--space-4) var(--space-6) 0;
+  }
+
+  .week + .week {
+    padding-left: var(--space-4);
+    border-left: 1px solid var(--line);
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-3);
+  }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: clamp(20px, 2.2vw, 28px);
+    border: 1px solid var(--line);
+    background: var(--surface-raised);
+  }
+
+  .card a.link {
+    margin-top: auto;
+  }
+
+  .cards-tight .card {
+    gap: var(--space-2);
+  }
+
+  .muted {
+    color: var(--ink-muted);
+  }
+
+  .plain {
+    color: inherit;
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 5px;
+  }
+
+  /* A list of things with a note, divided by hairlines */
+  .rows {
+    border-top: 1px solid var(--line);
+  }
+
+  .row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-6);
+    padding-block: var(--space-4);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .row p {
+    max-width: 40em;
+  }
+
+  .row .subheading {
+    font-size: 19px;
+    line-height: 26px;
+  }
+
+  .name {
+    font-size: 17px;
+    font-weight: var(--weight-title);
+    color: var(--accent-text);
+    text-decoration: underline;
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 5px;
+  }
+
+  .by {
+    color: var(--ink-muted);
+    font-size: 15px;
+  }
+
+  .tags-inline {
+    display: flex;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--space-2) var(--space-3);
+    max-width: none;
+  }
+
+  .tag {
+    padding: 3px 12px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-pill);
+    font-size: 13px;
+    line-height: 18px;
+    font-weight: 600;
+    color: var(--ink-muted);
+  }
+
+  .group + .group {
+    margin-top: clamp(40px, 5vw, 64px);
+  }
+
+  .group .subheading {
+    margin-bottom: var(--space-4);
+  }
+
+  .gap-top {
+    margin-top: clamp(40px, 6vw, 72px);
+    margin-bottom: var(--space-4);
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-6);
+  }
+
+  .panel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: clamp(24px, 3vw, 40px);
+    border: 1px solid var(--line);
+    background: var(--surface-raised);
+  }
+
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    counter-reset: step;
+  }
+
+  .steps li {
+    position: relative;
+    padding-left: 40px;
+    counter-increment: step;
+  }
+
+  .steps li::before {
+    content: counter(step, decimal-leading-zero);
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-weight: 300;
+    color: var(--accent-text);
+  }
+
+  .numbered-steps {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3);
+    counter-reset: step;
+  }
+
+  .numbered-steps li {
+    position: relative;
+    padding: var(--space-6) var(--space-6) var(--space-6) 76px;
+    border: 1px solid var(--line);
+    background: var(--surface-raised);
+    counter-increment: step;
+  }
+
+  .numbered-steps li::before {
+    content: counter(step, decimal-leading-zero);
+    position: absolute;
+    left: var(--space-6);
+    top: var(--space-4);
+    font-size: 32px;
+    line-height: 1;
+    font-weight: 300;
+    color: var(--accent-text);
+  }
+
+  .rows-cols {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--space-8);
+  }
+
+  .panel-note {
+    margin-top: clamp(40px, 6vw, 72px);
+    max-width: 52em;
+  }
+
+  .templates {
+    --wash-x: 100%;
+    --wash-y: 20%;
+    --wash2-x: 0%;
+    --wash2-y: 90%;
+  }
+
+  .careers {
+    --wash-x: 0%;
+    --wash-y: 30%;
+    --wash2-x: 100%;
+    --wash2-y: 80%;
+  }
+
+  /* Two paper sections in a row share one hairline instead of a gap */
+  .joined {
+    padding-top: 0;
+  }
+
+  .joined-inner {
+    padding-top: var(--section-y);
+    background: linear-gradient(var(--line), var(--line)) center top / calc(100% - 2 * var(--gutter)) 1px no-repeat;
+  }
+
+  @media (max-width: 1080px) {
+    .weeks {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .week:nth-child(3) {
+      padding-left: 0;
+      border-left: 0;
+    }
+
+    .week:nth-child(n + 3) {
+      border-top: 1px solid var(--line);
+    }
+
+    .cards {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 760px) {
+    .split,
+    .numbered-steps,
+    .rows-cols {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .weeks,
+    .cards {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .week,
+    .week + .week,
+    .week:nth-child(3) {
+      padding: var(--space-6) 0;
+      border-left: 0;
+    }
+
+    .week + .week {
+      border-top: 1px solid var(--line);
+    }
+
+    .row {
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .tags-inline {
+      justify-content: flex-start;
+    }
+  }
+</style>
