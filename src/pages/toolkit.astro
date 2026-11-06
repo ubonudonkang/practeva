@@ -11,7 +11,7 @@ import NumberedGrid from '../components/NumberedGrid.astro';
 import CohortBanner from '../components/CohortBanner.astro';
 import { orgId, pageUrl } from '../data/schema';
 import {
-  books, careers, certs, checked, community, files, follow, learning, practice, techniques, templates, thirtyDays, tools,
+  books, careers, certs, checked, community, files, follow, learning, practice, techniques, templates, thirtyDays, tools, videos,
 } from '../data/toolkit';
 
 const jump = [
@@ -21,6 +21,7 @@ const jump = [
   ['templates', 'Templates'],
   ['practice', 'Practice brief'],
   ['learn', 'Learning'],
+  ['videos', 'Videos'],
   ['tools', 'Tools'],
   ['books', 'Books and certificates'],
   ['careers', 'CV and jobs'],
@@ -234,6 +235,30 @@ const templateList = {
     </div>
   </section>
 
+  <section class="videos ground-wash section" id="videos" aria-labelledby="videos-title">
+    <div class="container">
+      <SectionHead
+        id="videos-title"
+        label="Watch and learn"
+        title="Short videos to start with."
+        note="Free videos from other channels, picked for people new to the work. Nothing loads from YouTube until you press play."
+      />
+      <div class="cards">
+        {videos.map((v) => (
+          <article class="card video" data-video={v.id}>
+            <button class="poster press" type="button" aria-label={`Play video: ${v.title}`}>
+              <span class="play" aria-hidden="true"></span>
+            </button>
+            <h3 class="subheading">{v.title}</h3>
+            {v.by && <p class="caption">{v.by}</p>}
+            <p class="muted">{v.note}</p>
+            <a class="link" href={`https://www.youtube.com/watch?v=${v.id}`} rel="noopener">Watch on YouTube<span class="visually-hidden">: {v.title}</span></a>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
   <section class="ground-paper section" id="tools" aria-labelledby="tools-title">
     <div class="container">
       <SectionHead
@@ -334,6 +359,25 @@ const templateList = {
 
   <CohortBanner />
 </Page>
+
+<script>
+  // Swap the poster for the player only when someone presses play, so the page makes no
+  // request to YouTube until then. The no-cookie domain sets no tracking cookies on load.
+  document.querySelectorAll<HTMLElement>('[data-video]').forEach((card) => {
+    const poster = card.querySelector<HTMLButtonElement>('.poster');
+    poster?.addEventListener('click', () => {
+      const frame = document.createElement('iframe');
+      frame.src = `https://www.youtube-nocookie.com/embed/${card.dataset.video}?autoplay=1&rel=0`;
+      frame.title = card.querySelector('h3')?.textContent ?? 'Video';
+      frame.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+      frame.allowFullscreen = true;
+      frame.referrerPolicy = 'strict-origin-when-cross-origin';
+      frame.className = 'player';
+      poster.replaceWith(frame);
+      frame.focus();
+    });
+  });
+</script>
 
 <style>
   /* On-page jump links: a row of pills under the hero */
@@ -456,6 +500,57 @@ const templateList = {
 
   .muted {
     color: var(--ink-muted);
+  }
+
+  /* Videos: a flat deep-green panel until play is pressed, then the player at the same size */
+  .video {
+    align-items: stretch;
+  }
+
+  .poster,
+  .video :global(.player) {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: 0;
+  }
+
+  .poster {
+    position: relative;
+    background: var(--deep-green, #024a31);
+    cursor: pointer;
+  }
+
+  .play {
+    position: absolute;
+    inset: 50% auto auto 50%;
+    width: 64px;
+    height: 64px;
+    margin: -32px 0 0 -32px;
+    border-radius: var(--radius-pill);
+    background: var(--highlight, #84d262);
+  }
+
+  .play::after {
+    content: '';
+    position: absolute;
+    left: 25px;
+    top: 20px;
+    border-left: 18px solid var(--deep-green, #024a31);
+    border-top: 12px solid transparent;
+    border-bottom: 12px solid transparent;
+  }
+
+  .poster:focus-visible {
+    outline: 2px solid var(--accent-text);
+    outline-offset: 3px;
+  }
+
+  .videos {
+    --wash-x: 0%;
+    --wash-y: 20%;
+    --wash2-x: 100%;
+    --wash2-y: 90%;
   }
 
   .plain {

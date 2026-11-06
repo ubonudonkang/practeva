@@ -211,6 +211,22 @@ export const learning: { group: string; items: Resource[] }[] = [
   },
 ];
 
+// Videos embedded on the page. Each `id` is the part after `v=` in the YouTube address.
+// Open each one on YouTube and check it plays when embedded (the owner can switch embedding off)
+// before it goes live, then set `videosChecked`. Keep `by` to what the channel page says.
+export const videosChecked = '';
+export interface Video {
+  id: string;
+  title: string;
+  by?: string;
+  note: string;
+}
+export const videos: Video[] = [
+  { id: 'MkXhkiRiovA', title: 'What is Business Process Model and Notation (BPMN)?', by: 'Camunda Academy', note: 'The symbols and why analysts draw processes this way. Watch it before the process-mapping week.' },
+  { id: '0n8MiEmNg1Y', title: 'How to create a BPMN diagram using Camunda Modeler', by: 'Camunda', note: 'A diagram built step by step from a car insurance application. Follow along in the free modeler.' },
+  { id: '6wJEtVMA3Io', title: '5 requirement gathering techniques every business analyst should know', note: 'A short tour of interviews, workshops and other ways to find out what a change needs.' },
+];
+
 export interface Tool {
   name: string;
   use: string;
